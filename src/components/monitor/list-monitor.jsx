@@ -1,67 +1,71 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import styles from './monitor.css';
+import ListMonitorScroller from './list-monitor-scroller.jsx';
 
-const ListMonitor = ({categoryColor, label, width, height, value}) => (
+const ListMonitor = ({draggable, label, width, height, value, onResizeMouseDown, onAdd, ...rowProps}) => (
     <div
         className={styles.listMonitor}
         style={{
-            width: `${width || 80}px`,
-            height: `${height || 200}px`
+            width: `${width}px`,
+            height: `${height}px`
         }}
     >
         <div className={styles.listHeader}>
             {label}
         </div>
         <div className={styles.listBody}>
-            {!value || value.length === 0 ? (
-                <div className={styles.listEmpty}>
-                    {'(empty)' /* @todo not translating, awaiting design */}
-                </div>
-            ) : value.map((v, i) => (
-                <div
-                    className={styles.listRow}
-                    key={`label-${i}`}
-                >
-                    <div className={styles.listIndex}>{i + 1 /* one indexed */}</div>
-                    <div
-                        className={styles.listValue}
-                        style={{background: categoryColor}}
-                    >
-                        <div className={styles.valueInner}>{v}</div>
-                    </div>
-                </div>
-            ))}
+            <ListMonitorScroller
+                draggable={draggable}
+                height={height}
+                values={value}
+                width={width}
+                {...rowProps}
+            />
         </div>
         <div className={styles.listFooter}>
-            <div className={styles.footerButton}>
-                {/* @todo add button here */}
+            <div
+                className={classNames(styles.addButton, 'no-drag')}
+                onClick={draggable ? onAdd : null}
+            >
+                {'+' /* TODO waiting on asset */}
             </div>
             <div className={styles.footerLength}>
-                <span className={styles.lengthNumber}>
-                    {value.length}
-                </span>
+                {`length ${value.length}`}
             </div>
-            <div className={styles.resizeHandle}>
-                {/* @todo resize handle */}
+            <div
+                className={classNames(styles.resizeHandle, 'no-drag')}
+                onMouseDown={draggable ? onResizeMouseDown : null}
+            >
+                {'=' /* TODO waiting on asset */}
             </div>
         </div>
     </div>
 );
 
 ListMonitor.propTypes = {
+    activeIndex: PropTypes.number,
     categoryColor: PropTypes.string.isRequired,
+    draggable: PropTypes.bool.isRequired,
     height: PropTypes.number,
     label: PropTypes.string.isRequired,
-    value: PropTypes.arrayOf(PropTypes.oneOfType([
+    onActivate: PropTypes.func,
+    onAdd: PropTypes.func,
+    onResizeMouseDown: PropTypes.func,
+    value: PropTypes.oneOfType([
         PropTypes.string,
-        PropTypes.number
-    ])),
+        PropTypes.number,
+        PropTypes.arrayOf(PropTypes.oneOfType([
+            PropTypes.string,
+            PropTypes.number
+        ]))
+    ]),
     width: PropTypes.number
 };
 
 ListMonitor.defaultProps = {
-    width: 80,
+    width: 110,
     height: 200
 };
 

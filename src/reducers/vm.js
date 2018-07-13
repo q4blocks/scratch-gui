@@ -27,4 +27,5 @@ export {
     reducer as default,
     setVM,
     defaultVM,
+    initialState as vmInitialState
 };

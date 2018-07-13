@@ -103,10 +103,12 @@ class Monitor extends React.Component {
             <MonitorComponent
                 componentRef={this.setElement}
                 {...monitorProps}
+                draggable={this.props.draggable}
                 height={this.props.height}
                 max={this.props.max}
                 min={this.props.min}
                 mode={this.state.mode}
+                targetId={this.props.targetId}
                 width={this.props.width}
                 onDragEnd={this.handleDragEnd}
                 onNextMode={this.handleNextMode}
@@ -120,6 +122,7 @@ class Monitor extends React.Component {
 
 Monitor.propTypes = {
     addMonitorRect: PropTypes.func.isRequired,
+    draggable: PropTypes.bool,
     height: PropTypes.number,
     id: PropTypes.string.isRequired,
     max: PropTypes.number,
@@ -135,6 +138,7 @@ Monitor.propTypes = {
     removeMonitorRect: PropTypes.func.isRequired,
     resizeMonitorRect: PropTypes.func.isRequired,
     spriteName: PropTypes.string, // eslint-disable-line react/no-unused-prop-types
+    targetId: PropTypes.string,
     value: PropTypes.oneOfType([
         PropTypes.string,
         PropTypes.number,
@@ -148,7 +152,7 @@ Monitor.propTypes = {
     y: PropTypes.number
 };
 const mapStateToProps = state => ({
-    monitorLayout: state.monitorLayout
+    monitorLayout: state.scratchGui.monitorLayout
 });
 const mapDispatchToProps = dispatch => ({
     addMonitorRect: (id, rect, savePosition) =>
