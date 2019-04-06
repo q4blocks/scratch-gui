@@ -86,6 +86,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 initialState,
                 enhancer
             );
+            window._scratchGuiStore =this.store;
         }
         componentDidUpdate (prevProps) {
             if (localesOnly) return;
