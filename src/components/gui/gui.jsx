@@ -57,7 +57,8 @@ let isRendererSupported = null;
 const GUIComponent = props => {
     const customOptions = {
         menuBarVisible: false,
-        previewInfoVisible: false
+        previewInfoVisible: false,
+        backpackVisible: false
     }
     const {
         accountNavOpen,
@@ -333,7 +334,7 @@ const GUIComponent = props => {
                                     {soundsTabVisible ? <SoundTab vm={vm} /> : null}
                                 </TabPanel>
                             </Tabs>
-                            {backpackVisible ? (
+                            {customOptions.backpackVisible ? (
                                 <Backpack host={backpackHost} />
                             ) : null}
                         </Box>
