@@ -17,7 +17,7 @@ import { addBlocksToWorkspace, testBlocks, getTestHints } from '../lib/hints/hin
 
 
 const isProductionMode = true;
-const isTesting = true;
+const isTesting = false;
 
 const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];
@@ -28,6 +28,11 @@ const addFunctionListener = (object, property, callback) => {
     };
 };
 
+const SNIPPET_LOCAL_STORAGE_KEY = '__snippet__';
+const updateShareSnippetOnLocalStorage = snippetEntry => {
+    const serializedSnippet = JSON.stringify(snippetEntry);
+    localStorage.setItem(SNIPPET_LOCAL_STORAGE_KEY, serializedSnippet);
+}
 
 class HintOverlay extends React.Component {
     constructor(props) {
@@ -107,7 +112,9 @@ class HintOverlay extends React.Component {
                 console.log('Post request to save procedure to library');
                 const block = this.workspace.getBlockById(hint.blockId);
                 const entry = getProcedureEntry(block);
-                console.log(entry);
+                updateShareSnippetOnLocalStorage(entry);
+                //todo: remove the hint
+                window.open('/playground-authoring');
                 break;
             }
         }

@@ -10,6 +10,7 @@ import {setPlayer, setFullScreen} from '../reducers/mode.js';
 
 import locales from 'scratch-l10n';
 import {detectLocale} from './detect-locale';
+import ScratchBlocks from 'scratch-blocks';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -88,6 +89,7 @@ const AppStateHOC = function (WrappedComponent, localesOnly, externalStateContro
             );
             if(externalStateController){
                 externalStateController.setStore(this.store);
+                externalStateController.setScratchBlocks(ScratchBlocks);
             }
         }
         componentDidUpdate (prevProps) {
