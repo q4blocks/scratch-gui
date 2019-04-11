@@ -56,6 +56,11 @@ const messages = defineMessages({
 let isRendererSupported = null;
 
 const GUIComponent = props => {
+    const customOptions = {
+        menuBarVisible: false,
+        previewInfoVisible: false,
+        backpackVisible: false
+    }
     const {
         accountNavOpen,
         activeTabIndex,
@@ -158,7 +163,7 @@ const GUIComponent = props => {
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
-                {previewInfoVisible ? (
+                {customOptions.previewInfoVisible ? (
                     <PreviewModal />
                 ) : null}
                 {telemetryModalVisible ? (
@@ -207,7 +212,7 @@ const GUIComponent = props => {
                         onRequestClose={onRequestCloseBackdropLibrary}
                     />
                 ) : null}
-                <MenuBar
+                {customOptions.menuBarVisible? (<MenuBar
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
@@ -232,7 +237,7 @@ const GUIComponent = props => {
                     onShare={onShare}
                     onToggleLoginOpen={onToggleLoginOpen}
                     onUpdateProjectTitle={onUpdateProjectTitle}
-                />
+                />):null}
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
                         <Box className={styles.editorWrapper}>
@@ -333,7 +338,7 @@ const GUIComponent = props => {
                                     {soundsTabVisible ? <SoundTab vm={vm} /> : null}
                                 </TabPanel>
                             </Tabs>
-                            {backpackVisible ? (
+                            {customOptions.backpackVisible ? (
                                 <Backpack host={backpackHost} />
                             ) : null}
                         </Box>
