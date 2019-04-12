@@ -4,9 +4,11 @@ const UPDATE_HINT = 'UPDATE_HINT';
 const PUT_HINT = "PUT_HINT";
 const PUT_ALL_HINTS = "PUT_ALL_HINTS";
 const REMOVE_HINT = "REMOVE_HINT";
-const SET_UPDATE_STATUS = "SET_UPDATE_STATUS"
+const SET_UPDATE_STATUS = "SET_UPDATE_STATUS";
+const SWITCH_HINT_MODE = "SWITCH_HINT_MODE";
 
 const initialState = {
+    hintMode: true,
     timestamp: null,
     hints: [],
     isUpdating: false
@@ -64,6 +66,8 @@ const reducer = function (state, action) {
             }
         case SET_UPDATE_STATUS:
             return Object.assign({}, state, { isUpdating: action.isUpdating })
+        case SWITCH_HINT_MODE:
+            return Object.assign({}, state, {hintMode: action.isInHintMode})
         default:
             return state;
     }
@@ -113,6 +117,13 @@ const setUpdateStatus = function (isUpdating) {
     return {
         type: SET_UPDATE_STATUS,
         isUpdating
+    }
+}
+
+const switchHintMode = function(isInHintMode){
+    return {
+        type: SWITCH_HINT_MODE,
+        isInHintMode
     }
 }
 

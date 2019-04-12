@@ -17,7 +17,7 @@ import { addBlocksToWorkspace, testBlocks, getTestHints } from '../lib/hints/hin
 
 
 const isProductionMode = true;
-const isTesting = false;
+const isTesting = true;
 
 const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];

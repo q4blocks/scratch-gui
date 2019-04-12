@@ -81,6 +81,7 @@ export default appTarget => {
                 backpackHost={backpackHost}
                 canSave={false}
                 onClickLogo={onClickLogo}
+                hintMode
             />,
         appTarget);
 };

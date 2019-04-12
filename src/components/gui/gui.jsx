@@ -122,6 +122,7 @@ const GUIComponent = props => {
         telemetryModalVisible,
         tipsLibraryVisible,
         vm,
+        hintMode,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -328,7 +329,7 @@ const GUIComponent = props => {
                                         <Watermark />
                                     </Box>
                                     <Box className="hint-overlay">
-                                        <HintOverlay />
+                                        {hintMode?(<HintOverlay />):null}
                                     </Box>
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
@@ -424,7 +425,8 @@ GUIComponent.propTypes = {
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    hintMode: PropTypes.bool
 };
 GUIComponent.defaultProps = {
     backpackHost: null,

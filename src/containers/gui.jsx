@@ -1,17 +1,17 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {compose} from 'redux';
-import {connect} from 'react-redux';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
 import ReactModal from 'react-modal';
 import VM from 'scratch-vm';
-import {defineMessages, injectIntl, intlShape} from 'react-intl';
+import { defineMessages, injectIntl, intlShape } from 'react-intl';
 
 import ErrorBoundaryHOC from '../lib/error-boundary-hoc.jsx';
 import {
     getIsError,
     getIsShowingProject
 } from '../reducers/project-state';
-import {setProjectTitle} from '../reducers/project-title';
+import { setProjectTitle } from '../reducers/project-title';
 import {
     activateTab,
     BLOCKS_TAB_INDEX,
@@ -37,7 +37,7 @@ import vmManagerHOC from '../lib/vm-manager-hoc.jsx';
 import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 
 import GUIComponent from '../components/gui/gui.jsx';
-import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
+import { setIsScratchDesktop } from '../lib/isScratchDesktop.js';
 
 const messages = defineMessages({
     defaultProjectTitle: {
@@ -48,12 +48,12 @@ const messages = defineMessages({
 });
 
 class GUI extends React.Component {
-    componentDidMount () {
+    componentDidMount() {
         setIsScratchDesktop(this.props.isScratchDesktop);
         this.setReduxTitle(this.props.projectTitle);
         this.props.onStorageInit(storage);
     }
-    componentDidUpdate (prevProps) {
+    componentDidUpdate(prevProps) {
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
             this.props.onUpdateProjectId(this.props.projectId);
         }
@@ -65,8 +65,11 @@ class GUI extends React.Component {
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
         }
+        // if (this.props.hintMode !== prevProps.hintMode && this.props.hintMode !== null) {
+            console.log('hintMode', this.props.hintMode);
+        // }
     }
-    setReduxTitle (newTitle) {
+    setReduxTitle(newTitle) {
         if (newTitle === null || typeof newTitle === 'undefined') {
             this.props.onUpdateReduxProjectTitle(
                 this.props.intl.formatMessage(messages.defaultProjectTitle)
@@ -75,7 +78,7 @@ class GUI extends React.Component {
             this.props.onUpdateReduxProjectTitle(newTitle);
         }
     }
-    render () {
+    render() {
         if (this.props.isError) {
             throw new Error(
                 `Error in Scratch GUI [location=${window.location}]: ${this.props.error}`);
@@ -137,14 +140,15 @@ GUI.propTypes = {
     projectId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     projectTitle: PropTypes.string,
     telemetryModalVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    hintMode: PropTypes.bool
 };
 
 GUI.defaultProps = {
     isScratchDesktop: false,
     onStorageInit: storageInstance => storageInstance.addOfficialScratchWebStores(),
-    onProjectLoaded: () => {},
-    onUpdateProjectId: () => {}
+    onProjectLoaded: () => { },
+    onUpdateProjectId: () => { }
 };
 
 const mapStateToProps = state => {
