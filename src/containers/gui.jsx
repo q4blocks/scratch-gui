@@ -65,9 +65,6 @@ class GUI extends React.Component {
             // At this time the project view in www doesn't need to know when a project is unloaded
             this.props.onProjectLoaded();
         }
-        // if (this.props.hintMode !== prevProps.hintMode && this.props.hintMode !== null) {
-            console.log('hintMode', this.props.hintMode);
-        // }
     }
     setReduxTitle(newTitle) {
         if (newTitle === null || typeof newTitle === 'undefined') {
