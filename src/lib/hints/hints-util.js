@@ -7,7 +7,6 @@ import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_
  * @param {*} workspace 
  */
 const computeHintLocationStyles = function (hint, workspace) {
-    console.log('update hint tracking');
     const block = workspace.getBlockById(hint.blockId);
     if (!block) return;
     const blockSvg = block.getSvgRoot();

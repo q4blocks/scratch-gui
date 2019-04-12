@@ -82,7 +82,7 @@ class HintOverlay extends React.Component {
     }
 
     onTargetsUpdate() {
-        console.log('TODO: show hint that is only relevant to the current target');
+//         console.log('TODO: show hint that is only relevant to the current target');
     }
 
     onWorkspaceMetricsChange() {
