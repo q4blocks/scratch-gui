@@ -3,6 +3,8 @@ import bindAll from 'lodash.bindall';
 import omit from 'lodash.omit';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import throttle from 'lodash.throttle';
+import debounce from 'lodash.debounce';
 
 import VM from 'scratch-vm';
 import ScratchBlocks from 'scratch-blocks';
@@ -23,7 +25,7 @@ const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];
     object[property] = function () {
         const result = oldFn.apply(this, arguments);
-        callback.apply(this, result);
+        callback.call(this, result);
         return result;
     };
 };
@@ -61,6 +63,7 @@ class HintOverlay extends React.Component {
         this.props.vm.addListener('targetsUpdate', this.onTargetsUpdate);
         addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
         addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
+        addFunctionListener(ScratchBlocks.Gesture.prototype, 'handleBlockStart', debounce(() => this.hideHint()));
     }
 
     detachVM() {
@@ -72,7 +75,7 @@ class HintOverlay extends React.Component {
         if (isTesting && !this.alreadySetup) {
             addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
             addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
             this.workspace.cleanUp();
         }
         this.alreadySetup = true;
@@ -87,7 +90,21 @@ class HintOverlay extends React.Component {
         const isProcedureEditorOpened = this.workspace.id !== Blockly.getMainWorkspace().id;
 
         if (this.props.hintState.hints.length <= 0 || isProcedureEditorOpened) return;
-        this.showHint();
+        debounce(this.showHint, 0);
+    }
+
+    hideHint() {
+        console.log('hide hint');
+        if (this.props) {
+            this.props.hintState.hints.map(h => {
+                //update hint styles to be invisible
+                this.props.onUpdateHint(h.hintId, {
+                    styles: {
+                        display: 'none'
+                    }
+                });
+            });
+        }
     }
 
     showHint() {
@@ -135,7 +152,7 @@ class HintOverlay extends React.Component {
 
     blockListener(e) {
         if (this.workspace.isDragging()) return;
-        console.log('TODO: logic to delay analyzing hints waiting for a good time');
+        // console.log('TODO: logic to delay analyzing hints waiting for a good time');
 
         if (e.type === 'create' && e.xml.getAttribute('type') === 'procedures_definition') {
             const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
@@ -144,9 +161,9 @@ class HintOverlay extends React.Component {
                 this.showHint();
             }
         }
-        
-        if (e.type ==='delete') {
-            this.props.hintState.hints.filter(h=>!this.workspace.getBlockById(h.blockId)).forEach(h=>{
+
+        if (e.type === 'delete') {
+            this.props.hintState.hints.filter(h => !this.workspace.getBlockById(h.blockId)).forEach(h => {
                 this.props.removeHint(h.hintId);
             });
         }

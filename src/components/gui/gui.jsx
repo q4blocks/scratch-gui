@@ -360,7 +360,7 @@ const GUIComponent = props => {
                         </Box>
                     </Box>
                 </Box>
-                <DragLayer />
+                {/* <DragLayer /> */}
             </Box>
         );
     }}</MediaQuery>);
