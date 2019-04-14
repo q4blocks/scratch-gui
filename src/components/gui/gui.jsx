@@ -43,9 +43,8 @@ import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
 
-import '!style-loader!css-loader!../../css/steps-index.css';
-import '!style-loader!css-loader!../../css/steps-iconfont.css';
-import Steps, { Step } from 'rc-steps';
+import Tutorial from '../../containers/tutorial.jsx';
+
 
 const messages = defineMessages({
     addExtension: {
@@ -169,12 +168,8 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 
-                <Steps current={1} className={styles.steps}>
-                        <Steps.Step title="first" />
-                        <Steps.Step title="second" />
-                        <Steps.Step title="third" />
-                    </Steps>
-                
+                <Tutorial/>
+
                 {customOptions.previewInfoVisible ? (
                     <PreviewModal />
                 ) : null}
@@ -371,7 +366,7 @@ const GUIComponent = props => {
                         </Box>
                     </Box>
                 </Box>
-                {/* <DragLayer /> */}
+                <DragLayer />
             </Box>
         );
     }}</MediaQuery>);
