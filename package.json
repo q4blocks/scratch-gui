@@ -140,6 +140,7 @@
   },
   "dependencies": {
     "rc-steps": "^3.3.1",
-    "react-floater": "^0.6.4"
+    "react-floater": "^0.6.4",
+    "react-popper": "^1.3.3"
   }
 }
