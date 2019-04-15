@@ -61,9 +61,9 @@ class HintOverlay extends React.Component {
         this.workspace.addChangeListener(this.blockListener);
         this.props.vm.addListener('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.addListener('targetsUpdate', this.onTargetsUpdate);
-        addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
-        addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
-        addFunctionListener(ScratchBlocks.Gesture.prototype, 'handleBlockStart', debounce(() => this.hideHint()));
+        addFunctionListener(this.workspace, 'translate', debounce(()=>this.onWorkspaceMetricsChange(),100, {leading:true}));
+        addFunctionListener(this.workspace, 'zoom', debounce(()=>this.onWorkspaceMetricsChange(),100, {leading:true}));
+        addFunctionListener(ScratchBlocks.Gesture.prototype, 'updateDragDelta_', debounce(() => this.hideHint()));
     }
 
     detachVM() {
@@ -90,11 +90,12 @@ class HintOverlay extends React.Component {
         const isProcedureEditorOpened = this.workspace.id !== Blockly.getMainWorkspace().id;
 
         if (this.props.hintState.hints.length <= 0 || isProcedureEditorOpened) return;
-        debounce(this.showHint, 0);
+        this.hideHint();
+        setTimeout(()=>this.showHint(), 500);
+
     }
 
     hideHint() {
-        console.log('hide hint');
         if (this.props) {
             this.props.hintState.hints.map(h => {
                 //update hint styles to be invisible

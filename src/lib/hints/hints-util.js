@@ -120,7 +120,7 @@ const generateShareableCodeHints = function (workspace, hintState){
         let oldHint = hintState.hints.find(h => b.id === h.blockId);
         if (oldHint) return oldHint;
         let blockId = b.id;
-        let hintId = blockId; //hintId is also block id;
+        let hintId = "custom_block" + Math.round(Math.random(1,2)*100000); //hintId is also block id;
 
         const hintMenuItems = buildHintContextMenu(SHAREABLE_CODE_HINT_TYPE);
         return { type: SHAREABLE_CODE_HINT_TYPE, hintId, blockId, hintMenuItems };
