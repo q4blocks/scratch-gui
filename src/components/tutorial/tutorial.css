@@ -1,0 +1,32 @@
+@keyframes BeaconFlick {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
+  .next-button {
+    -webkit-appearance: none;
+    background-color: #f04;
+    border-radius: 3px;
+    border: 1px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
+    outline: none;
+    padding: 8px 16px;
+    white-space: nowrap;
+  }
+
+  .next-button:hover {
+    background-color:  #fff;
+    color: #f04;
+    border-radius: 3px;
+    border: 1px;
+    border-color: #f04;
+  }

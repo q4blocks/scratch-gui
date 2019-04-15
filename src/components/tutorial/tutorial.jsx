@@ -1,8 +1,11 @@
 import React from 'react';
 import '!style-loader!css-loader!../../css/steps-index.css';
 import '!style-loader!css-loader!../../css/steps-iconfont.css';
-
+import '!style-loader!css-loader!./tutorial.css';
+import styles from './tutorial.css';
 import Steps, { Step } from 'rc-steps';
+
+import classnames from 'classnames';
 
 import { Popper } from 'react-popper';
 import Floater from 'react-floater';
@@ -14,7 +17,7 @@ class VirtualReference {
             bottom: 20,
             right: 100,
             width: 90,
-            height: 10,
+            height: 10
         };
     }
 
@@ -33,42 +36,61 @@ class VirtualReference {
 const virtualReferenceElement = new VirtualReference();
 
 
-const steps = [
-    {
-        title: 'Create a custom block',
-        descriptions: `Create a custom block and name it "Swing`
-    }, {
-        title: 'Use the custom block',
-        description: `Copy the highlighted blocks`
-    }, {
-        title: 'Add parameter to the custom block',
-        description: `Allow your custom block to perform a variation`
-    }
-]
 
-const target = document.querySelector(".scratchCategoryMenu > div:nth-child(9)");
+const beaconStyle = {
+    animation: 'BeaconFlick 1s infinite',
+    color: '#7FB800',
+    fontSize: 32
+}
 
-const Tutorial = props => (
-    <div className={'firstStep'}>
-        <Steps current={0} direction={'horizontal'}>
-            {steps.map((step, key) => (
-                <Steps.Step key={key} title={step.title} description={step.descriptions} />
-            ))}
-        </Steps>
 
-        <Popper referenceElement={props.target ? props.target : virtualReferenceElement} placement="right">
-            {({ ref, style, placement, arrowProps }) => (
-                
-                    <div ref={ref} style={{...style, zIndex:100}} data-placement={placement}>
-                        <span style={{ color: '#f04', fontSize: 34, zIndex: 100 }}>◉</span>
-                        <div ref={arrowProps.ref} style={{...arrowProps.style}} />
+const Tutorial = props => {
+    const { target, currentStep, currentInstruction, steps, onNextInstruction } = props;
+    const instructions = steps[currentStep].instructions;
+    const instruction = instructions[currentInstruction];
+    return (
+        <div className='Tutorial'>
+            <Steps current={currentStep} direction={'horizontal'}>
+                {steps.map((step, key) => (
+                    <Steps.Step key={key} title={step.title} description={step.description} />
+                ))}
+            </Steps>
+
+            <Popper referenceElement={props.target ? props.target : virtualReferenceElement} placement={instruction.beaconAlign}>
+                {({ ref, style, placement, arrowProps }) => (
+
+                    <div ref={ref} style={{ ...style, zIndex: 100 }} data-placement={placement}>
+                        <Floater
+                            content={!instruction.isModal ? instructions[currentInstruction].description :
+                                (<div>
+                                    <p>{instructions[currentInstruction].description}</p>
+                                    <button className={classnames(styles.nextButton)} onClick={()=>onNextInstruction()}>Next</button>
+                                </div>)
+                            }
+                            event="hover"
+                            key={`step_${currentStep}_${currentInstruction}`}
+                            offset={5}
+                            placement={props.target ? "auto" : "center"}
+                            open={true}
+                            styles={{
+                                tooltip: {
+                                    maxWidth: 500,
+                                    width: "100%"
+                                }
+                            }}
+
+                        >
+                            <span style={beaconStyle} className="BeaconTarget">◉</span>
+                        </Floater>
+                        <div ref={arrowProps.ref} style={{ ...arrowProps.style }} />
                     </div>
-            )}
-        </Popper>
+                )}
+            </Popper>
 
 
-    </div>
-);
+        </div>
+    )
+};
 
 export default Tutorial;
 
