@@ -1,10 +1,10 @@
-import tutorialStateReducer, { markInstructionComplete, nextInstruction } from '../../../src/reducers/tutorial';
+import tutorialStateReducer, { markInstructionComplete, nextInstruction, actionTypes, loadNewTutorial } from '../../../src/reducers/tutorial';
 import { testModeAPI } from 'react-ga';
 
 test("initialState", () => {
     let defaultState
     expect(tutorialStateReducer(defaultState, { type: 'anything' })).toBeDefined();
-    expect(tutorialStateReducer(defaultState, { type: 'anything' }).currentStep).toBe(0);
+    expect(tutorialStateReducer(defaultState, { type: 'anything' }).currentStep).toBe(null);
     expect(tutorialStateReducer(defaultState, { type: 'anything' }).currentInstruction).toBe(null);
     expect(tutorialStateReducer(defaultState, { type: 'anything' }).target).toBe(null);
     expect(tutorialStateReducer(defaultState, { type: 'anything' }).steps).toEqual([]);
@@ -60,5 +60,27 @@ test("next instruction", () => {
     expect(newState4ByNext).toEqual(newState4);
     expect(newState4ByNext.isComplete).toBe(true);
 
-    console.log(JSON.stringify(newState4, null, 2));
+    // console.log(JSON.stringify(newState4, null, 2));
 })
+
+test("load new tutorial", () => {
+    let defaultState
+    const steps =  [
+        {
+            description: "step 1",
+            instructions: [
+                { description: "instruction 1" }, { description: "instruction 2" }
+            ]
+        },
+        {
+            description: "step 2",
+            instructions: [
+                { description: "instruction 1" }, { description: "instruction 2" }
+            ]
+        }
+    ]
+
+    const newState = tutorialStateReducer(defaultState, loadNewTutorial(steps));
+    expect(newState).toBeDefined();
+    console.log(newState);
+});

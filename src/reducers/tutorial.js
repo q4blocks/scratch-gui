@@ -1,13 +1,14 @@
 const actionTypes = {
     MARK_INSTRUCTION_AS_COMPLETE: 'MARK_INSTRUCTION_AS_COMPLETE',
-    NEXT_INSTRUCTION: 'NEXT_INSTRUCTION'
+    NEXT_INSTRUCTION: 'NEXT_INSTRUCTION',
+    LOAD_NEW_TUTORIAL: 'LOAD_NEW_TUTORIAL'
 }
 
 const initialState = {
     isComplete: false,
     target: null,
     steps: [],
-    currentStep: 0,
+    currentStep: null,
     currentInstruction: null
 }
 
@@ -15,6 +16,7 @@ const getNextStepAndInstruction = (state) => {
     const { steps, currentStep, currentInstruction } = state;
     let nextStep = null;
     let nextInstruction = null;
+    if (state.steps.length === 0) return {nextStep, nextInstruction};
     if (currentInstruction < steps[currentStep].instructions.length - 1) {
         nextStep = currentStep;
         nextInstruction = currentInstruction + 1;
@@ -29,7 +31,7 @@ const getNextStepAndInstruction = (state) => {
 
 const tutorialReducer = (state, action) => {
     if (typeof state === 'undefined') state = initialState;
-    if (state.steps.length === 0) return state;
+    
     const { nextStep, nextInstruction } = getNextStepAndInstruction(state);
     let stepIdx
     switch (action.type) {
@@ -62,7 +64,12 @@ const tutorialReducer = (state, action) => {
                 currentInstruction: nextInstruction,
                 isComplete: nextStep === null
             });
-
+        case actionTypes.LOAD_NEW_TUTORIAL:
+            return Object.assign({}, state, {
+                steps: action.steps,
+                currentStep:0,                 
+                currentInstruction:0
+            })
 
         default:
             return state;
@@ -107,6 +114,11 @@ const nextInstruction = () => ({
     type: actionTypes.NEXT_INSTRUCTION
 });
 
+const loadNewTutorial = (steps) => ({
+    type: actionTypes.LOAD_NEW_TUTORIAL,
+    steps
+})
+
 
 
 export {
@@ -114,5 +126,6 @@ export {
     initialState as tutorialInitialState,
     markInstructionComplete,
     nextInstruction,
+    loadNewTutorial,
     actionTypes
 }
