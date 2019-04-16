@@ -1,5 +1,8 @@
 import React from 'react';
 import TutorialComponent from '../components/tutorial/tutorial.jsx';
+import { connect } from 'react-redux';
+import bindAll from 'lodash.bindall';
+import { loadNewTutorial, nextInstruction, setFocusTarget } from '../reducers/tutorial';
 
 const steps = [
     {
@@ -33,61 +36,59 @@ const steps = [
 class Tutorial extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            target: null
-            , steps: steps, currentStep: 0, currentInstruction: 0
-        };
-
         this.onNextInstruction = this.onNextInstruction.bind(this);
+        this.props.onLoadNewTutorial(steps);
+        bindAll(this, [
+            'onWorkspaceUpdate'
+        ]);
     }
 
-    onNextInstruction(delay=0) {
-        const { steps, currentStep, currentInstruction } = this.state;
-        let nextStep = currentStep, nextInstruction;
-        if (currentInstruction < steps[currentStep].instructions.length) {
-            nextInstruction = currentInstruction + 1;
-        } else if (currentStep < steps.length) {
-            nextStep = currentStep + 1;
-            nextInstruction = 0;
-        } else {
-            console.log("complete");
-        }
-
+    onNextInstruction(delay = 0) {
         setTimeout(() => {
-            this.setState(Object.assign({}, this.state, {
-                currentStep: nextStep,
-                currentInstruction: nextInstruction,
-                target: eval(steps[currentStep].instructions[nextInstruction].selectorExpr)
-            }));
+            this.props.onNextInstruction();
         }, delay);
+    }
 
-        console.log(this.state);
+    onWorkspaceUpdate() {
+        // const steps = this.props.tutorial.steps;
+        // const initialTarget = eval(steps[0].instructions[0].selectorExpr);
+        // this.setState(Object.assign({}, this.state, {
+        //     target: initialTarget
+        // }));
+        // this.props.onSetFocusTarget(initialTarget);
     }
 
 
     componentDidMount() {
-        const initialTarget = eval(steps[0].instructions[0].selectorExpr);
-        this.setState(Object.assign({}, this.state, {
-            target: initialTarget
-        }));
-
-        setTimeout(() => {
-            const myBlockTarget = document.querySelector(".scratchCategoryMenu > div:nth-child(9)");
-            const makeBlockTarget = document.querySelectorAll(".blocklyFlyoutButton")[2];
-            const { steps, currentStep, currentInstruction } = this.state;
-
-            myBlockTarget.addEventListener("click", () => this.onNextInstruction(500));
-
-            makeBlockTarget.addEventListener("click", () => this.onNextInstruction());
-        }, 1000);
+        this.props.vm.addListener('workspaceUpdate', this.onWorkspaceUpdate);
     }
 
     render() {
-        return (<TutorialComponent {...this.state} onNextInstruction={this.onNextInstruction}
-        // target={this.state.target} steps={this.state.steps}
-        />);
+        const { steps, currentStep, currentInstruction } = this.props.tutorial;
+        if (steps.length > 0 && !!!currentStep) {
+            const target = eval(steps[currentStep].instructions[currentInstruction].selectorExpr);
+            if (target) {
+                target.addEventListener("click", () => {
+                    this.onNextInstruction(500);
+                });
+            }
+            return (<TutorialComponent {...this.props.tutorial} target={target} onNextInstruction={this.props.onNextInstruction} />);
+        } else {
+            return null;
+        }
     }
 }
 
 
-export default Tutorial;
+const mapStateToProps = state => ({
+    tutorial: state.scratchGui.tutorial,
+    vm: state.scratchGui.vm,
+});
+
+const mapDispatchToProps = dispatch => ({
+    onLoadNewTutorial: steps => dispatch(loadNewTutorial(steps)),
+    onNextInstruction: () => dispatch(nextInstruction()),
+    onSetFocusTarget: domTarget => dispatch(setFocusTarget(domTarget))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Tutorial);

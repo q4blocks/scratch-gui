@@ -1,4 +1,4 @@
-import tutorialStateReducer, { markInstructionComplete, nextInstruction, actionTypes, loadNewTutorial } from '../../../src/reducers/tutorial';
+import tutorialStateReducer, { markInstructionComplete, nextInstruction, loadNewTutorial } from '../../../src/reducers/tutorial';
 import { testModeAPI } from 'react-ga';
 
 test("initialState", () => {

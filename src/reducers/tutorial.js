@@ -1,7 +1,8 @@
 const actionTypes = {
     MARK_INSTRUCTION_AS_COMPLETE: 'MARK_INSTRUCTION_AS_COMPLETE',
     NEXT_INSTRUCTION: 'NEXT_INSTRUCTION',
-    LOAD_NEW_TUTORIAL: 'LOAD_NEW_TUTORIAL'
+    LOAD_NEW_TUTORIAL: 'LOAD_NEW_TUTORIAL',
+    SET_FOCUS_TARGET: 'SET_FOCUS_TARGET'
 }
 
 const initialState = {
@@ -70,6 +71,10 @@ const tutorialReducer = (state, action) => {
                 currentStep:0,                 
                 currentInstruction:0
             })
+        case actionTypes.SET_FOCUS_TARGET:
+            return Object.assign({}, state, {
+                target: action.target
+            })
 
         default:
             return state;
@@ -119,6 +124,10 @@ const loadNewTutorial = (steps) => ({
     steps
 })
 
+const setFocusTarget = (target) => ({
+    type: actionTypes.SET_FOCUS_TARGET,
+    target
+})
 
 
 export {
@@ -127,5 +136,6 @@ export {
     markInstructionComplete,
     nextInstruction,
     loadNewTutorial,
+    setFocusTarget,
     actionTypes
 }
