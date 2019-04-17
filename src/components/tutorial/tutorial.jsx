@@ -51,9 +51,9 @@ const Tutorial = props => {
     const instruction = instructions[currentInstruction];
     return (
         <div className='Tutorial'>
-            <Steps current={currentStep} direction={'horizontal'}>
+            <Steps current={currentStep} direction={'horizontal'} >
                 {steps.map((step, key) => (
-                    <Steps.Step key={key} title={step.title} description={step.description} />
+                    <Steps.Step key={key} title={step.title} description={step.description}/>
                 ))}
             </Steps>
 
@@ -62,7 +62,12 @@ const Tutorial = props => {
 
                     <div ref={ref} style={{ ...style, zIndex: 1000 }} data-placement={placement}>
                         <Floater
-                            content={!instruction.isModal ? instructions[currentInstruction].description :
+                            content={!instruction.isModal ? (
+                                <div>
+                                    {instructions[currentInstruction].description}
+                                    {instruction.checkUserCode? (<button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>):null}
+                                </div>
+                                ) :
                                 (<div>
                                     <p>{instructions[currentInstruction].description}</p>
                                     <button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>
@@ -81,8 +86,8 @@ const Tutorial = props => {
                                 },
                                 options: { zIndex: 550 }
                             }}
-                            getPopper= {popper=>{
-                                setTimeout(()=>popper.instance.scheduleUpdate(),0);
+                            getPopper={popper => {
+                                setTimeout(() => popper.instance.scheduleUpdate(), 0);
                             }}
 
                         >

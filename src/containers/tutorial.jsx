@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import bindAll from 'lodash.bindall';
 import { loadNewTutorial, nextInstruction, setFocusTarget } from '../reducers/tutorial';
 import ScratchBlocks from 'scratch-blocks';
+import analytics, { stitchClient, sendFeedbackData } from '../lib/custom-analytics';
 
 const steps = [
     {
@@ -37,12 +38,28 @@ const steps = [
                 description: `Copy the code that perform Action and put it under the define block`,
                 selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
                 beaconAlign: 'right',
-                floaterPlacement: 'right'
+                floaterPlacement: 'right',
+                checkUserCode: true
             }
         ]
     }, {
         title: 'Use the custom block',
-        description: `Copy the highlighted blocks`
+        description: `Copy the highlighted blocks`,
+        instructions: [
+            {
+                description: `Now we have our custom block that we can use. Replace the blocks in workspace with our custom block`,
+                selectorExpr: `this.flyout.getAllBlocks().find(b=>b.type==='procedures_call').svgGroup_`,
+                beaconAlign: 'right',
+                floaterPlacement: 'right',
+                checkUserCode: true
+            },
+            {
+                description: `Nicely Done! Let's click Green Flag to see if everything is still working as expected.`,
+                selectorExpr: `document.querySelectorAll("div.rc-steps-item-description")[0]`,
+                isModal: true,
+                floaterPlacement: 'center'
+            }
+        ]
     }, {
         title: 'Add parameter to the custom block',
         description: `Allow your custom block to perform a variation`
@@ -57,23 +74,29 @@ class Tutorial extends React.Component {
         bindAll(this, [
             'onWorkspaceUpdate'
         ]);
-        
     }
 
     onNextInstruction(delay = 0) {
+        analytics.event({
+            category: 'Tutorial',
+            action: 'Complete Step',
+            label: `step: ${this.props.tutorial.currentStep}, instruction: ${this.props.tutorial.currentInstruction}`
+        });
+
         setTimeout(() => {
             this.props.onNextInstruction();
         }, delay);
     }
 
     onWorkspaceUpdate() {
-        // const steps = this.props.tutorial.steps;
-        // const initialTarget = eval(steps[0].instructions[0].selectorExpr);
-        // this.setState(Object.assign({}, this.state, {
-        //     target: initialTarget
-        // }));
-        // this.props.onSetFocusTarget(initialTarget);
-        this.workspace = ScratchBlocks.getMainWorkspace()|| Blockly.getMainWorkspace();
+        this.workspace = ScratchBlocks.getMainWorkspace() || Blockly.getMainWorkspace();
+        this.flyout = Object.values(ScratchBlocks.Workspace.WorkspaceDB_).find(ws => ws.isFlyout);
+        window.flyout = this.flyout;
+        sendFeedbackData({ questionId: 1, question: 'Do you like the hint?', feedback: 'A lot' });
+    }
+
+    sendFeedback() {
+        sendFeedbackData('data');
     }
 
 
@@ -83,14 +106,14 @@ class Tutorial extends React.Component {
 
     render() {
         const { steps, currentStep, currentInstruction } = this.props.tutorial;
-        if (steps.length > 0 && !!!currentStep) {
-            
+        console.log(currentStep, currentInstruction);
+        if (steps.length > 0) {
             const instruction = steps[currentStep].instructions[currentInstruction];
             const target = eval(instruction.selectorExpr);
             const triggerNextTarget = eval(instruction.triggerNextTarget);
-            if (triggerNextTarget||target) {
-                (triggerNextTarget||target).addEventListener("click", () => {
-                    this.onNextInstruction(instruction.delayNextInstruction||200);
+            if (triggerNextTarget || target) {
+                (triggerNextTarget || target).addEventListener("click", () => {
+                    this.onNextInstruction(instruction.delayNextInstruction || 200);
                 });
             }
             return (<TutorialComponent {...this.props.tutorial} target={target} onNextInstruction={this.props.onNextInstruction} />);
