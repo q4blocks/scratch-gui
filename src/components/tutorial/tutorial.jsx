@@ -40,7 +40,8 @@ const virtualReferenceElement = new VirtualReference();
 const beaconStyle = {
     animation: 'BeaconFlick 1s infinite',
     color: '#7FB800',
-    fontSize: 32
+    fontSize: 32,
+    cursor: 'default'
 }
 
 
@@ -56,31 +57,38 @@ const Tutorial = props => {
                 ))}
             </Steps>
 
-            <Popper referenceElement={props.target ? props.target : virtualReferenceElement} placement={instruction.beaconAlign}>
-                {({ ref, style, placement, arrowProps }) => (
+            <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
+                {({ ref, style, placement, arrowProps, scheduleUpdate }) => (
 
-                    <div ref={ref} style={{ ...style, zIndex: 100 }} data-placement={placement}>
+                    <div ref={ref} style={{ ...style, zIndex: 1000 }} data-placement={placement}>
                         <Floater
                             content={!instruction.isModal ? instructions[currentInstruction].description :
                                 (<div>
                                     <p>{instructions[currentInstruction].description}</p>
-                                    <button className={classnames(styles.nextButton)} onClick={()=>onNextInstruction()}>Next</button>
+                                    <button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>
                                 </div>)
                             }
+                            disableAnimation
                             event="hover"
                             key={`step_${currentStep}_${currentInstruction}`}
                             offset={5}
-                            placement={props.target ? "auto" : "center"}
+                            placement={instruction.floaterPlacement ? instruction.floaterPlacement : "auto"}
                             open={true}
                             styles={{
                                 tooltip: {
                                     maxWidth: 500,
                                     width: "100%"
-                                }
+                                },
+                                options: { zIndex: 550 }
+                            }}
+                            getPopper= {popper=>{
+                                setTimeout(()=>popper.instance.scheduleUpdate(),0);
                             }}
 
                         >
-                            <span style={beaconStyle} className="BeaconTarget">◉</span>
+                            <span style={beaconStyle} className="BeaconTarget">
+                                ◉
+                            </span>
                         </Floater>
                         <div ref={arrowProps.ref} style={{ ...arrowProps.style }} />
                     </div>

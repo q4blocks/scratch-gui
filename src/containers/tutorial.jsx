@@ -3,6 +3,7 @@ import TutorialComponent from '../components/tutorial/tutorial.jsx';
 import { connect } from 'react-redux';
 import bindAll from 'lodash.bindall';
 import { loadNewTutorial, nextInstruction, setFocusTarget } from '../reducers/tutorial';
+import ScratchBlocks from 'scratch-blocks';
 
 const steps = [
     {
@@ -13,15 +14,30 @@ const steps = [
                 description: `Let's get started!`,
                 selectorExpr: `document.querySelectorAll("div.rc-steps-item-description")[0]`,
                 isModal: true,
-                beaconAlign: 'right-start'
+                beaconAlign: 'right-start',
+                floaterPlacement: 'center'
             },
             {
                 description: `Click My Blocks`,
-                selectorExpr: `document.querySelector(".scratchCategoryMenu > div:nth-child(9)")`
+                selectorExpr: `document.querySelector(".scratchCategoryMenu > div:nth-child(9)")`,
+                delayNextInstruction: 600,
             },
             {
                 description: `Click Make a Block`,
-                selectorExpr: `document.querySelectorAll(".blocklyFlyoutButton")[2]`
+                selectorExpr: `document.querySelectorAll(".blocklyFlyoutButton")[2]`,
+                beaconAlign: 'right'
+            },
+            {
+                description: `Give procedure a name and click OK`,
+                selectorExpr: `document.querySelector("div.ReactModalPortal").querySelector("g.blocklyBlockCanvas")`,
+                triggerNextTarget: `document.querySelector('div.ReactModalPortal').querySelectorAll('button')[1]`,
+                beaconAlign: 'right'
+            },
+            {
+                description: `Copy the code that perform Action and put it under the define block`,
+                selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
+                beaconAlign: 'right',
+                floaterPlacement: 'right'
             }
         ]
     }, {
@@ -41,6 +57,7 @@ class Tutorial extends React.Component {
         bindAll(this, [
             'onWorkspaceUpdate'
         ]);
+        
     }
 
     onNextInstruction(delay = 0) {
@@ -56,6 +73,7 @@ class Tutorial extends React.Component {
         //     target: initialTarget
         // }));
         // this.props.onSetFocusTarget(initialTarget);
+        this.workspace = ScratchBlocks.getMainWorkspace()|| Blockly.getMainWorkspace();
     }
 
 
@@ -66,10 +84,13 @@ class Tutorial extends React.Component {
     render() {
         const { steps, currentStep, currentInstruction } = this.props.tutorial;
         if (steps.length > 0 && !!!currentStep) {
-            const target = eval(steps[currentStep].instructions[currentInstruction].selectorExpr);
-            if (target) {
-                target.addEventListener("click", () => {
-                    this.onNextInstruction(500);
+            
+            const instruction = steps[currentStep].instructions[currentInstruction];
+            const target = eval(instruction.selectorExpr);
+            const triggerNextTarget = eval(instruction.triggerNextTarget);
+            if (triggerNextTarget||target) {
+                (triggerNextTarget||target).addEventListener("click", () => {
+                    this.onNextInstruction(instruction.delayNextInstruction||200);
                 });
             }
             return (<TutorialComponent {...this.props.tutorial} target={target} onNextInstruction={this.props.onNextInstruction} />);
