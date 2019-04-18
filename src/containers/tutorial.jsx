@@ -93,10 +93,9 @@ const steps = [
                 isModal: true,
                 floaterPlacement: 'center',
                 customContent: `<h3>You just learned the basics of a custom block!</h3> 
-                <p>What if we want to make the Scratch Cat move a little bit differently?</p>
-                <p>Luckily, we don't need to create another custom block.</p>
-
-                <p>Next you will learn how to use <b>parameters</b> to make a custom block even more powerful.<p/>
+                <p>What if we want to make Scratch Cat move a little bit differently?</p>
+                <p>Luckily, we only need to add <b>parameters</b> and don't need to create another custom block.
+                Next you will learn how to use <b>parameters</b> to make a custom block even more powerful!<p/>
                 `,
                 workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='procedures_definition' id='PxH;Rp_Ia/gX3wGoj7O[' x='-508' y='-285'><statement name='custom_block'><shadow type='procedures_prototype' id='1{}?-zEWx!J3E27pwg2a'><mutation proccode='block name' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='motion_movesteps' id='m%)5Z67I8g-ofd@LwgX`'><value name='STEPS'><shadow type='math_number' id='+6ij{vIyaYP{9#X,QV/B'><field name='NUM'>10</field></shadow></value><next><block type='motion_turnright' id='%Cqf}+0Pz[Y^7w~Y{{VT'><value name='DEGREES'><shadow type='math_number' id='atI.x%~WQb$X?s.n8:V*'><field name='NUM'>15</field></shadow></value></block></next></block></next></block><block type='event_whenflagclicked' id='3GgSEq2C3!UUHbO~!2wG' x='-92' y='13'><next><block type='motion_movesteps' id=':L6MsjJxAuqwuVSw^8oO'><value name='STEPS'><shadow type='math_number' id='TXZwH5e3}+[}[RJz#DH)'><field name='NUM'>10</field></shadow></value><next><block type='motion_turnright' id='BKf`Tu?`rziW2g!-*QpM'><value name='DEGREES'><shadow type='math_number' id='JJ-pr9fYpv$me2!%C=K3'><field name='NUM'>15</field></shadow></value><next><block type='motion_pointindirection' id='#u=Td#wrIT0]I*9N:`s/'><value name='DIRECTION'><shadow type='math_angle' id='!z#aH]hyO|NfSDT]%/;}'><field name='NUM'>90</field></shadow></value></block></next></block></next></block></next></block></xml>",
                 customizedNextButtonText: 'Continue'
