@@ -15,7 +15,7 @@ const getHintOverlayText = function (type) {
 };
 
 const HintOverlayComponent = props => {
-    const { hints } = props.hintState;
+    const { hints, options } = props.hintState;
     return (
         <div>
             {hints
@@ -28,7 +28,7 @@ const HintOverlayComponent = props => {
                     placement="right"
                     offset={30}
                 >
-                    <HintIcon key={h.hintId} hint={h}
+                    <HintIcon key={h.hintId} hint={h} options={options}
                               onHandleHintMenuItemClick={() => itemAction => props.onHandleHintMenuItemClick(h.hintId, itemAction)}
                               onMouseEnter={() => props.onMouseEnter(h.hintId)}
                               onMouseLeave={() => props.onMouseLeave(h.hintId)}

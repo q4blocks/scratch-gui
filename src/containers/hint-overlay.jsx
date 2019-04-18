@@ -76,7 +76,7 @@ class HintOverlay extends React.Component {
         if (isTesting && !this.alreadySetup) {
             addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
             addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
-            // addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
+            addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
             this.workspace.cleanUp();
             this.alreadySetup = true;
         }

@@ -31,34 +31,38 @@ const getIconSpec = (type) => {
 }
 
 const HintIcon = props => {
+    const options = props.options;
     const { type, hintId, styles, hintMenuItems } = props.hint;
     const { className, iconSvg, iconStyles } = getIconSpec(type);
-    return (
-        <div style={styles}>
-            <ContextMenuTrigger id={hintId}
-                attributes={{
-                    onMouseEnter: props.onMouseEnter,
-                    onMouseLeave: props.onMouseLeave
-                }}>
-                <img
-                    className={classNames(
-                        className, iconStyles
-                    ) + " hint_icon_" + hintId}
-                    src={iconSvg}
-                />
-            </ContextMenuTrigger>
-            <ContextMenu id={hintId} hideOnLeave={true}>
-                {
-                    hintMenuItems.map((menuItem, key) => (
-                        <MenuItem key={key} onClick={() => props.onHandleHintMenuItemClick()(menuItem.itemAction)}>
-                            {menuItem.item_name}
-                        </MenuItem>
-                    ))
-                }
-
-            </ContextMenu>
+    return options.showHintOnly ?
+        (<div style={styles}>
+            <img className={classNames(className, iconStyles) + " hint_icon_" + hintId} src={iconSvg} />
         </div>
-    );
+        ) : (
+            <div style={styles}>
+                <ContextMenuTrigger id={hintId}
+                    attributes={{
+                        onMouseEnter: props.onMouseEnter,
+                        onMouseLeave: props.onMouseLeave
+                    }}>
+                    <img
+                        className={classNames(
+                            className, iconStyles
+                        ) + " hint_icon_" + hintId}
+                        src={iconSvg}
+                    />
+                </ContextMenuTrigger>
+                <ContextMenu id={hintId} hideOnLeave={true}>
+                    {
+                        hintMenuItems.map((menuItem, key) => (
+                            <MenuItem key={key} onClick={() => props.onHandleHintMenuItemClick()(menuItem.itemAction)}>
+                                {menuItem.item_name}
+                            </MenuItem>
+                        ))
+                    }
+
+                </ContextMenu>
+            </div>);
 };
 
 
