@@ -53,10 +53,12 @@ const Tutorial = props => {
         <div className='Tutorial'>
             <Steps current={currentStep} direction={'horizontal'} >
                 {steps.map((step, key) => (
-                    <Steps.Step key={key} title={step.title} description={step.description}/>
+                    <Steps.Step key={key} title={step.title} description={step.description} />
                 ))}
             </Steps>
-
+            {props.isDevMode && <button onClick={()=>{
+                props.onMarkInstructionComplete(0,6);
+                }}>step2</button>}
             <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
                 {({ ref, style, placement, arrowProps, scheduleUpdate }) => (
 
@@ -64,13 +66,13 @@ const Tutorial = props => {
                         <Floater
                             content={!instruction.isModal ? (
                                 <div>
-                                    {instructions[currentInstruction].description}
-                                    {instruction.checkUserCode? (<button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>):null}
+                                    {instruction.description}
+                                    {instruction.checkUserCode ? (<button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>) : null}
                                 </div>
-                                ) :
+                            ) :
                                 (<div>
-                                    <p>{instructions[currentInstruction].description}</p>
-                                    <button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>
+                                    <p>{instruction.description}</p>
+                                    <button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>{instruction.customizedNextButtonText || 'Next'}</button>
                                 </div>)
                             }
                             disableAnimation
@@ -99,7 +101,7 @@ const Tutorial = props => {
                     </div>
                 )}
             </Popper>
-
+            {instruction.isModal && <div className='overlay' />}
 
         </div>
     )

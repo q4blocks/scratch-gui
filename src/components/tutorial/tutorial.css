@@ -1,46 +1,56 @@
 @keyframes BeaconFlick {
-    0% {
-      opacity: 1;
-      /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px; */
-    }
-    50% {
-      opacity: 0.3;
-      /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 4px; */
-    }
-    100% {
-      opacity: 1;
-      /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px; */
-    }
+  0% {
+    opacity: 1;
+    /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px; */
   }
+  50% {
+    opacity: 0.3;
+    /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 4px; */
+  }
+  100% {
+    opacity: 1;
+    /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px; */
+  }
+}
 
-  .next-button {
-    -webkit-appearance: none;
-    background-color: #f04;
-    border-radius: 3px;
-    border: 1px;
-    border-style: solid;
-    color: #fff;
-    font-size: 14px;
-    line-height: 1;
-    outline: none;
-    padding: 8px 16px;
-    white-space: nowrap;
-    box-sizing: border-box;
-  }
+.next-button {
+  -webkit-appearance: none;
+  background-color: #f04;
+  border-radius: 3px;
+  border: 1px;
+  border-style: solid;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1;
+  outline: none;
+  padding: 8px 16px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
 
-  .next-button:hover {
-    border-color: #f04;
-    -webkit-appearance: none;
-    background-color: #fff;
-    border-radius: 3px;
-    border: 1px;
-    border-style: solid;
-    color: #f04;
-    font-size: 14px;
-    line-height: 1;
-    outline: none;
-    padding: 8px 16px;
-    white-space: nowrap;
-    box-sizing: border-box;
-    cursor: pointer;
-  }
+.next-button:hover {
+  border-color: #f04;
+  -webkit-appearance: none;
+  background-color: #fff;
+  border-radius: 3px;
+  border: 1px;
+  border-style: solid;
+  color: #f04;
+  font-size: 14px;
+  line-height: 1;
+  outline: none;
+  padding: 8px 16px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.336);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}

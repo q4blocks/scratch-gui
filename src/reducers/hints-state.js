@@ -20,9 +20,9 @@ const initialState = {
     hints: [],
     isUpdating: false,
     options: {
-        isVisible: true,
+        isVisible: false,
         showHintOnly: true,
-        showProcedureSharingHint: true
+        showProcedureSharingHint: false
     }
 };
 

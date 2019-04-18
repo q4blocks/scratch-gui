@@ -15,9 +15,13 @@ const initialState = {
 
 const getNextStepAndInstruction = (state) => {
     const { steps, currentStep, currentInstruction } = state;
+    return getNextStepAndInstructionHelper({ steps, currentStep, currentInstruction });
+}
+
+const getNextStepAndInstructionHelper = ({ currentStep, currentInstruction, steps }) => {
     let nextStep = null;
     let nextInstruction = null;
-    if (state.steps.length === 0) return {nextStep, nextInstruction};
+    if (steps.length === 0) return { nextStep, nextInstruction };
     if (currentInstruction < steps[currentStep].instructions.length - 1) {
         nextStep = currentStep;
         nextInstruction = currentInstruction + 1;
@@ -32,12 +36,12 @@ const getNextStepAndInstruction = (state) => {
 
 const tutorialReducer = (state, action) => {
     if (typeof state === 'undefined') state = initialState;
-    
-    const { nextStep, nextInstruction } = getNextStepAndInstruction(state);
+
     let stepIdx
     switch (action.type) {
-        case actionTypes.MARK_INSTRUCTION_AS_COMPLETE:
-            stepIdx = action.stepIdx;
+        case actionTypes.MARK_INSTRUCTION_AS_COMPLETE: {
+            const { stepIdx, instructionIdx } = action;
+            const { nextStep, nextInstruction } = getNextStepAndInstructionHelper({ currentStep: stepIdx, currentInstruction: instructionIdx, steps: state.steps });
             return Object.assign({}, state, {
                 steps: state.steps.map((step, idx) => {
                     if (idx === stepIdx) {
@@ -50,13 +54,14 @@ const tutorialReducer = (state, action) => {
                 currentInstruction: nextInstruction,
                 isComplete: nextStep === null
             });
-
+        }
         case actionTypes.NEXT_INSTRUCTION:
+            const { nextStep, nextInstruction } = getNextStepAndInstruction(state);
             stepIdx = state.currentStep;
             return Object.assign({}, state, {
                 steps: state.steps.map((step, idx) => {
                     if (idx === stepIdx) {
-                        return stepReducer(step, {...action, instructionIdx: state.currentInstruction});
+                        return stepReducer(step, { ...action, instructionIdx: state.currentInstruction });
                     } else {
                         return step;
                     }
@@ -68,8 +73,8 @@ const tutorialReducer = (state, action) => {
         case actionTypes.LOAD_NEW_TUTORIAL:
             return Object.assign({}, state, {
                 steps: action.steps,
-                currentStep:0,                 
-                currentInstruction:0
+                currentStep: 0,
+                currentInstruction: 0
             })
         case actionTypes.SET_FOCUS_TARGET:
             return Object.assign({}, state, {

@@ -21,7 +21,7 @@ const GreenFlagComponent = function (props) {
                 {
                     [styles.isActive]: active
                 }
-            )}
+            )+' greenFlag'}
             draggable={false}
             src={greenFlagIcon}
             title={title}

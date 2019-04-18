@@ -12,6 +12,12 @@ const addBlocksToWorkspace = function (workspace, rootBlockXml) {
     ScratchBlocks.Xml.domToBlock(dom, workspace);
 }
 
+
+const workspaceFromXml = (workspace, xml) => {
+    const dom = ScratchBlocks.Xml.textToDom(xml);
+    Blockly.Xml.domToWorkspace(dom, workspace);
+}
+
 const getTestHints = function (workspace, hintState) {
     const blocksDb = Object.values(workspace.blockDB_);
     const badBlocks = blocksDb.filter(b => !b.isShadow_ && b.type === 'motion_movesteps');
@@ -41,4 +47,4 @@ const getTestHints = function (workspace, hintState) {
     return allHints;
 }
 
-export { addBlocksToWorkspace, getTestHints };
+export { addBlocksToWorkspace, getTestHints, workspaceFromXml };
