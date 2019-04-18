@@ -6,12 +6,24 @@ const PUT_ALL_HINTS = "PUT_ALL_HINTS";
 const REMOVE_HINT = "REMOVE_HINT";
 const SET_UPDATE_STATUS = "SET_UPDATE_STATUS";
 const SWITCH_HINT_MODE = "SWITCH_HINT_MODE";
+const SET_HINT_OPTIONS = "SET_HINT_OPTIONS";
+
+const hintOptions = {
+    isVisible: "isVisible",
+    showHintOnly: "showHintOnly",
+    showProcedureSharingHint: "showProcedureSharingHint"
+}
 
 const initialState = {
     hintMode: true,
     timestamp: null,
     hints: [],
-    isUpdating: false
+    isUpdating: false,
+    options: {
+        isVisible: true,
+        showHintOnly: true,
+        showProcedureSharingHint: false
+    }
 };
 
 const reducer = function (state, action) {
@@ -26,17 +38,18 @@ const reducer = function (state, action) {
             };
         case UPDATE_HINT:
             const { hintId, changes } = action;
-            return {
-                timestamp: state.timestamp,
-                hints: state.hints.map(h => {
-                    if (h.hintId === hintId) {
-                        return Object.assign({}, h, changes);
-                    } else {
-                        return h;
-                    }
-                }),
-                isUpdating: true
-            };
+            return Object.assign({}, state,
+                {
+                    timestamp: state.timestamp,
+                    hints: state.hints.map(h => {
+                        if (h.hintId === hintId) {
+                            return Object.assign({}, h, changes);
+                        } else {
+                            return h;
+                        }
+                    }),
+                    isUpdating: true
+                });
         case PUT_HINT:
             return {
                 timestamp,
@@ -44,20 +57,20 @@ const reducer = function (state, action) {
                 isUpdating: true
             };
         case PUT_ALL_HINTS:
-            let hintMap = hints.reduce((map, h) => { 
+            let hintMap = hints.reduce((map, h) => {
                 map[h.hintId] = h;
                 return map;
             }, {});
-            hintMap = action.hints.reduce((map,h) =>{
+            hintMap = action.hints.reduce((map, h) => {
                 map[h.hintId] = h;
                 return map;
             }, hintMap);
 
-            return {
+            return Object.assign({}, state, {
                 timestamp,
                 hints: Object.values(hintMap).concat(),
                 isUpdating: true
-            }
+            })
         case REMOVE_HINT:
             return {
                 timestamp,
@@ -67,7 +80,9 @@ const reducer = function (state, action) {
         case SET_UPDATE_STATUS:
             return Object.assign({}, state, { isUpdating: action.isUpdating })
         case SWITCH_HINT_MODE:
-            return Object.assign({}, state, {hintMode: action.isInHintMode})
+            return Object.assign({}, state, { hintMode: action.isInHintMode })
+        case SET_HINT_OPTIONS:
+            return Object.assign({}, state, { options: Object.assign({}, state.options, { ...action.options }) })
         default:
             return state;
     }
@@ -120,10 +135,17 @@ const setUpdateStatus = function (isUpdating) {
     }
 }
 
-const switchHintMode = function(isInHintMode){
+const switchHintMode = function (isInHintMode) {
     return {
         type: SWITCH_HINT_MODE,
         isInHintMode
+    }
+}
+
+const setHintOptions = function (options) {
+    return {
+        type: SET_HINT_OPTIONS,
+        options
     }
 }
 
@@ -135,5 +157,7 @@ export {
     putHint,
     putAllHints,
     removeHint,
-    setUpdateStatus
+    setUpdateStatus,
+    setHintOptions,
+    hintOptions
 };

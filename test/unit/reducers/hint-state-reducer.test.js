@@ -1,4 +1,4 @@
-import hintStateReducer, { setHint, updateHint, putHint, putAllHints, removeHint, setUpdateStatus } from '../../../src/reducers/hints-state';
+import hintStateReducer, { setHint, updateHint, putHint, putAllHints, removeHint, setUpdateStatus, setHintOptions } from '../../../src/reducers/hints-state';
 
 test("initialState", () => {
     let defaultState
@@ -68,7 +68,7 @@ test("put all hints", () => {
     };
 
     const newState = hintStateReducer(state, putAllHints([
-        { hintId: 'id2', type: 'Extract Procedure', target: 'Sprite3' }, 
+        { hintId: 'id2', type: 'Extract Procedure', target: 'Sprite3' },
         { hintId: 'id1', type: 'Extract Procedure', target: 'Sprite3', visible: false },
         { hintId: 'id3', type: 'Extract Procedure', target: 'Sprite4' }
     ]));
@@ -115,4 +115,34 @@ test("update status", () => {
     const newState2 = hintStateReducer(newState1, setUpdateStatus(false));
     expect(newState2.isUpdating).toBe(false);
 
+});
+
+
+test("hint options", () => {
+    let state = {
+        hints: [],
+        options: {
+            isVisible: true,
+            showHintOnly: false,
+            showProcedureSharingHint: true
+        }
+    };
+
+    const newState1 = hintStateReducer(state, setHintOptions({}));
+    expect(newState1.options).toEqual({
+        isVisible: true,
+        showHintOnly: false,
+        showProcedureSharingHint: true
+    });
+
+    const newState2 = hintStateReducer(state, setHintOptions({
+        isVisible: false,
+        showProcedureSharingHint: false
+    }));
+
+    expect(newState2.options).toEqual({
+        isVisible: false,
+        showHintOnly: false,
+        showProcedureSharingHint: false
+    });
 });
