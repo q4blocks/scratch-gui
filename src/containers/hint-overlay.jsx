@@ -9,7 +9,7 @@ import debounce from 'lodash.debounce';
 import VM from 'scratch-vm';
 import ScratchBlocks from 'scratch-blocks';
 
-import { updateHint, putHint, putAllHints, removeHint, setUpdateStatus, hintOptions } from '../reducers/hints-state';
+import { updateHint, putAllHints, removeHint, hintOptions } from '../reducers/hints-state';
 import HintOverlayComponent from '../components/hint-overlay/hint-overlay.jsx';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
 import { computeHintLocationStyles, analysisInfoToHints, getProcedureEntry, generateShareableCodeHints, highlightDuplicateBlocks } from '../lib/hints/hints-util';
@@ -246,11 +246,10 @@ const mapDispatchToProps = dispatch => {
         onUpdateHint: (hintId, changes) => {
             dispatch(updateHint(hintId, changes));
         },
-        setUpdateStatus: isUpdating => dispatch(setUpdateStatus(isUpdating)),
         removeHint: hintId => {
             dispatch(removeHint(hintId))
         },
-        putHint: hint => dispatch(putHint(hint)),
+        // putHint: hint => dispatch(putHint(hint)),
         putAllHints: hints => dispatch(putAllHints(hints))
     }
 };
