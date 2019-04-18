@@ -9,7 +9,7 @@ import debounce from 'lodash.debounce';
 import VM from 'scratch-vm';
 import ScratchBlocks from 'scratch-blocks';
 
-import { setHint, updateHint, putHint, putAllHints, removeHint, setUpdateStatus } from '../reducers/hints-state';
+import { updateHint, putHint, putAllHints, removeHint, setUpdateStatus, hintOptions } from '../reducers/hints-state';
 import HintOverlayComponent from '../components/hint-overlay/hint-overlay.jsx';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
 import { computeHintLocationStyles, analysisInfoToHints, getProcedureEntry, generateShareableCodeHints, highlightDuplicateBlocks } from '../lib/hints/hints-util';
@@ -20,6 +20,7 @@ import { addBlocksToWorkspace, testBlocks, getTestHints } from '../lib/hints/hin
 
 const isProductionMode = true;
 const isTesting = true;
+
 
 const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];
@@ -61,8 +62,8 @@ class HintOverlay extends React.Component {
         this.workspace.addChangeListener(this.blockListener);
         this.props.vm.addListener('workspaceUpdate', this.onWorkspaceUpdate);
         this.props.vm.addListener('targetsUpdate', this.onTargetsUpdate);
-        addFunctionListener(this.workspace, 'translate', debounce(()=>this.onWorkspaceMetricsChange(),100, {leading:true}));
-        addFunctionListener(this.workspace, 'zoom', debounce(()=>this.onWorkspaceMetricsChange(),100, {leading:true}));
+        addFunctionListener(this.workspace, 'translate', debounce(() => this.onWorkspaceMetricsChange(), 100, { leading: true }));
+        addFunctionListener(this.workspace, 'zoom', debounce(() => this.onWorkspaceMetricsChange(), 100, { leading: true }));
         addFunctionListener(ScratchBlocks.Gesture.prototype, 'updateDragDelta_', debounce(() => this.hideHint()));
     }
 
@@ -77,12 +78,12 @@ class HintOverlay extends React.Component {
             addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
             // addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
             this.workspace.cleanUp();
+            this.alreadySetup = true;
         }
-        this.alreadySetup = true;
     }
 
     onTargetsUpdate() {
-//         console.log('TODO: show hint that is only relevant to the current target');
+        //         console.log('TODO: show hint that is only relevant to the current target');
     }
 
     onWorkspaceMetricsChange() {
@@ -91,7 +92,11 @@ class HintOverlay extends React.Component {
 
         if (this.props.hintState.hints.length <= 0 || isProcedureEditorOpened) return;
         this.hideHint();
-        setTimeout(()=>this.showHint(), 500);
+
+        const options = this.props.hintState.options;
+        if(this.props.hintState.options.isVisible){
+            setTimeout(() => this.showHint(), 500);
+        }
 
     }
 
@@ -147,12 +152,13 @@ class HintOverlay extends React.Component {
                 const analysisInfo = this.analysisInfo = json;
                 return analysisInfo ? analysisInfoToHints(analysisInfo) : [];
             }).then(hints => {
-                this.props.setHint(hints);
+                this.props.putAllHints(hints);
             });
     }
 
     blockListener(e) {
         if (this.workspace.isDragging()) return;
+        if (!this.props.hintState) return;
         // console.log('TODO: logic to delay analyzing hints waiting for a good time');
 
         if (e.type === 'create' && e.xml.getAttribute('type') === 'procedures_definition') {
@@ -172,13 +178,17 @@ class HintOverlay extends React.Component {
         if (this.timeout) {
             clearTimeout(this.timeout);
         }
+
+
         this.timeout = setTimeout(() => {
             this.analyzeAndGenerateHints().then(() => {
                 const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
                 if (hints.length > 0) {
                     this.props.putAllHints(hints);
                 }
-                if (this.props.hintState.hints.length > 0) {
+
+                const options = this.props.hintState.options;
+                if (this.props.hintState.hints.length > 0 && options.isVisible) {
                     this.showHint();
                 }
             });
@@ -233,9 +243,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setHint: hints => {
-            dispatch(setHint(hints));
-        },
         onUpdateHint: (hintId, changes) => {
             dispatch(updateHint(hintId, changes));
         },
