@@ -160,9 +160,9 @@ class HintOverlay extends React.Component {
         if (this.workspace.isDragging()) return;
         if (!this.props.hintState) return;
         // console.log('TODO: logic to delay analyzing hints waiting for a good time');
-
+        const options = this.props.hintState.options;
         if (e.type === 'create' && e.xml.getAttribute('type') === 'procedures_definition') {
-            const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
+            const hints = options.showProcedureSharingHint? generateShareableCodeHints(this.workspace, this.props.hintState):[];
             if (hints.length > 0) {
                 this.props.putAllHints(hints);
                 this.showHint();
@@ -182,12 +182,12 @@ class HintOverlay extends React.Component {
 
         this.timeout = setTimeout(() => {
             this.analyzeAndGenerateHints().then(() => {
-                const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
+                const options = this.props.hintState.options;
+                const hints = options.showProcedureSharingHint?generateShareableCodeHints(this.workspace, this.props.hintState):[];
                 if (hints.length > 0) {
                     this.props.putAllHints(hints);
                 }
 
-                const options = this.props.hintState.options;
                 if (this.props.hintState.hints.length > 0 && options.isVisible) {
                     this.showHint();
                 }

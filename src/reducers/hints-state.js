@@ -22,7 +22,7 @@ const initialState = {
     options: {
         isVisible: true,
         showHintOnly: true,
-        showProcedureSharingHint: false
+        showProcedureSharingHint: true
     }
 };
 
