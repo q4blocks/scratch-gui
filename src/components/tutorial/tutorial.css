@@ -1,3 +1,5 @@
+
+
 @keyframes BeaconFlick {
   0% {
     opacity: 1;
@@ -16,11 +18,12 @@
 .next-button {
   -webkit-appearance: none;
   background-color: #f04;
-  border-radius: 3px;
+  border-radius: 6px;
   border: 1px;
   border-style: solid;
   color: #fff;
   font-size: 14px;
+  font-weight: bold;
   line-height: 1;
   outline: none;
   padding: 8px 16px;
@@ -32,11 +35,12 @@
   border-color: #f04;
   -webkit-appearance: none;
   background-color: #fff;
-  border-radius: 3px;
+  border-radius: 6px;
   border: 1px;
   border-style: solid;
   color: #f04;
   font-size: 14px;
+  font-weight: bold;
   line-height: 1;
   outline: none;
   padding: 8px 16px;
@@ -53,4 +57,16 @@
   right: 0;
   top: 0;
   z-index: 100;
+}
+
+p {
+  font-size: 14px
+}
+
+span {
+  font-size: 14px
+}
+
+div {
+  font-size: 14px
 }
