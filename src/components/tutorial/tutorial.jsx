@@ -126,8 +126,9 @@ const Tutorial = props => {
             </Steps>
 
             {props.isDevMode && <button onClick={() => {
-                props.onMarkInstructionComplete(0, 7);
-            }}>step2</button>}
+                const testInstructionIdx =  instructions.findIndex(inst=>inst.test);
+                props.onMarkInstructionComplete(0, testInstructionIdx-1);
+            }}>Fast forward to test instruction</button>}
 
             <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
                 {({ ref, style, placement, arrowProps, scheduleUpdate }) => (
