@@ -166,36 +166,92 @@ const steps = [
                 customContent: ``,
                 checkUserCode: true,
                 workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='procedures_definition' id='?[^2U*dVqjyP1/^;s03C' x='-326' y='-192'><statement name='custom_block'><shadow type='procedures_prototype' id='I/+O)jN.Mmt~DFf82iEu'><mutation proccode='Circle Around' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block><block type='event_whenflagclicked' id='__greenflag__' x='0' y='0'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='procedures_call' id='~MpfTa3a5[b/eN3}PIqK'><mutation proccode='Circle Around' argumentids='[]' warp='false'></mutation><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
-                delayNextInstruction: 2000
+                delayNextInstruction: 2000,
+                isIntermediateInstruction: true
             },
             {
                 customContent: `
-                <p>Let's adjust our <b>definition</b> block to take a step parameter input<p>
+                <p>Let's adjust our <b>definition</b> block to take <b>steps</b> as an input parameter<p>
                 <p>Right click on the definition block and select "Edit"</p>
                 `,
-                selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
+                selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_prototype').svgGroup_`,
                 triggerNextTarget: `document.querySelectorAll('.goog-menuitem-content')[2]`,
                 triggerTargetEvent: 'contextmenu',
                 beaconAlign: "right",
-                floaterPlacement: "right"
+                floaterPlacement: "right",
+                delayNextInstruction: 100
             },
             {
                 customContent: `
-                <p>Click to add number parameter to our custom block</p>`,
-                beaconAlign: "left",
-                floaterPlacement: "left",
+                <p>Click Edit</p>`,
+                beaconAlign: "right",
+                floaterPlacement: "right",
+                selectorExpr: `document.querySelectorAll('.goog-menuitem')[2]`,
+                triggerTargetEvent: 'mouseup',
+                delayNextInstruction: 200
+            },
+            {
+                customContent: `
+                <p>Click <b>Add an input</b> then click <b>OK</b></p>`,
+                beaconAlign: "bottom",
+                floaterPlacement: "bottom",
+                selectorExpr:`document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`
+            },
+            {
+                customContent: `Give a meaningful name to the input (e.g., steps). Then click OK.`,
+                beaconAlign: "right",
+                floaterPlacement: "right",
+                selectorExpr: `Blockly.getMainWorkspace().getAllBlocks()[0].svgGroup_`,
+                triggerNextTarget: `document.querySelector('div.ReactModalPortal').querySelectorAll('button')[1]`
+            },
+            {
+                customContent: `
+                <p>Let's call our custom block with an input value of 8 for the small circle-around movement.</p>
+                <p>Type in 8 as the input to our custom block</p>`,
+                beaconAlign: "right",
+                floaterPlacement: "right",
+                selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_call').svgGroup_.firstElementChild`,
                 checkUserCode: true
             },
             {
                 customContent: `
-                <p>Before moving on, click <b>Green Flag</b> to see if your code still works correctly.</p>`,
-                selectorExpr: `document.querySelector('.greenFlag')`,
+                <p>This <b>steps</b> parameter block will hold the input value</p>
+                <p>We can use <b>steps</b> parameter anywhere in our custom block's definition.</p>
+                <p>To use, drag the <b>steps</b> parameter block and drop it into the move block's input (highlighted).
+                Click "Next" when you are done.</p>
+                `,
+                beaconAlign: "right",
+                floaterPlacement: "right",
+                selectorExpr: `Blockly.getMainWorkspace().getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_.firstElementChild`,
+                checkUserCode: true
+            },
+            {
+                customContent: `
+                <p>Almost there!, Let's click <b>Green Flag</b> once again just to see if the code still works correctly.</p>`,
                 beaconAlign: "left",
                 floaterPlacement: "left",
+                selectorExpr: `document.querySelector('.greenFlag')`,
                 delayNextInstruction: 2000
             },
             {
-                customContent: `Looks like it's working exactly like before, but your code is easier to understand.
+                customContent: `
+                <p>Let's replace the code that performs big circle-around movement with our <b>Circle Around</b> custom block 
+                and give it an input value of 16. Click "Next" when you are done.</p>`,
+                beaconAlign: "left",
+                floaterPlacement: "left",
+                selectorExpr: `this.workspace.getBlockById('__large-rotation__').svgGroup_.firstElementChild`,
+                checkUserCode: true
+            },
+            {
+                customContent: `
+                <p>Let's click <b>Green Flag</b> one last time to see if the code still works correctly.</p>`,
+                beaconAlign: "left",
+                floaterPlacement: "left",
+                selectorExpr: `document.querySelector('.greenFlag')`,
+                delayNextInstruction: 2000
+            },
+            {
+                customContent: `Looks like it's working exactly like before, but your code is much easier to understand.
                 <p>By creating a new custom block with a meaningful name, you made the code easier to understand.</p>`,
                 isModal: true,
                 floaterPlacement: "center"
@@ -304,6 +360,7 @@ class Tutorial extends React.Component {
 
     componentDidMount() {
         this.props.vm.addListener("workspaceUpdate", this.onWorkspaceUpdate);
+        console.log('component did mount');
     }
 
     render() {
