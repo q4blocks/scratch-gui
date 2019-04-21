@@ -129,6 +129,7 @@ const GUIComponent = props => {
         tipsLibraryVisible,
         vm,
         hintMode,
+        showTutorial,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -171,7 +172,7 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 
-                <Tutorial/>
+                {showTutorial?<Tutorial/>:null}
 
                 {customOptions.previewInfoVisible ? (
                     <PreviewModal />

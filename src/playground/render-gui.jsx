@@ -81,7 +81,11 @@ export default appTarget => {
                 backpackHost={backpackHost}
                 canSave={false}
                 onClickLogo={onClickLogo}
+                // customGuiState
                 hintMode
+                showTutorial={false}
+                procedureShareToggleVisible={false}
+                qualityHintToggleVisible={false}
             />,
         appTarget);
 };

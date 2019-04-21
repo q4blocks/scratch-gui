@@ -26,6 +26,69 @@ import {
     closeLoginMenu,
     loginMenuOpen
 } from '../../reducers/menus';
+import Toggle from 'react-toggled'
+
+
+const ShareProcedureFeatureToggle = () => (
+    <Toggle>
+    {({ on, getTogglerProps }) => (
+      <span
+        className="container"
+        style={{
+          position: "relative",
+          display: "inline-block",
+          width: "40px",
+          height: "20px"
+        }}
+      >
+        <input
+          type="checkbox"
+          style={{
+            width: "100%",
+            height: "100%",
+            margin: 0
+          }}
+          {...getTogglerProps()}
+        />
+        <span
+          className="switch"
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            height: "100%",
+            pointerEvents: "none"
+          }}
+        >
+          <span
+            className="track"
+            style={{
+              flex: 1,
+              height: "100%",
+              borderRadius: "10px",
+              background: on ? "green" : "gray"
+            }}
+          />
+          <span
+            className="slider"
+            style={{
+              position: "absolute",
+              width: "16px",
+              height: "16px",
+              borderRadius: "50%",
+              background: "white",
+              transition: "transform 0.3s",
+              transform: on ? "translateX(22px)" : "translateX(2px)"
+            }}
+          />
+        </span>
+      </span>
+    )}
+  </Toggle>
+)
 
 class CustomizedMenuBar extends React.Component {
     constructor(props) {
@@ -44,7 +107,7 @@ class CustomizedMenuBar extends React.Component {
                     customStyles.customMenuBar
                 )}
             >
-                <div className={styles.mainMenu}>
+                {/* <div className={styles.mainMenu}>
                     <div className={styles.fileGroup}>
                         <SBFileUploader onUpdateProjectTitle={this.props.onUpdateProjectTitle}>
                             {(className, renderFileInput, loadProject) => (
@@ -55,7 +118,8 @@ class CustomizedMenuBar extends React.Component {
                             )}
                         </SBFileUploader>
                     </div>
-                </div>
+                </div> */}
+                <ShareProcedureFeatureToggle/>
             </div>
         </React.Fragment>);
     }
