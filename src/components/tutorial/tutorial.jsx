@@ -111,6 +111,19 @@ const TutorialFloater = props => {
     );
 }
 
+const GotoStep = ({isDevMode, steps, onMarkInstructionComplete}) =>  {
+    return (<div className='stepGotos'>{
+    steps.map((step,stepKey)=>{
+        return !step.instructions?null:
+        step.instructions.map((inst,instKey)=>{
+            return inst.test&&(<button key={stepKey+''+instKey} onClick={() => {   
+                onMarkInstructionComplete(stepKey, instKey-1);
+            }}>Go to{stepKey}.{instKey}</button>)
+        })
+    })
+    
+}</div>)}
+
 const Tutorial = props => {
     const { target, currentStep, currentInstruction, steps} = props;
     const instructions = steps[currentStep].instructions;
@@ -125,17 +138,13 @@ const Tutorial = props => {
                 ))}
             </Steps>
 
-            {props.isDevMode && <button onClick={() => {
-                const testInstructionIdx =  instructions.findIndex(inst=>inst.test);
-                props.onMarkInstructionComplete(0, testInstructionIdx-1);
-            }}>Fast forward to test instruction</button>}
+            {props.isDevMode&&<GotoStep  steps={steps} onMarkInstructionComplete={props.onMarkInstructionComplete}/>}
 
             <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
-                {({ ref, style, placement, arrowProps, scheduleUpdate }) => (
-
+                {({ ref, style, placement, arrowProps }) => (
                     <div ref={ref} style={{ ...style, zIndex: 1000 }} data-placement={placement}>
-                        <TutorialFloater {...props} instruction={instruction} />
-                        <div ref={arrowProps.ref} style={{ ...arrowProps.style }} />
+                        {instruction.isIntermediateInstruction?null:<TutorialFloater {...props} instruction={instruction} />}
+                        <div ref={arrowProps.ref} style={{ ...arrowProps.style}} />
                     </div>
                 )}
             </Popper>
