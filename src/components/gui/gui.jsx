@@ -45,6 +45,8 @@ import soundsIcon from './icon--sounds.svg';
 
 import Tutorial from '../../containers/tutorial.jsx';
 
+import CustomizedMenuBar from '../custom-menu-bar/custom-menu-bar.jsx';
+
 
 const messages = defineMessages({
     addExtension: {
@@ -62,7 +64,8 @@ const GUIComponent = props => {
     const customOptions = {
         menuBarVisible: false,
         previewInfoVisible: false,
-        backpackVisible: false
+        backpackVisible: false,
+        customizedGui: true
     }
     const {
         accountNavOpen,
@@ -219,7 +222,10 @@ const GUIComponent = props => {
                         onRequestClose={onRequestCloseBackdropLibrary}
                     />
                 ) : null}
-                {customOptions.menuBarVisible? (<MenuBar
+                {customOptions.customizedGui? 
+                (<CustomizedMenuBar
+                    onUpdateProjectTitle={onUpdateProjectTitle}
+                />):(<MenuBar
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
@@ -244,7 +250,7 @@ const GUIComponent = props => {
                     onShare={onShare}
                     onToggleLoginOpen={onToggleLoginOpen}
                     onUpdateProjectTitle={onUpdateProjectTitle}
-                />):null}
+                />)}
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
                         <Box className={styles.editorWrapper}>
