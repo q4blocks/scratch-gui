@@ -166,7 +166,8 @@ const steps = [
                 customContent: ``,
                 checkUserCode: true,
                 workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='procedures_definition' id='?[^2U*dVqjyP1/^;s03C' x='-326' y='-192'><statement name='custom_block'><shadow type='procedures_prototype' id='I/+O)jN.Mmt~DFf82iEu'><mutation proccode='Circle Around' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block><block type='event_whenflagclicked' id='__greenflag__' x='0' y='0'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='procedures_call' id='~MpfTa3a5[b/eN3}PIqK'><mutation proccode='Circle Around' argumentids='[]' warp='false'></mutation><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
-                delayNextInstruction: 2000
+                delayNextInstruction: 2000,
+                autoNext: true
             },
             {
                 customContent: `
@@ -235,7 +236,7 @@ const steps = [
             },
             {
                 customContent: `<p>Working great! With a parameter <b>steps</b>, our custom block is more useful.</p>
-                <p>We can finally use it to perform big circle-around movement!<p>
+                <p>We can finally use it to perform the big circle-around movement!<p>
                 `,
                 isModal: true,
                 floaterPlacement: "center"
@@ -247,7 +248,8 @@ const steps = [
                 beaconAlign: "left",
                 floaterPlacement: "left",
                 selectorExpr: `this.workspace.getBlockById('__large-rotation__').svgGroup_.firstElementChild`,
-                checkUserCode: true
+                checkUserCode: true,
+                focusBlocks: [{id1:'__large-rotation__',color:HIGHLIGHT_COLOR.BLUE}]
             },
             {
                 customContent: `
@@ -276,22 +278,18 @@ const steps = [
                 checkUserCode: true,
                 workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='procedures_definition' id='?[^2U*dVqjyP1/^;s03C' x='0' y='0'><statement name='custom_block'><shadow type='procedures_prototype' id='I/+O)jN.Mmt~DFf82iEu'><mutation proccode='Circle Around %s' argumentids='[&quot;XS(PEf($kxid2SJp8?vB&quot;]' argumentnames='[&quot;steps&quot;]' argumentdefaults='[&quot;&quot;]' warp='false'></mutation><value name='XS(PEf($kxid2SJp8?vB'><shadow type='argument_reporter_string_number' id='~7SN6]al]dlnS{lR#Izf'><field name='VALUE'>steps</field></shadow></value></shadow></statement><next><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow><block type='argument_reporter_string_number' id='Pu^IF^Gwo|~A%5WECvo]'><field name='VALUE'>steps</field></block></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block><block type='event_whenflagclicked' id='__greenflag__' x='0' y='296'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='procedures_call' id='~MpfTa3a5[b/eN3}PIqK'><mutation proccode='Circle Around %s' argumentids='[&quot;XS(PEf($kxid2SJp8?vB&quot;]' warp='false'></mutation><value name='XS(PEf($kxid2SJp8?vB'><shadow type='text' id='`|;Ie@q`g@_W4=tek-Y3'><field name='TEXT'>8</field></shadow></value><next><block type='procedures_call' id='rr:~Gke@`_XJ@TuOn76='><mutation proccode='Circle Around %s' argumentids='[&quot;XS(PEf($kxid2SJp8?vB&quot;]' warp='false'></mutation><value name='XS(PEf($kxid2SJp8?vB'><shadow type='text' id='3pv{QGgzqjrWiS9x*0i{'><field name='TEXT'>16</field></shadow></value></block></next></block></statement></block></next></block></next></block></next></block></xml>",
                 delayNextInstruction: 2000,
-                isIntermediateInstruction: true
+                isIntermediateInstruction: true,
+                autoNext:true
             },
             {
                 isModal: true,
                 floaterPlacement: "center",
-                customContent: `<h3>You just learned the basics of creating and calling custom blocks!</h3> 
-                <p>What if we want to make Scratch Cat move a little bit differently?</p>
-                <p>Luckily,  you don't need to create another custom block, but can simply add <b>parameters</b>.
-                Next you will learn how to use <b>parameters</b> to make a custom block even more powerful!<p/>
-                `,
-                // workspaceSetupCode:
-                //     "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
+                customContent: `<h3>Well done! You have just learned the basics of creating and calling custom blocks!</h3> 
+                You have unlocked the "Share Procedure"  feature!`,
                 customizedNextButtonText: "Continue"
             },
             {
-                customContent: `Let's`,
+                customContent: `Click to enable "Share Procedure" feature`,
                 selectorExpr: `document.querySelectorAll(".blocklyFlyoutButton")[2]`,
                 beaconAlign: "right"
             }
@@ -342,6 +340,9 @@ class Tutorial extends React.Component {
                     workspaceFromXml(workspace, instruction.workspaceSetupCode);
                     workspace.cleanUp();
                     workspace.scrollCenter();
+                    if(instruction.autoNext){
+                        this.props.onNextInstruction();
+                    }
                 }, 100);
             }
         }

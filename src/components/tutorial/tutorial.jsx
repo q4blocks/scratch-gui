@@ -143,7 +143,7 @@ const Tutorial = props => {
             <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
                 {({ ref, style, placement, arrowProps }) => (
                     <div ref={ref} style={{ ...style, zIndex: 1000 }} data-placement={placement}>
-                        {instruction.isIntermediateInstruction?null:<TutorialFloater {...props} instruction={instruction} />}
+                        {(instruction.isIntermediateInstruction||instruction.autoNext)?null:<TutorialFloater {...props} instruction={instruction} />}
                         <div ref={arrowProps.ref} style={{ ...arrowProps.style}} />
                     </div>
                 )}
