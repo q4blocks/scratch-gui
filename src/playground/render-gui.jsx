@@ -86,7 +86,7 @@ export default appTarget => {
                 showTutorial={false}
                 showCustomGuiDevPanel={true}
                 procedureShareToggleVisible={true}
-                qualityHintToggleVisible={false}
+                qualityHintToggleVisible={true}
             />,
         appTarget);
 };

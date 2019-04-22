@@ -89,7 +89,7 @@ class HintOverlay extends React.Component {
 
     hideHint() {
         if (this.props) {
-            this.props.hintState.hints.map(h => {
+            this.props.hintState.hints.filter(h => h.type === SHAREABLE_CODE_HINT_TYPE).map(h => {
                 //update hint styles to be invisible
                 this.props.onUpdateHint(h.hintId, {
                     styles: {
@@ -97,8 +97,19 @@ class HintOverlay extends React.Component {
                     }
                 });
             });
-            this.alreadyHidden = true;
-            this.alreadyShown = false;
+            this.procedureShareAlreadyHidden = true;
+            this.procedureShareAlreadyShown = false;
+
+            this.props.hintState.hints.filter(h => h.type === DUPLICATE_CODE_SMELL_HINT_TYPE).map(h => {
+                //update hint styles to be invisible
+                this.props.onUpdateHint(h.hintId, {
+                    styles: {
+                        display: 'none'
+                    }
+                });
+            });
+            this.qualityHintAlreadyHidden = true;
+            this.qualityHintAlreadyShown = false;
         }
     }
 
@@ -106,15 +117,15 @@ class HintOverlay extends React.Component {
         const { showProcedureSharingHint, showQualityHint } = this.props.hintState.options;
         if (showProcedureSharingHint) {
             this.props.hintState.hints.map(h => h.type === SHAREABLE_CODE_HINT_TYPE && this.updateHintTracking(h));
+            this.procedureShareAlreadyShown = true;
+            this.procedureShareAlreadyHidden = false;
         }
         if (showQualityHint) {
             this.props.hintState.hints.map(h => h.type === DUPLICATE_CODE_SMELL_HINT_TYPE && this.updateHintTracking(h));
+            this.qualityHintAlreadyShown = true;
+            this.qualityHintAlreadyHidden = false;
         }
 
-        if (showProcedureSharingHint || showQualityHint) {
-            this.alreadyShown = true;
-            this.alreadyHidden = false;
-        }
     }
 
     updateHintTracking(hint) {
@@ -227,11 +238,18 @@ class HintOverlay extends React.Component {
 
     componentDidUpdate() {
         const { showProcedureSharingHint, showQualityHint } = this.props.hintState.options;
-        if (showProcedureSharingHint && !this.alreadyShown) {
+        if (showProcedureSharingHint && !this.procedureShareAlreadyShown) {
             this.showHint();
-        } else if (!showProcedureSharingHint && !this.alreadyHidden) {
+        } else if (!showProcedureSharingHint && !this.procedureShareAlreadyHidden) {
             this.hideHint();
         }
+
+        if (showQualityHint && !this.qualityHintAlreadyShown) {
+            this.showHint();
+        } else if (!showQualityHint && !this.qualityHintAlreadyHidden) {
+            this.hideHint();
+        }
+
 
     }
 

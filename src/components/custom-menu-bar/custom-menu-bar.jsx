@@ -133,31 +133,31 @@ class CustomizedMenuBar extends React.Component {
           customStyles.customMenuBar
         )}
       >
-
-        {this.props.procedureShareToggleVisible ? <FeatureToggle
-          featureName='Procedure Share'
-          isOn={this.props.isProcedureShareEnabled}
-          onToggle={this.props.onToggleProcedureShareFeature}
-        /> : null}
-        {this.props.qualityHintToggleVisible ? <FeatureToggle
-          featureName='Code Hint'
-          isOn={this.props.isProcedureShareEnabled}
-          onToggle={this.props.onToggleProcedureShareFeature}
-        /> : null}
-
+        <div style={{ display: 'flex' }} className='custom-features'>
+          {this.props.procedureShareToggleVisible ? <FeatureToggle
+            featureName='Procedure Sharing'
+            isOn={this.props.isProcedureShareEnabled}
+            onToggle={this.props.onToggleProcedureShareFeature}
+          /> : null}
+          {this.props.qualityHintToggleVisible ? <FeatureToggle
+            featureName='Code Hints'
+            isOn={this.props.isQualityHintEnabled}
+            onToggle={this.props.onToggleQualityHintFeature}
+          /> : null}
+        </div>
       </div>
     </React.Fragment>);
   }
 }
 
 const mapStateToProps = (state, props) => {
-  const { isVisible, showHintOnly, showProcedureSharingHint } = state.scratchGui.hintState.options;
+  const { isVisible, showProcedureSharingHint, showQualityHint } = state.scratchGui.hintState.options;
   return {
     fileMenuOpen: fileMenuOpen(state),
     procedureShareToggleVisible: props.procedureShareToggleVisible || state.scratchGui.customMenu.procedureShareToggleVisible,
     qualityHintToggleVisible: props.qualityHintToggleVisible || state.scratchGui.customMenu.qualityHintToggleVisible,
     isProcedureShareEnabled: isVisible && showProcedureSharingHint,
-    isQualityHintEnabled: isVisible && !showHintOnly
+    isQualityHintEnabled: isVisible && showQualityHint 
   }
 }
 
@@ -168,7 +168,8 @@ const mapDispatchToProps = (dispatch, props) => ({
   })),
   onToggleQualityHintFeature: (value) => dispatch(setHintOptions({
     isVisible: true,
-    showHintOnly: value
+    showQualityHint: value,
+    hintWithRefactoringSupport: true,
   }))
 });
 
