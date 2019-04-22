@@ -45,12 +45,12 @@ const beaconStyle = {
 }
 
 const modalMaxSize = {
-    'default': 500,
+    'default': 300,
     'large': 1000
 }
 
 const modalContainerStyle = {
-    width: '40vw',
+    width: '30vw',
     // height: '30vh',
     padding: '2rem',
     background: 'white',

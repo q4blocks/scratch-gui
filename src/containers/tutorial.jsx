@@ -2,29 +2,16 @@ import React from "react";
 import TutorialComponent from "../components/tutorial/tutorial.jsx";
 import { connect } from "react-redux";
 import bindAll from "lodash.bindall";
-import {
-    loadNewTutorial,
-    nextInstruction,
-    setFocusTarget,
-    markInstructionComplete
-} from "../reducers/tutorial";
+import { loadNewTutorial, nextInstruction, setFocusTarget, markInstructionComplete } from "../reducers/tutorial";
 import ScratchBlocks from "scratch-blocks";
-import analytics, {
-    stitchClient,
-    sendFeedbackData
-} from "../lib/custom-analytics";
+import analytics, { stitchClient, sendFeedbackData } from "../lib/custom-analytics";
 
-import {
-    addBlocksToWorkspace,
-    testBlocks,
-    workspaceFromXml
-} from "../lib/hints/hint-test-workspace-setup";
+import { addBlocksToWorkspace, testBlocks, workspaceFromXml } from "../lib/hints/hint-test-workspace-setup";
 
-import {
-    setProjectId
-} from '../reducers/project-state';
+import { setProjectId } from '../reducers/project-state';
+import { setCustomFeatureToggleVisible, featureNames } from '../reducers/custom-menu';
 
-const HIGHLIGHT_COLOR = {GREEN:'#92C124',BLUE:'#3C91E6',RED:'#F15152'};
+const HIGHLIGHT_COLOR = { GREEN: '#92C124', BLUE: '#3C91E6', RED: '#F15152' };
 
 const steps = [
     {
@@ -47,9 +34,9 @@ const steps = [
                 modalSize: "large",
                 beaconAlign: "right-start",
                 floaterPlacement: "center",
-                workspaceSetupCode: 
-                // "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></statement></block></next></block></next></block></next></block></xml>",
-                "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
+                workspaceSetupCode:
+                    // "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></statement></block></next></block></next></block></next></block></xml>",
+                    "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
                 projectId: '303529631',
                 customizedNextButtonText: "Begin the tutorial"
             },
@@ -60,7 +47,7 @@ const steps = [
                 <p>Click <b>Green Flag</b> to see what it does. Then click "Next"</p>
                `,
                 selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_.firstElementChild`,
-                focusBlocks: [{id1:'__small-rotation__',color:HIGHLIGHT_COLOR.RED}, {id1:'__large-rotation__',color:HIGHLIGHT_COLOR.BLUE}],
+                focusBlocks: [{ id1: '__small-rotation__', color: HIGHLIGHT_COLOR.RED }, { id1: '__large-rotation__', color: HIGHLIGHT_COLOR.BLUE }],
                 beaconAlign: "right",
                 floaterPlacement: "right",
                 checkUserCode: true
@@ -73,7 +60,7 @@ const steps = [
                 </p>
                `,
                 selectorExpr: `this.workspace.getBlockById('__small-rotation__').svgGroup_`,
-                focusBlocks: [{id1:'__small-rotation__',color:HIGHLIGHT_COLOR.RED}, {id1:'__large-rotation__',color:HIGHLIGHT_COLOR.BLUE}],
+                focusBlocks: [{ id1: '__small-rotation__', color: HIGHLIGHT_COLOR.RED }, { id1: '__large-rotation__', color: HIGHLIGHT_COLOR.BLUE }],
                 beaconAlign: "right",
                 floaterPlacement: "right",
                 checkUserCode: true
@@ -86,7 +73,7 @@ const steps = [
                 </p>
                `,
                 selectorExpr: `this.workspace.getBlockById('__small-rotation__').svgGroup_.firstElementChild`,
-                focusBlocks: [{id1:'__small-rotation__',color:HIGHLIGHT_COLOR.RED}],
+                focusBlocks: [{ id1: '__small-rotation__', color: HIGHLIGHT_COLOR.RED }],
                 beaconAlign: "right",
                 floaterPlacement: "right",
                 checkUserCode: true
@@ -115,7 +102,7 @@ const steps = [
                 beaconAlign: "right",
                 floaterPlacement: "right",
                 checkUserCode: true,
-                focusBlocks: [{id1:'__small-rotation__',color:HIGHLIGHT_COLOR.RED}]
+                focusBlocks: [{ id1: '__small-rotation__', color: HIGHLIGHT_COLOR.RED }]
             },
             {
                 customContent: `<p><b>Great Job!</b> Scratch places all your custom blocks in the <b>"My Blocks"</b> category.</p>
@@ -123,7 +110,7 @@ const steps = [
                     <p>Let's use the custom block you have just created!</p>
                     <p>Let's replace the blocks in the workspace that perform the small circle-around movement with our custom block</p>`,
                 selectorExpr: `this.flyout.getAllBlocks().find(b=>b.type==='procedures_call').svgGroup_`,
-                focusBlocks: [{id1:'__small-rotation__',color:HIGHLIGHT_COLOR.RED}],
+                focusBlocks: [{ id1: '__small-rotation__', color: HIGHLIGHT_COLOR.RED }],
                 beaconAlign: "bottom",
                 floaterPlacement: "bottom",
                 checkUserCode: true
@@ -196,7 +183,7 @@ const steps = [
                 <p>Click <b>Add an input</b> then click <b>OK</b></p>`,
                 beaconAlign: "bottom",
                 floaterPlacement: "bottom",
-                selectorExpr:`document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`
+                selectorExpr: `document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`
             },
             {
                 customContent: `Give a meaningful name to the input (e.g., steps). Then click OK.`,
@@ -221,9 +208,10 @@ const steps = [
                 <p>To use, drag the <b>steps</b> parameter block and drop it into the move block's input (highlighted).
                 Click "Next" when you are done.</p>
                 `,
-                beaconAlign: "right",
-                floaterPlacement: "right",
-                selectorExpr: `Blockly.getMainWorkspace().getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_.firstElementChild`,
+                beaconAlign: "top",
+                floaterPlacement: "top",
+                // selectorExpr: `Blockly.getMainWorkspace().getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_.firstElementChild`,
+                selectorExpr: `Blockly.getMainWorkspace().getAllBlocks().find(b=>b.type==='argument_reporter_string_number').svgGroup_`,
                 checkUserCode: true
             },
             {
@@ -249,7 +237,7 @@ const steps = [
                 floaterPlacement: "left",
                 selectorExpr: `this.workspace.getBlockById('__large-rotation__').svgGroup_.firstElementChild`,
                 checkUserCode: true,
-                focusBlocks: [{id1:'__large-rotation__',color:HIGHLIGHT_COLOR.BLUE}]
+                focusBlocks: [{ id1: '__large-rotation__', color: HIGHLIGHT_COLOR.BLUE }]
             },
             {
                 customContent: `
@@ -260,10 +248,79 @@ const steps = [
                 delayNextInstruction: 2000
             },
             {
-                customContent: `Looks like it's working exactly like before, but your code is much easier to understand.
-                <p>By creating a new custom block with a meaningful name, you made the code easier to understand.</p>`,
+                customContent: `Looks like it's working exactly like before, but your code significantly improves.
+                <p><b>Custom blocks</b> is your best friend for making your code easy to understand and reuse.</p>
+                `,
                 isModal: true,
                 floaterPlacement: "center"
+            }
+        ]
+    },
+    {
+        title: "Bonus Feature: Code Wizard",
+        description: ``,
+        instructions: [
+            {
+                //tutorial state setup
+                test: true,
+                customContent: ``,
+                checkUserCode: true,
+                workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
+                delayNextInstruction: 2000,
+                isIntermediateInstruction: true,
+                autoNext: true
+            },
+            {
+                isModal: true,
+                floaterPlacement: "center",
+                customContent: `<h3>Bonus Feature: Code Wizard Unlocked!</h3>
+                <p><b>Code Wizard</b> feature provides you with suggestions and helps to create <b>Custom Blocks</b> in your project.</p>
+                `,
+                customizedNextButtonText: "Try it out",
+                customAction: "this.props.onShowCodeHintToggle()"
+            },
+            {
+                customContent: `Tap the toggle to enable "Code Wizard" feature`,
+                selectorExpr: `document.querySelector('.code-hint-feature-toggle')`,
+                beaconAlign: "bottom"
+            },
+            {
+                customContent: `
+                <p>Let's see how it works with the original example.</p>
+                <p><b>Code Wizard</b> is available to help when you see the light bulb hint icons.</p>
+                `,
+                isModal: true,
+                selectorExpr: `document.querySelector('.code-hint-feature-toggle')`
+            },
+            {
+                customContent: `<p>You will create the custom block again. Don't worry it will be quick this time 
+                with the help of <b>Code Wizard</b></p>
+                <p><b>Mouse over</b> the hint icon to view the improvement suggestions. Click Next when you are done.</p>
+                `,
+                selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_`,
+                checkUserCode: true,
+                beaconAlign: "left",
+                floaterPlacement: "left"
+            },
+            {
+                customContent: `
+                <p>There is no magic really! You already know how to do all this!</p>
+                <p>The wizard is not that smart though... you should <b>Right click</b> the definition block to change 
+                the names of custom block and its parameter inputs. You know your code the best!</p>
+                `,
+                selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_`,
+                beaconAlign: "left",
+                floaterPlacement: "left",
+                checkUserCode: true
+            },
+            {
+                customContent: `
+                <p> The Wizard is here to help but you don't have to follow all the hints. It's entirely up to you!</p> 
+                <p>You can tap the toggle to enable or disable the Wizard at any time.</p>
+                `,
+                selectorExpr: `document.querySelector('.code-hint-feature-toggle')`,
+                beaconAlign: "bottom",
+                checkUserCode: true
             }
         ]
     },
@@ -279,25 +336,43 @@ const steps = [
                 workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='procedures_definition' id='?[^2U*dVqjyP1/^;s03C' x='0' y='0'><statement name='custom_block'><shadow type='procedures_prototype' id='I/+O)jN.Mmt~DFf82iEu'><mutation proccode='Circle Around %s' argumentids='[&quot;XS(PEf($kxid2SJp8?vB&quot;]' argumentnames='[&quot;steps&quot;]' argumentdefaults='[&quot;&quot;]' warp='false'></mutation><value name='XS(PEf($kxid2SJp8?vB'><shadow type='argument_reporter_string_number' id='~7SN6]al]dlnS{lR#Izf'><field name='VALUE'>steps</field></shadow></value></shadow></statement><next><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow><block type='argument_reporter_string_number' id='Pu^IF^Gwo|~A%5WECvo]'><field name='VALUE'>steps</field></block></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block><block type='event_whenflagclicked' id='__greenflag__' x='0' y='296'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='procedures_call' id='~MpfTa3a5[b/eN3}PIqK'><mutation proccode='Circle Around %s' argumentids='[&quot;XS(PEf($kxid2SJp8?vB&quot;]' warp='false'></mutation><value name='XS(PEf($kxid2SJp8?vB'><shadow type='text' id='`|;Ie@q`g@_W4=tek-Y3'><field name='TEXT'>8</field></shadow></value><next><block type='procedures_call' id='rr:~Gke@`_XJ@TuOn76='><mutation proccode='Circle Around %s' argumentids='[&quot;XS(PEf($kxid2SJp8?vB&quot;]' warp='false'></mutation><value name='XS(PEf($kxid2SJp8?vB'><shadow type='text' id='3pv{QGgzqjrWiS9x*0i{'><field name='TEXT'>16</field></shadow></value></block></next></block></statement></block></next></block></next></block></next></block></xml>",
                 delayNextInstruction: 2000,
                 isIntermediateInstruction: true,
-                autoNext:true
+                autoNext: true
             },
             {
                 isModal: true,
                 floaterPlacement: "center",
-                customContent: `<h3>Well done! You have just learned the basics of creating and calling custom blocks!</h3> 
-                You have unlocked the "Share Procedure"  feature!`,
+                customContent: `<p>
+                Well done! You have just learned the basics of creating and calling custom blocks!
+                </p>`,
+                customAction: "this.props.onShowProcedureShareToggle()",
                 customizedNextButtonText: "Continue"
             },
             {
-                customContent: `Click to enable "Share Procedure" feature`,
-                selectorExpr: `document.querySelectorAll(".blocklyFlyoutButton")[2]`,
-                beaconAlign: "right"
+                customContent: `
+                You have unlocked <b>Procedure Sharing</b> feature!
+                You can learn more about this feature by following this link to the short video.</p>
+                `,
+                selectorExpr: `document.querySelector('.procedure-share-feature-toggle')`,
+                beaconAlign: "bottom",
+                checkUserCode: true,
+                isModal: true
+            },
+            {
+                customContent: `<p>
+                    We are working on the <b>Code Wizard</b> feature and would like to hear your feedback!
+                    <ul>
+                        <li>Do you find Code Wizard's hint useful in helping you see where you can improve your code? (Scale 1 - 5)</li>
+                        <li>Do you find Code Wizard's "Extract a Custom Block" helpful? (Scale 1-5)</li>
+                        <li>Additional Feedback (e.g., What do you like /dislike? 
+                            How <b>Code Wizard</b> feature can be improved ? (optional text input)</li>
+                    </ul>
+                </p>`,
+                floaterPlacement: "center",
+                isModal: true,
+                modalSize: "large",
+                customizedNextButtonText: "Exit"
             }
         ]
-    },
-    {
-        title: "Sharing your Custom Block with Others",
-        description: ``
     }
 ];
 // <p>A useful tip is to look for the similar code that you tend to make a copy of them to reuse in your project.</p>
@@ -340,7 +415,7 @@ class Tutorial extends React.Component {
                     workspaceFromXml(workspace, instruction.workspaceSetupCode);
                     workspace.cleanUp();
                     workspace.scrollCenter();
-                    if(instruction.autoNext){
+                    if (instruction.autoNext) {
                         this.props.onNextInstruction();
                     }
                 }, 100);
@@ -371,13 +446,22 @@ class Tutorial extends React.Component {
         sendFeedbackData("data");
     }
 
-    highlightFocusBlocks(id1,id2, color) {
-        this.workspace.drawHighlightBox(id1, id2, color?{color:color}:null);
+    highlightFocusBlocks(id1, id2, color) {
+        this.workspace.drawHighlightBox(id1, id2, color ? { color: color } : null);
     }
 
     componentDidMount() {
         this.props.vm.addListener("workspaceUpdate", this.onWorkspaceUpdate);
-        console.log('component did mount');
+    }
+
+    componentDidUpdate() {
+        const { steps, currentStep, currentInstruction } = this.props.tutorial;
+        if (steps.length > 0) {
+            const instruction = steps[currentStep].instructions[currentInstruction];
+            if (instruction.customAction) {
+                eval(instruction.customAction);
+            }
+        }
     }
 
     render() {
@@ -387,23 +471,24 @@ class Tutorial extends React.Component {
             if (this.workspace && instruction.workspaceSetupCode) {
                 this.onWorkspaceSetup();
             }
+
             const target = eval(instruction.selectorExpr);
 
             //clean up highlight block for every render
-            if(instruction&&this.workspace){
+            if (instruction && this.workspace) {
                 this.workspace.removeHighlightBox();
             }
             if (instruction.focusBlocks) {
-                instruction.focusBlocks.forEach(blocksHighlightObj=>{
-                    this.highlightFocusBlocks(blocksHighlightObj.id1,blocksHighlightObj.id2,blocksHighlightObj.color);
+                instruction.focusBlocks.forEach(blocksHighlightObj => {
+                    this.highlightFocusBlocks(blocksHighlightObj.id1, blocksHighlightObj.id2, blocksHighlightObj.color);
                 })
             }
-            
+
             const triggerNextTarget = eval(instruction.triggerNextTarget);
             if (triggerNextTarget || target) {
-                (triggerNextTarget || target).addEventListener(instruction.triggerTargetEvent||"click", () => {
+                (triggerNextTarget || target).addEventListener(instruction.triggerTargetEvent || "click", () => {
                     this.onNextInstruction(instruction.delayNextInstruction || 200);
-                }, {once:true});
+                }, { once: true });
             }
             return (
                 <TutorialComponent
@@ -433,7 +518,9 @@ const mapDispatchToProps = dispatch => ({
         dispatch(markInstructionComplete(stepIdx, instIdx)),
     onFetchedProjectData: projectId => {
         dispatch(setProjectId(projectId));
-    }
+    },
+    onShowProcedureShareToggle: () => dispatch(setCustomFeatureToggleVisible(featureNames.PROCEDURE_SHARE, true)),
+    onShowCodeHintToggle: () => dispatch(setCustomFeatureToggleVisible(featureNames.QUALITY_HINT, true))
 });
 
 export default connect(

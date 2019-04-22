@@ -33,10 +33,10 @@ import {
 import Toggle from 'react-toggled'
 
 
-const FeatureToggle = ({ featureName, isOn, onToggle }) => (
+const FeatureToggle = ({className, featureName, isOn, onToggle }) => (
   <Toggle onToggle={onToggle}>
     {({ on = isOn, getTogglerProps }) => (
-      <div className={classNames(customStyles.featureItem)}>
+      <div className={classNames(className,customStyles.featureItem)}>
         <div style={{ padding: '2px' }}>
           {featureName}
         </div>
@@ -142,15 +142,17 @@ class CustomizedMenuBar extends React.Component {
               onUpdateProjectId={this.props.onUpdateProjectId}
             />
           </div>
-          {this.props.procedureShareToggleVisible ? <FeatureToggle
-            featureName='Procedure Sharing'
-            isOn={this.props.isProcedureShareEnabled}
-            onToggle={this.props.onToggleProcedureShareFeature}
-          /> : null}
           {this.props.qualityHintToggleVisible ? <FeatureToggle
+            className='code-hint-feature-toggle'
             featureName='Code Hints'
             isOn={this.props.isQualityHintEnabled}
             onToggle={this.props.onToggleQualityHintFeature}
+          /> : null}
+          {this.props.procedureShareToggleVisible ? <FeatureToggle
+            className='procedure-share-feature-toggle'
+            featureName='Procedure Sharing'
+            isOn={this.props.isProcedureShareEnabled}
+            onToggle={this.props.onToggleProcedureShareFeature}
           /> : null}
         </div>
       </div>

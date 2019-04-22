@@ -83,10 +83,10 @@ export default appTarget => {
                 onClickLogo={onClickLogo}
                 // customGuiState
                 hintMode={true}
-                showTutorial={false}
-                showCustomGuiDevPanel={true}
-                procedureShareToggleVisible={true}
-                qualityHintToggleVisible={true}
+                showTutorial={true}
+                showCustomGuiDevPanel={false}
+                procedureShareToggleVisible={false}
+                qualityHintToggleVisible={false}
             />,
         appTarget);
 };

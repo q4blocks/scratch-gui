@@ -60,7 +60,9 @@
 }
 
 p {
-  font-size: 14px
+  -webkit-appearance: none;
+  font-size: 14px;
+  text-align: left;
 }
 
 span {
@@ -68,5 +70,5 @@ span {
 }
 
 div {
-  font-size: 14px
+  font-size: 14px;
 }
