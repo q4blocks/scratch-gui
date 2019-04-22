@@ -11,14 +11,6 @@ const BufferedInput = BufferedInputHOC(Input);
 
 import styles from './project-id-input.css';
 
-const messages = defineMessages({
-    projectTitlePlaceholder: {
-        id: 'gui.gui.projectTitlePlaceholder',
-        description: 'Placeholder for project id when blank',
-        defaultMessage: 'Project ID here'
-    }
-});
-
 class ProjectIdInput extends React.Component {
     constructor (props) {
         super(props);
@@ -26,8 +18,7 @@ class ProjectIdInput extends React.Component {
             'handleUpdateProjectId'
         ]);
     }
-    // call onUpdateProjectTitle if it is defined (only defined when gui
-    // is used within scratch-www)
+
     handleUpdateProjectId (projectId) {
         if (this.props.onUpdateProjectId) {
             this.props.onUpdateProjectId(projectId);
@@ -38,7 +29,7 @@ class ProjectIdInput extends React.Component {
             <BufferedInput
                 className={classNames(styles.titleField, this.props.className)}
                 maxLength="100"
-                placeholder='Project Id here'
+                placeholder='Put the project ID you want to open here'
                 tabIndex="0"
                 type="text"
                 value={this.props.projectId&&this.props.projectId!=='0'?this.props.projectId:''}
