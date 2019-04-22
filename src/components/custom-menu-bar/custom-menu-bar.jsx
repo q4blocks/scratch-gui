@@ -136,6 +136,12 @@ class CustomizedMenuBar extends React.Component {
         )}
       >
         <div style={{ display: 'flex' }} className='custom-features'>
+          <div className='projectIdInput' style={{ display: 'flex', padding: '4px', marginRight:'50px' }}>
+            <ProjectIdInput
+              className={classNames(styles.titleFieldGrowable)}
+              onUpdateProjectId={this.props.onUpdateProjectId}
+            />
+          </div>
           {this.props.procedureShareToggleVisible ? <FeatureToggle
             featureName='Procedure Sharing'
             isOn={this.props.isProcedureShareEnabled}
@@ -146,15 +152,7 @@ class CustomizedMenuBar extends React.Component {
             isOn={this.props.isQualityHintEnabled}
             onToggle={this.props.onToggleQualityHintFeature}
           /> : null}
-          <div className='projectIdInput' style={{ display: 'flex', padding: '4px' }}>
-            <ProjectIdInput
-              className={classNames(styles.titleFieldGrowable)}
-              onUpdateProjectId={this.props.onUpdateProjectId}
-            />
-          </div>
         </div>
-
-
       </div>
     </React.Fragment>);
   }
