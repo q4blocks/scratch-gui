@@ -111,7 +111,7 @@ class HintOverlay extends React.Component {
             this.props.hintState.hints.map(h => h.type === DUPLICATE_CODE_SMELL_HINT_TYPE && this.updateHintTracking(h));
         }
 
-        if(showProcedureSharingHint||showQualityHint){
+        if (showProcedureSharingHint || showQualityHint) {
             this.alreadyShown = true;
             this.alreadyHidden = false;
         }
@@ -180,8 +180,6 @@ class HintOverlay extends React.Component {
             const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
             if (hints.length > 0) {
                 this.props.putAllHints(hints);
-            }
-            if (this.props.hintState.hints.length > 0 && options.isVisible ) {
                 this.showHint();
             }
         }
@@ -196,20 +194,17 @@ class HintOverlay extends React.Component {
             clearTimeout(this.timeout);
         }
 
-
         this.timeout = setTimeout(() => {
             this.analyzeAndGenerateHints().then(() => {
                 const options = this.props.hintState.options;
                 const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
                 if (hints.length > 0) {
                     this.props.putAllHints(hints);
-                }
-
-                if (this.props.hintState.hints.length > 0 && options.isVisible ) {
                     this.showHint();
                 }
             });
         }, 1000);
+
     }
 
     onMouseEnter(hintId) {
