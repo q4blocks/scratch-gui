@@ -46,7 +46,7 @@ import soundsIcon from './icon--sounds.svg';
 import Tutorial from '../../containers/tutorial.jsx';
 
 import CustomizedMenuBar from '../custom-menu-bar/custom-menu-bar.jsx';
-
+import CustomGuiDevPanel from '../../containers/custom-gui-dev-panel.jsx';
 
 const messages = defineMessages({
     addExtension: {
@@ -129,7 +129,10 @@ const GUIComponent = props => {
         tipsLibraryVisible,
         vm,
         hintMode,
+        showCustomGuiDevPanel,
         showTutorial,
+        procedureShareToggleVisible,
+        qualityHintToggleVisible,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -223,8 +226,11 @@ const GUIComponent = props => {
                         onRequestClose={onRequestCloseBackdropLibrary}
                     />
                 ) : null}
+                {showCustomGuiDevPanel?<CustomGuiDevPanel/>:null}
                 {customOptions.customizedGui? 
                 (<CustomizedMenuBar
+                    procedureShareToggleVisible={procedureShareToggleVisible}
+                    qualityHintToggleVisible={qualityHintToggleVisible}
                     onUpdateProjectTitle={onUpdateProjectTitle}
                 />):(<MenuBar
                     accountNavOpen={accountNavOpen}

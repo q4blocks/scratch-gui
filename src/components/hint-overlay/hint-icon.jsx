@@ -34,7 +34,7 @@ const HintIcon = props => {
     const options = props.options;
     const { type, hintId, styles, hintMenuItems } = props.hint;
     const { className, iconSvg, iconStyles } = getIconSpec(type);
-    return options.showHintOnly ?
+    return !options.hintWithRefactoringSupport ?
         (<div style={styles}>
             <img className={classNames(className, iconStyles) + " hint_icon_" + hintId} src={iconSvg} />
         </div>

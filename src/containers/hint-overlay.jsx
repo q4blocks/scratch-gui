@@ -19,7 +19,7 @@ import { addBlocksToWorkspace, testBlocks, getTestHints } from '../lib/hints/hin
 
 
 const isProductionMode = true;
-const isTesting = false;
+const isTesting = true;
 
 
 const addFunctionListener = (object, property, callback) => {
@@ -94,10 +94,17 @@ class HintOverlay extends React.Component {
         this.hideHint();
 
         const options = this.props.hintState.options;
-        if(this.props.hintState.options.isVisible){
-            setTimeout(() => this.showHint(), 500);
-        }
 
+        if (this.props.hintState.options.isVisible) {
+            const hints = options.showProcedureSharingHint ? generateShareableCodeHints(this.workspace, this.props.hintState) : [];
+            if (hints.length > 0) {
+                this.props.putAllHints(hints);
+                this.alreadyShown = false;
+                this.alreadyHidden = true;
+                setTimeout(() => this.showHint(), 500);
+            }
+        }
+        console.log(this.props.hintState);
     }
 
     hideHint() {
@@ -110,11 +117,21 @@ class HintOverlay extends React.Component {
                     }
                 });
             });
+            this.alreadyHidden = true;
+            this.alreadyShown = false;
         }
     }
 
     showHint() {
-        this.props.hintState.hints.map(h => this.updateHintTracking(h));
+        const { showProcedureSharingHint, showQualityHint } = this.props.hintState.options;
+        if (showProcedureSharingHint) {
+            this.props.hintState.hints.map(h => h.type === SHAREABLE_CODE_HINT_TYPE && this.updateHintTracking(h));
+        }
+        if (showQualityHint) {
+            this.props.hintState.hints.map(h => h.type === DUPLICATE_CODE_SMELL_HINT_TYPE && this.updateHintTracking(h));
+        }
+        this.alreadyShown = true;
+        this.alreadyHidden = false;
     }
 
     updateHintTracking(hint) {
@@ -162,7 +179,7 @@ class HintOverlay extends React.Component {
         // console.log('TODO: logic to delay analyzing hints waiting for a good time');
         const options = this.props.hintState.options;
         if (e.type === 'create' && e.xml.getAttribute('type') === 'procedures_definition') {
-            const hints = options.showProcedureSharingHint? generateShareableCodeHints(this.workspace, this.props.hintState):[];
+            const hints = options.showProcedureSharingHint ? generateShareableCodeHints(this.workspace, this.props.hintState) : [];
             if (hints.length > 0) {
                 this.props.putAllHints(hints);
                 this.showHint();
@@ -183,11 +200,12 @@ class HintOverlay extends React.Component {
         this.timeout = setTimeout(() => {
             this.analyzeAndGenerateHints().then(() => {
                 const options = this.props.hintState.options;
-                const hints = options.showProcedureSharingHint?generateShareableCodeHints(this.workspace, this.props.hintState):[];
+                const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
                 if (hints.length > 0) {
                     this.props.putAllHints(hints);
                 }
-
+                this.alreadyShown = false;
+                this.alreadyHidden = true;
                 if (this.props.hintState.hints.length > 0 && options.isVisible) {
                     this.showHint();
                 }
@@ -211,6 +229,16 @@ class HintOverlay extends React.Component {
                 highlightDuplicateBlocks(hintId, false, this.workspace, this.analysisInfo);
                 break;
         }
+    }
+
+    componentDidUpdate() {
+        const { showProcedureSharingHint, showQualityHint } = this.props.hintState.options;
+        if (showProcedureSharingHint && !this.alreadyShown) {
+            this.showHint();
+        } else if (!showProcedureSharingHint && !this.alreadyHidden) {
+            this.hideHint();
+        }
+
     }
 
     render() {

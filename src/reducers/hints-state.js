@@ -8,7 +8,7 @@ const SET_HINT_OPTIONS = "SET_HINT_OPTIONS";
 
 const hintOptions = {
     isVisible: "isVisible",
-    showHintOnly: "showHintOnly",
+    hintWithRefactoringSupport: "hintWithRefactoringSupport",
     showProcedureSharingHint: "showProcedureSharingHint"
 }
 
@@ -19,7 +19,8 @@ const initialState = {
     isUpdating: false,
     options: {
         isVisible: false,
-        showHintOnly: true,
+        showQualityHint: false,
+        hintWithRefactoringSupport: true,
         showProcedureSharingHint: false
     }
 };

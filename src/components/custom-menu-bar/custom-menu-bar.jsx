@@ -9,133 +9,170 @@ import SBFileUploader from '../../containers/sb-file-uploader.jsx';
 import SB3Downloader from '../../containers/sb3-downloader.jsx';
 import { MenuItem, MenuSection } from '../menu/menu.jsx';
 import MenuBarMenu from '../menu-bar/menu-bar-menu.jsx';
+
+import { setHintOptions } from '../../reducers/hints-state';
 import {
-    openAccountMenu,
-    closeAccountMenu,
-    accountMenuOpen,
-    openFileMenu,
-    closeFileMenu,
-    fileMenuOpen,
-    openEditMenu,
-    closeEditMenu,
-    editMenuOpen,
-    openLanguageMenu,
-    closeLanguageMenu,
-    languageMenuOpen,
-    openLoginMenu,
-    closeLoginMenu,
-    loginMenuOpen
+  openAccountMenu,
+  closeAccountMenu,
+  accountMenuOpen,
+  openFileMenu,
+  closeFileMenu,
+  fileMenuOpen,
+  openEditMenu,
+  closeEditMenu,
+  editMenuOpen,
+  openLanguageMenu,
+  closeLanguageMenu,
+  languageMenuOpen,
+  openLoginMenu,
+  closeLoginMenu,
+  loginMenuOpen
 } from '../../reducers/menus';
 import Toggle from 'react-toggled'
 
 
-const ShareProcedureFeatureToggle = () => (
-    <Toggle>
-    {({ on, getTogglerProps }) => (
-      <span
-        className="container"
-        style={{
-          position: "relative",
-          display: "inline-block",
-          width: "40px",
-          height: "20px"
-        }}
-      >
-        <input
-          type="checkbox"
-          style={{
-            width: "100%",
-            height: "100%",
-            margin: 0
-          }}
-          {...getTogglerProps()}
-        />
+const FeatureToggle = ({ featureName, isOn, onToggle }) => (
+  <Toggle onToggle={onToggle}>
+    {({ on = isOn, getTogglerProps }) => (
+      <div className={classNames(customStyles.featureItem)}>
+        <div style={{ padding: '2px' }}>
+          {featureName}
+        </div>
+
         <span
-          className="switch"
+          className="container"
           style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none"
+            position: "relative",
+            display: "inline-block",
+            width: "40px",
+            height: "20px"
           }}
         >
-          <span
-            className="track"
+          <input
+            type="checkbox"
             style={{
-              flex: 1,
+              width: "100%",
               height: "100%",
-              borderRadius: "10px",
-              background: on ? "green" : "gray"
+              margin: 0
             }}
+            {...getTogglerProps()}
           />
           <span
-            className="slider"
+            className="switch"
             style={{
               position: "absolute",
-              width: "16px",
-              height: "16px",
-              borderRadius: "50%",
-              background: "white",
-              transition: "transform 0.3s",
-              transform: on ? "translateX(22px)" : "translateX(2px)"
+              top: 0,
+              left: 0,
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+              pointerEvents: "none"
             }}
-          />
+          >
+            <span
+              className="track"
+              style={{
+                flex: 1,
+                height: "100%",
+                borderRadius: "10px",
+                background: on ? "#83b8fa" : "#0f58bd"
+              }}
+            />
+            <span
+              className="slider"
+              style={{
+                position: "absolute",
+                width: "16px",
+                height: "16px",
+                borderRadius: "50%",
+                background: "#fff1d7",
+                transition: "transform 0.3s",
+                transform: on ? "translateX(22px)" : "translateX(2px)"
+              }}
+            />
+          </span>
         </span>
-      </span>
+
+      </div>
     )}
   </Toggle>
 )
 
-class CustomizedMenuBar extends React.Component {
-    constructor(props) {
-        super(props);
-        bindAll(this, [
-            // 'handleClickNew',
-            // 'handleClickSave',
-            // 'handleCloseFileMenuAndThen'
-        ]);
-    }
-
-    render() {
-        return (<React.Fragment>
-            <div
-                className={classNames(
-                    customStyles.customMenuBar
-                )}
-            >
-                {/* <div className={styles.mainMenu}>
-                    <div className={styles.fileGroup}>
-                        <SBFileUploader onUpdateProjectTitle={this.props.onUpdateProjectTitle}>
-                            {(className, renderFileInput, loadProject) => (
-                                <div className={className} onClick={loadProject}>
-                                    Load project
-                                    {renderFileInput()}
-                                </div>
-                            )}
-                        </SBFileUploader>
-                    </div>
-                </div> */}
-                <ShareProcedureFeatureToggle/>
+const LoadFromFile = props => {
+  return (
+    <div className={styles.mainMenu}>
+      <div className={styles.fileGroup}>
+        <SBFileUploader onUpdateProjectTitle={props.onUpdateProjectTitle}>
+          {(className, renderFileInput, loadProject) => (
+            <div className={className} onClick={loadProject}>
+              Load project
+              {renderFileInput()}
             </div>
-        </React.Fragment>);
-    }
+          )}
+        </SBFileUploader>
+      </div>
+    </div>
+  )
 }
 
-const mapStateToProps = state => {
-    return {
-        fileMenuOpen: fileMenuOpen(state),
-    }
+class CustomizedMenuBar extends React.Component {
+  constructor(props) {
+    super(props);
+    bindAll(this, [
+      // 'handleClickNew',
+      // 'handleClickSave',
+      // 'handleCloseFileMenuAndThen'
+    ]);
+  }
+
+  render() {
+    return (<React.Fragment>
+      <div
+        className={classNames(
+          customStyles.customMenuBar
+        )}
+      >
+
+        {this.props.procedureShareToggleVisible ? <FeatureToggle
+          featureName='Procedure Share'
+          isOn={this.props.isProcedureShareEnabled}
+          onToggle={this.props.onToggleProcedureShareFeature}
+        /> : null}
+        {this.props.qualityHintToggleVisible ? <FeatureToggle
+          featureName='Code Hint'
+          isOn={this.props.isProcedureShareEnabled}
+          onToggle={this.props.onToggleProcedureShareFeature}
+        /> : null}
+
+      </div>
+    </React.Fragment>);
+  }
 }
 
-const mapDispatchToProps = dispatch => ({
+const mapStateToProps = (state, props) => {
+  const { isVisible, showHintOnly, showProcedureSharingHint } = state.scratchGui.hintState.options;
+  return {
+    fileMenuOpen: fileMenuOpen(state),
+    procedureShareToggleVisible: props.procedureShareToggleVisible || state.scratchGui.customMenu.procedureShareToggleVisible,
+    qualityHintToggleVisible: props.qualityHintToggleVisible || state.scratchGui.customMenu.qualityHintToggleVisible,
+    isProcedureShareEnabled: isVisible && showProcedureSharingHint,
+    isQualityHintEnabled: isVisible && !showHintOnly
+  }
+}
 
+const mapDispatchToProps = (dispatch, props) => ({
+  onToggleProcedureShareFeature: (value) => dispatch(setHintOptions({
+    isVisible: true,
+    showProcedureSharingHint: value
+  })),
+  onToggleQualityHintFeature: (value) => dispatch(setHintOptions({
+    isVisible: true,
+    showHintOnly: value
+  }))
 });
 
 export default injectIntl(connect(
-    mapStateToProps,
-    mapDispatchToProps
+  mapStateToProps,
+  mapDispatchToProps
 )(CustomizedMenuBar));

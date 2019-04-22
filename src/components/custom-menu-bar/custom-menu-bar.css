@@ -27,6 +27,23 @@
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: $menu-bar-standard-font-size;
     font-weight: bold;
-    background-color: $motion-primary;
+    background-color: #4c97ff;
     color: $ui-white;
 }
+
+.feature-item {
+    -webkit-appearance: none;
+    /* background-color: #f04; */
+    /* border-radius: 6px;
+    border: 1px;
+    border-style: solid; */
+    color: #fff1d7;
+    font-size: 14px;
+    text-align: center;
+    /* font-weight: bold;
+    line-height: 1;
+    outline: none;
+    padding: 8px 16px;
+    white-space: nowrap;
+    box-sizing: border-box; */
+  }
