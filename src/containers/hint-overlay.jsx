@@ -86,26 +86,6 @@ class HintOverlay extends React.Component {
         //         console.log('TODO: show hint that is only relevant to the current target');
     }
 
-    onWorkspaceMetricsChange() {
-        //disregard metrics change when workspace for custom block is shown
-        const isProcedureEditorOpened = this.workspace.id !== Blockly.getMainWorkspace().id;
-
-        if (this.props.hintState.hints.length <= 0 || isProcedureEditorOpened) return;
-        this.hideHint();
-
-        const options = this.props.hintState.options;
-
-        if (this.props.hintState.options.isVisible) {
-            const hints = options.showProcedureSharingHint ? generateShareableCodeHints(this.workspace, this.props.hintState) : [];
-            if (hints.length > 0) {
-                this.props.putAllHints(hints);
-                this.alreadyShown = false;
-                this.alreadyHidden = true;
-                setTimeout(() => this.showHint(), 500);
-            }
-        }
-        console.log(this.props.hintState);
-    }
 
     hideHint() {
         if (this.props) {
@@ -130,8 +110,11 @@ class HintOverlay extends React.Component {
         if (showQualityHint) {
             this.props.hintState.hints.map(h => h.type === DUPLICATE_CODE_SMELL_HINT_TYPE && this.updateHintTracking(h));
         }
-        this.alreadyShown = true;
-        this.alreadyHidden = false;
+
+        if(showProcedureSharingHint||showQualityHint){
+            this.alreadyShown = true;
+            this.alreadyHidden = false;
+        }
     }
 
     updateHintTracking(hint) {
@@ -173,15 +156,32 @@ class HintOverlay extends React.Component {
             });
     }
 
+    onWorkspaceMetricsChange() {
+        //disregard metrics change when workspace for custom block is shown
+        const isProcedureEditorOpened = this.workspace.id !== Blockly.getMainWorkspace().id;
+        if (this.props.hintState.hints.length <= 0 || isProcedureEditorOpened) return;
+        this.hideHint();
+
+        if (this.props.hintState.options.isVisible) {
+            const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
+            if (hints.length > 0) {
+                this.props.putAllHints(hints);
+                setTimeout(() => this.showHint(), 500);
+            }
+        }
+    }
+
     blockListener(e) {
         if (this.workspace.isDragging()) return;
         if (!this.props.hintState) return;
         // console.log('TODO: logic to delay analyzing hints waiting for a good time');
         const options = this.props.hintState.options;
         if (e.type === 'create' && e.xml.getAttribute('type') === 'procedures_definition') {
-            const hints = options.showProcedureSharingHint ? generateShareableCodeHints(this.workspace, this.props.hintState) : [];
+            const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
             if (hints.length > 0) {
                 this.props.putAllHints(hints);
+            }
+            if (this.props.hintState.hints.length > 0 && options.isVisible ) {
                 this.showHint();
             }
         }
@@ -204,9 +204,8 @@ class HintOverlay extends React.Component {
                 if (hints.length > 0) {
                     this.props.putAllHints(hints);
                 }
-                this.alreadyShown = false;
-                this.alreadyHidden = true;
-                if (this.props.hintState.hints.length > 0 && options.isVisible) {
+
+                if (this.props.hintState.hints.length > 0 && options.isVisible ) {
                     this.showHint();
                 }
             });
@@ -271,13 +270,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        onUpdateHint: (hintId, changes) => {
-            dispatch(updateHint(hintId, changes));
-        },
-        removeHint: hintId => {
-            dispatch(removeHint(hintId))
-        },
-        // putHint: hint => dispatch(putHint(hint)),
+        onUpdateHint: (hintId, changes) => dispatch(updateHint(hintId, changes)),
+        removeHint: hintId => dispatch(removeHint(hintId)),
         putAllHints: hints => dispatch(putAllHints(hints))
     }
 };
