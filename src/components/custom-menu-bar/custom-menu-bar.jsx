@@ -9,6 +9,8 @@ import SBFileUploader from '../../containers/sb-file-uploader.jsx';
 import SB3Downloader from '../../containers/sb3-downloader.jsx';
 import { MenuItem, MenuSection } from '../menu/menu.jsx';
 import MenuBarMenu from '../menu-bar/menu-bar-menu.jsx';
+import ProjectIdInput from './project-id-input.jsx';
+
 
 import { setHintOptions } from '../../reducers/hints-state';
 import {
@@ -144,7 +146,15 @@ class CustomizedMenuBar extends React.Component {
             isOn={this.props.isQualityHintEnabled}
             onToggle={this.props.onToggleQualityHintFeature}
           /> : null}
+          <div className='projectIdInput' style={{ display: 'flex', padding: '4px' }}>
+            <ProjectIdInput
+              className={classNames(styles.titleFieldGrowable)}
+              onUpdateProjectId={this.props.onUpdateProjectId}
+            />
+          </div>
         </div>
+
+
       </div>
     </React.Fragment>);
   }
@@ -157,7 +167,7 @@ const mapStateToProps = (state, props) => {
     procedureShareToggleVisible: props.procedureShareToggleVisible || state.scratchGui.customMenu.procedureShareToggleVisible,
     qualityHintToggleVisible: props.qualityHintToggleVisible || state.scratchGui.customMenu.qualityHintToggleVisible,
     isProcedureShareEnabled: isVisible && showProcedureSharingHint,
-    isQualityHintEnabled: isVisible && showQualityHint 
+    isQualityHintEnabled: isVisible && showQualityHint
   }
 }
 
@@ -170,7 +180,11 @@ const mapDispatchToProps = (dispatch, props) => ({
     isVisible: true,
     showQualityHint: value,
     hintWithRefactoringSupport: true,
-  }))
+  })),
+  onUpdateProjectId: (value) => {
+    console.log('updated', value);
+    window.open('/#' + value, "_self");
+  }
 });
 
 export default injectIntl(connect(
