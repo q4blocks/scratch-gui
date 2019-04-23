@@ -92,9 +92,8 @@ const FloaterContent = props => {
         </div>
     ) :
         (<div style={getModalContainerStyle(instruction.modalSize)}>
-            <div style={{marginBottom:'1.5rem'}}
+            <div style={{marginBottom:'1.5rem', textAlign:'left'}}
             dangerouslySetInnerHTML={{ __html: instruction.description||instruction.customContent }}>
-            
             </div>
             <button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>{instruction.customizedNextButtonText || 'Next'}</button>
         </div>);
