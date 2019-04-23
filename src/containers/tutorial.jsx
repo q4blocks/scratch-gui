@@ -349,24 +349,25 @@ const steps = [
                 recordStatus: 'completion'
             },
             {
+                test: true,
                 customContent: `
                 You have unlocked the <b>Custom Block Sharing</b> feature!
-                You can learn more about this feature by following this link to a short video.</p>
+                You can learn more about this feature by following this link to a short guide.</p>
                 `,
                 selectorExpr: `document.querySelector('.procedure-share-feature-toggle')`,
                 beaconAlign: "bottom",
                 checkUserCode: true,
-                isModal: true
+                isModal: true,
             },
             {
                 test: true,
                 customContent: `<p>
-                    <h3>We are working on the <em>Code Wizard</em> feature and would love to hear your comments!</h3>
+                    <h3>We hope you enjoy and find this tutorial helpful!</h3>
                 </p>`,
                 floaterPlacement: "center",
                 isModal: true,
                 modalSize: "large",
-                customizedNextButtonText: "Exit",
+                customizedNextButtonText: "Continue",
                 showSurvey: true
             }
         ]
@@ -379,9 +380,10 @@ class Tutorial extends React.Component {
         this.onNextInstruction = this.onNextInstruction.bind(this);
         this.props.onLoadNewTutorial(steps);
 
-        bindAll(this, ["onWorkspaceUpdate", "onWorkspaceSetup", "highlightFocusBlocks"]);
+        bindAll(this, ["onWorkspaceUpdate", "onWorkspaceSetup", "highlightFocusBlocks", "setTutorialCompleted"]);
         this.state = {
-            workspaceReady: false
+            workspaceReady: false,
+            completed: false
         };
     }
 
@@ -394,9 +396,11 @@ class Tutorial extends React.Component {
                 }`
         });
 
-        setTimeout(() => {
-            this.props.onNextInstruction();
-        }, delay);
+        if(!this.props.tutorial.isComplete){
+            setTimeout(() => {
+                this.props.onNextInstruction();
+            }, delay);
+        }
     }
 
     onWorkspaceSetup() {
@@ -436,6 +440,10 @@ class Tutorial extends React.Component {
         this.workspace.drawHighlightBox(id1, id2, color ? { color: color } : null);
     }
 
+    setTutorialCompleted(){
+        this.setState({completed: true});
+    }
+
     
 
     componentDidMount() {
@@ -446,8 +454,8 @@ class Tutorial extends React.Component {
     }
 
     componentDidUpdate() {
-        const { steps, currentStep, currentInstruction } = this.props.tutorial;
-        if (steps.length > 0) {
+        const { steps, currentStep, currentInstruction, isComplete } = this.props.tutorial;
+        if (steps.length > 0 && !isComplete) {
             const instruction = steps[currentStep].instructions[currentInstruction];
             if (instruction.recordStatus) {
                 saveProfileData(`tutorial_${instruction.recordStatus}`, new Date().toLocaleString());
@@ -459,8 +467,11 @@ class Tutorial extends React.Component {
     }
 
     render() {
-        const { steps, currentStep, currentInstruction } = this.props.tutorial;
-        if (steps.length > 0) {
+        const { steps, currentStep, currentInstruction, isComplete } = this.props.tutorial;
+        if (isComplete&&steps.length>0) {
+            return (<div></div>);
+        }
+        if (steps.length > 0 && currentStep < steps.length && currentInstruction < steps[currentStep].instructions.length) {
             const instruction = steps[currentStep].instructions[currentInstruction];
             if (this.workspace && instruction.workspaceSetupCode) {
                 this.onWorkspaceSetup();
@@ -492,6 +503,7 @@ class Tutorial extends React.Component {
                     onNextInstruction={this.props.onNextInstruction}
                     onMarkInstructionComplete={this.props.onMarkInstructionComplete}
                     handleSaveProfileData={this.handleSaveProfileData}
+                    showSurveyCallBack={this.props.showSurveyCallBack}
                 />
             );
         } else {

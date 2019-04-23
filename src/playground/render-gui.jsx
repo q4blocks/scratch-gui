@@ -82,11 +82,13 @@ export default appTarget => {
                 canSave={false}
                 onClickLogo={onClickLogo}
                 // customGuiState
+                showCustomMenuBar={true}
                 hintMode={true}
                 showTutorial={true}
                 showCustomGuiDevPanel={false}
                 procedureShareToggleVisible={false}
                 qualityHintToggleVisible={false}
+                showSurveyCallBack={()=>{console.log('open the modal survey!')}}
             />,
         appTarget);
 };

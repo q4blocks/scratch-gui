@@ -34,6 +34,10 @@ class SurveyComponent extends React.Component {
         super(props);
         this.onComplete = this.onComplete.bind(this);
     }
+
+    componentDidMount(){
+
+    }
     //Define a callback methods on survey complete
     onComplete(survey, options) {
         //Write survey results into database
@@ -46,7 +50,7 @@ class SurveyComponent extends React.Component {
         //You may create survey model outside the render function and use it in your App or component
         //The most model properties are reactive, on their change the component will change UI when needed.
         var model = new Survey.Model(json);
-        return (<Survey.Survey model={model} onComplete={this.onComplete} />);
+        return (<Survey.Survey model={model} onComplete={this.onComplete}/>);
         /*
         //The alternative way. react Survey component will create survey model internally
         return (<Survey.Survey json={this.json} onComplete={this.onComplete}/>);

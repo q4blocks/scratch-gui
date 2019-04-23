@@ -77,7 +77,14 @@ const FloaterContent = props => {
     return !instruction.isModal ? (
         <div style={toolTipContentStyle}>
             {instruction.description ? (<span>{instruction.description}</span>) : (instruction.customContent && renderHTML(instruction.customContent))}
-            {instruction.checkUserCode ? (<button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>) : null}
+            {instruction.checkUserCode ? (<button className={classnames(styles.nextButton)}
+                onClick={() => {
+                    if (props.showSurvey && props.showSurveyCallBack) {
+                        props.showSurveyCallBack();
+                    } else {
+                        onNextInstruction();
+                    }
+                }}>Next</button>) : null}
         </div>
     ) :
         (<div style={getModalContainerStyle(instruction.modalSize)}>
@@ -89,11 +96,11 @@ const FloaterContent = props => {
 }
 
 const TutorialFloater = props => {
-    const { currentStep, currentInstruction, onNextInstruction, instruction } = props;
+    const { currentStep, currentInstruction, onNextInstruction, instruction, showSurveyCallBack } = props;
     return (
         <Floater
             content={!instruction.isModal && <FloaterContent instruction={instruction} onNextInstruction={onNextInstruction} />}
-            component={instruction.isModal && <FloaterContent instruction={instruction} onNextInstruction={onNextInstruction} />}
+            component={instruction.isModal && <FloaterContent instruction={instruction} onNextInstruction={onNextInstruction} showSurveyCallBack={showSurveyCallBack} />}
             disableAnimation
             event="hover"
             key={`step_${currentStep}_${currentInstruction}`}
@@ -131,44 +138,61 @@ const GotoStep = ({ isDevMode, steps, onMarkInstructionComplete }) => {
     }</div>)
 }
 
-const Tutorial = props => {
-    const { target, currentStep, currentInstruction, steps } = props;
-    const instructions = steps[currentStep].instructions;
-    const instruction = instructions[currentInstruction];
-    return (
-        <div className='Tutorial'>
-            <Steps current={currentStep} direction={'horizontal'} >
-                {steps.map((step, key) => (
-                    <Steps.Step key={key} title={step.title}
-                    // description={step.description} 
-                    />
-                ))}
-            </Steps>
+class Tutorial extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            finalModalHasClosed: false
+        }
+        this.handleFinalModalClose = this.handleFinalModalClose.bind(this);
+    }
 
-            {props.isDevMode && <GotoStep steps={steps} onMarkInstructionComplete={props.onMarkInstructionComplete} />}
+    handleFinalModalClose() {
+        this.setState({
+            finalModalHasClosed: true
+        });
+        this.props.showSurveyCallBack();
+    }
+    render() {
+        const { target, currentStep, currentInstruction, steps } = this.props;
+        const instructions = steps[currentStep].instructions;
+        const instruction = instructions[currentInstruction];
 
-            {!instruction.showSurvey && <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
-                {({ ref, style, placement, arrowProps }) => (
-                    <div ref={ref} style={{ ...style, zIndex: 1000 }} data-placement={placement}>
-                        {(instruction.isIntermediateInstruction || instruction.autoNext) ? null : <TutorialFloater {...props} instruction={instruction} />}
-                        <div ref={arrowProps.ref} style={{ ...arrowProps.style }} />
-                    </div>
-                )}
-            </Popper>}
-            {instruction.isModal && !instruction.showSurvey && <div className='overlay' />}
+        return (
+            <div className='Tutorial'>
+                <Steps current={currentStep} direction={'horizontal'} >
+                    {steps.map((step, key) => (
+                        <Steps.Step key={key} title={step.title}
+                        // description={step.description} 
+                        />
+                    ))}
+                </Steps>
 
-            {instruction.showSurvey && (
-                <ReactModal isOpen={true} className="ReactModal" overlayClassName="ReactOverlay">
-                    <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}
-                        dangerouslySetInnerHTML={{ __html: instruction.description || instruction.customContent }}>
-                    </div>
-                    {instruction.showSurvey ? <div style={{textAlign:'left'}}><SurveyComponent tutorialSurvey={true}/></div> : null}
-                    
-                </ReactModal>)
-            }
-        </div>
-    )
-};
+                {this.props.isDevMode && <GotoStep steps={steps} onMarkInstructionComplete={this.props.onMarkInstructionComplete} />}
+
+                {!instruction.showSurvey && <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
+                    {({ ref, style, placement, arrowProps }) => (
+                        <div ref={ref} style={{ ...style, zIndex: 1000 }} data-placement={placement}>
+                            {(instruction.isIntermediateInstruction || instruction.autoNext) ? null : <TutorialFloater {...this.props} instruction={instruction} />}
+                            <div ref={arrowProps.ref} style={{ ...arrowProps.style }} />
+                        </div>
+                    )}
+                </Popper>}
+                {instruction.isModal && !instruction.showSurvey && <div className='overlay' />}
+                {instruction.showSurvey && (
+                    <ReactModal isOpen={!this.state.finalModalHasClosed} className="ReactModal" overlayClassName="ReactOverlay">
+                        <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}
+                            dangerouslySetInnerHTML={{ __html: instruction.description || instruction.customContent }}>
+                        </div>
+                        <button className={classnames(styles.nextButton)}
+                            onClick={this.handleFinalModalClose}>{instruction.customizedNextButtonText}</button>
+                    </ReactModal>)
+                }
+
+            </div>
+        )
+    };
+}
 
 export default Tutorial;
 

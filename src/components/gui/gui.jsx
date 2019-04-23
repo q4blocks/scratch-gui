@@ -133,6 +133,8 @@ const GUIComponent = props => {
         showTutorial,
         procedureShareToggleVisible,
         qualityHintToggleVisible,
+        showCustomMenuBar,
+        showSurveyCallBack,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -175,7 +177,7 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 
-                {showTutorial?<Tutorial/>:null}
+                {showTutorial?<Tutorial showSurveyCallBack={showSurveyCallBack}/>:null}
 
                 {customOptions.previewInfoVisible ? (
                     <PreviewModal />
@@ -228,11 +230,11 @@ const GUIComponent = props => {
                 ) : null}
                 {showCustomGuiDevPanel?<CustomGuiDevPanel/>:null}
                 {customOptions.customizedGui? 
-                (<CustomizedMenuBar
+                (showCustomMenuBar?<CustomizedMenuBar
                     procedureShareToggleVisible={procedureShareToggleVisible}
                     qualityHintToggleVisible={qualityHintToggleVisible}
                     onUpdateProjectTitle={onUpdateProjectTitle}
-                />):(<MenuBar
+                />:null):(<MenuBar
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
