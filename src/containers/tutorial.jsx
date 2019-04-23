@@ -358,19 +358,15 @@ const steps = [
                 isModal: true
             },
             {
+                test: true,
                 customContent: `<p>
-                    We are working on the <b>Code Wizard</b> feature and would like to hear your feedback!
-                    <ul>
-                        <li>How helpful did you find the Code Wizard's hint in helping you see where you can improve your code? (Scale 1 (least helpful) - 5(helpful))</li>
-                        <li>How helpful did you find the Code Wizard's "Extract a Custom Block" helpful? (Scale 1-5)</li>
-                        <li>Any other comments  (e.g., What did you like/dislike? 
-                            How the <b>Code Wizard</b> feature can be improved ? (optional text input)</li>
-                    </ul>
+                    <h3>We are working on the <em>Code Wizard</em> feature and would love to hear your comments!</h3>
                 </p>`,
                 floaterPlacement: "center",
                 isModal: true,
                 modalSize: "large",
-                customizedNextButtonText: "Exit"
+                customizedNextButtonText: "Exit",
+                showSurvey: true
             }
         ]
     }
@@ -434,16 +430,6 @@ class Tutorial extends React.Component {
         if (this.workspace) {
             this.onWorkspaceSetup();
         }
-
-        sendFeedbackData({
-            questionId: 1,
-            question: "Do you like the hint?",
-            feedback: "A lot"
-        });
-    }
-
-    sendFeedback() {
-        sendFeedbackData("data");
     }
 
     highlightFocusBlocks(id1, id2, color) {
@@ -452,6 +438,8 @@ class Tutorial extends React.Component {
 
     componentDidMount() {
         this.props.vm.addListener("workspaceUpdate", this.onWorkspaceUpdate);
+        //testing:
+        // this.props.onMarkInstructionComplete(2,2);
     }
 
     componentDidUpdate() {
@@ -520,7 +508,8 @@ const mapDispatchToProps = dispatch => ({
         dispatch(setProjectId(projectId));
     },
     onShowProcedureShareToggle: () => dispatch(setCustomFeatureToggleVisible(featureNames.PROCEDURE_SHARE, true)),
-    onShowCodeHintToggle: () => dispatch(setCustomFeatureToggleVisible(featureNames.QUALITY_HINT, true))
+    onShowCodeHintToggle: () => dispatch(setCustomFeatureToggleVisible(featureNames.QUALITY_HINT, true)),
+
 });
 
 export default connect(

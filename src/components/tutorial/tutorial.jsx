@@ -9,8 +9,13 @@ import classnames from 'classnames';
 
 import { Popper } from 'react-popper';
 import Floater from 'react-floater';
-
 import renderHTML from 'react-render-html';
+
+import SurveyComponent from './survey.jsx';
+
+import ReactModal from 'react-modal';
+
+
 class VirtualReference {
     getBoundingClientRect() {
         return {
@@ -50,8 +55,8 @@ const modalSize = {
     'large': '50vw'
 }
 
-const getModalContainerStyle = (size)=>({
-    width: modalSize[size||'default'],
+const getModalContainerStyle = (size) => ({
+    width: modalSize[size || 'default'],
     // height: '30vh',
     padding: '2rem',
     background: 'white',
@@ -73,27 +78,27 @@ const getModalContainerStyle = (size)=>({
 // }
 
 const modalContentStyle = {
-    marginBottom:'20px',
+    marginBottom: '20px',
     lineHeight: 1.6,
     fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
     color: 'rgb(102, 102, 102)'
 }
 
 const toolTipContentStyle = {
-    
+
 }
 
 const FloaterContent = props => {
-    const {instruction, onNextInstruction} = props;
+    const { instruction, onNextInstruction } = props;
     return !instruction.isModal ? (
         <div style={toolTipContentStyle}>
-            {instruction.description?(<span>{instruction.description}</span>):(instruction.customContent&&renderHTML(instruction.customContent))}
+            {instruction.description ? (<span>{instruction.description}</span>) : (instruction.customContent && renderHTML(instruction.customContent))}
             {instruction.checkUserCode ? (<button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>) : null}
         </div>
     ) :
         (<div style={getModalContainerStyle(instruction.modalSize)}>
-            <div style={{marginBottom:'1.5rem', textAlign:'left'}}
-            dangerouslySetInnerHTML={{ __html: instruction.description||instruction.customContent }}>
+            <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}
+                dangerouslySetInnerHTML={{ __html: instruction.description || instruction.customContent }}>
             </div>
             <button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>{instruction.customizedNextButtonText || 'Next'}</button>
         </div>);
@@ -103,8 +108,8 @@ const TutorialFloater = props => {
     const { currentStep, currentInstruction, onNextInstruction, instruction } = props;
     return (
         <Floater
-            content={!instruction.isModal && <FloaterContent instruction={instruction} onNextInstruction={onNextInstruction}/>}
-            component={instruction.isModal &&<FloaterContent instruction={instruction} onNextInstruction={onNextInstruction}/>}
+            content={!instruction.isModal && <FloaterContent instruction={instruction} onNextInstruction={onNextInstruction} />}
+            component={instruction.isModal && <FloaterContent instruction={instruction} onNextInstruction={onNextInstruction} />}
             disableAnimation
             event="hover"
             key={`step_${currentStep}_${currentInstruction}`}
@@ -115,7 +120,7 @@ const TutorialFloater = props => {
                 tooltip: {
                     width: "100%"
                 },
-                options: { 
+                options: {
                     zIndex: 550
                 }
             }}
@@ -128,45 +133,55 @@ const TutorialFloater = props => {
     );
 }
 
-const GotoStep = ({isDevMode, steps, onMarkInstructionComplete}) =>  {
+const GotoStep = ({ isDevMode, steps, onMarkInstructionComplete }) => {
     return (<div className='stepGotos'>{
-    steps.map((step,stepKey)=>{
-        return !step.instructions?null:
-        step.instructions.map((inst,instKey)=>{
-            return inst.test&&(<button key={stepKey+''+instKey} onClick={() => {   
-                onMarkInstructionComplete(stepKey, instKey-1);
-            }}>Go to{stepKey}.{instKey}</button>)
+        steps.map((step, stepKey) => {
+            return !step.instructions ? null :
+                step.instructions.map((inst, instKey) => {
+                    return inst.test && (<button key={stepKey + '' + instKey} onClick={() => {
+                        onMarkInstructionComplete(stepKey, instKey - 1);
+                    }}>Go to{stepKey}.{instKey}</button>)
+                })
         })
-    })
-    
-}</div>)}
+
+    }</div>)
+}
 
 const Tutorial = props => {
-    const { target, currentStep, currentInstruction, steps} = props;
+    const { target, currentStep, currentInstruction, steps } = props;
     const instructions = steps[currentStep].instructions;
     const instruction = instructions[currentInstruction];
     return (
         <div className='Tutorial'>
             <Steps current={currentStep} direction={'horizontal'} >
                 {steps.map((step, key) => (
-                    <Steps.Step key={key} title={step.title} 
+                    <Steps.Step key={key} title={step.title}
                     // description={step.description} 
                     />
                 ))}
             </Steps>
 
-            {props.isDevMode&&<GotoStep  steps={steps} onMarkInstructionComplete={props.onMarkInstructionComplete}/>}
+            {props.isDevMode && <GotoStep steps={steps} onMarkInstructionComplete={props.onMarkInstructionComplete} />}
 
-            <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
+            {!instruction.showSurvey && <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
                 {({ ref, style, placement, arrowProps }) => (
                     <div ref={ref} style={{ ...style, zIndex: 1000 }} data-placement={placement}>
-                        {(instruction.isIntermediateInstruction||instruction.autoNext)?null:<TutorialFloater {...props} instruction={instruction} />}
-                        <div ref={arrowProps.ref} style={{ ...arrowProps.style}} />
+                        {(instruction.isIntermediateInstruction || instruction.autoNext) ? null : <TutorialFloater {...props} instruction={instruction} />}
+                        <div ref={arrowProps.ref} style={{ ...arrowProps.style }} />
                     </div>
                 )}
-            </Popper>
-            {instruction.isModal && <div className='overlay' />}
+            </Popper>}
+            {instruction.isModal && !instruction.showSurvey && <div className='overlay' />}
 
+            {instruction.showSurvey && (
+                <ReactModal isOpen={true} className="ReactModal" overlayClassName="ReactOverlay">
+                    <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}
+                        dangerouslySetInnerHTML={{ __html: instruction.description || instruction.customContent }}>
+                    </div>
+                    {instruction.showSurvey ? <div style={{textAlign:'left'}}><SurveyComponent /></div> : null}
+                    
+                </ReactModal>)
+            }
         </div>
     )
 };
