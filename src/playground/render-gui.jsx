@@ -88,7 +88,7 @@ export default appTarget => {
                 showCustomGuiDevPanel={false}
                 procedureShareToggleVisible={false}
                 qualityHintToggleVisible={false}
-                showSurveyCallBack={()=>{console.log('open the modal survey!')}}
+                showSurveyCallBack={(origin)=>{console.log(`open the modal survey! origin: ${origin}`)}}
             />,
         appTarget);
 };

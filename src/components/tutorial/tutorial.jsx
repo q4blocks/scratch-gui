@@ -151,7 +151,7 @@ class Tutorial extends React.Component {
         this.setState({
             finalModalHasClosed: true
         });
-        this.props.showSurveyCallBack();
+        this.props.showSurveyCallBack('post-tutorial-session');
     }
     render() {
         const { target, currentStep, currentInstruction, steps } = this.props;
@@ -185,7 +185,7 @@ class Tutorial extends React.Component {
                             dangerouslySetInnerHTML={{ __html: instruction.description || instruction.customContent }}>
                         </div>
                         <button className={classnames(styles.nextButton)}
-                            onClick={this.handleFinalModalClose}>{instruction.customizedNextButtonText}</button>
+                            onClick={()=>this.handleFinalModalClose()}>{instruction.customizedNextButtonText}</button>
                     </ReactModal>)
                 }
 
