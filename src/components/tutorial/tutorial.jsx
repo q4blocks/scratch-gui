@@ -68,22 +68,6 @@ const getModalContainerStyle = (size) => ({
     boxSizing: 'border-box'
 })
 
-// const modalContainerStyle = {
-//     width: '30vw',
-//     // height: '30vh',
-//     padding: '2rem',
-//     background: 'white',
-//     borderRadius: '10px',
-//     textAlign: 'center'
-// }
-
-const modalContentStyle = {
-    marginBottom: '20px',
-    lineHeight: 1.6,
-    fontFamily: 'Helvetica Neue, Helvetica, Arial, sans-serif',
-    color: 'rgb(102, 102, 102)'
-}
-
 const toolTipContentStyle = {
 
 }
@@ -178,7 +162,7 @@ const Tutorial = props => {
                     <div style={{ marginBottom: '1.5rem', textAlign: 'left' }}
                         dangerouslySetInnerHTML={{ __html: instruction.description || instruction.customContent }}>
                     </div>
-                    {instruction.showSurvey ? <div style={{textAlign:'left'}}><SurveyComponent /></div> : null}
+                    {instruction.showSurvey ? <div style={{textAlign:'left'}}><SurveyComponent tutorialSurvey={true}/></div> : null}
                     
                 </ReactModal>)
             }

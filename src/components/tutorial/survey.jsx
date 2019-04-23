@@ -17,7 +17,7 @@ const json = {
         {
             type: "rating",
             name: "helpfulness-extract-custom-block",
-            title: `How helpful did you find the Code Wizard's Extract a Custom Block helpful`,
+            title: `How helpful did you find the Code Wizard's Extract a Custom Block?`,
             minRateDescription: "Not at all helpful",
             maxRateDescription: "Extremely helpful"
         },
@@ -32,12 +32,14 @@ const json = {
 class SurveyComponent extends React.Component {
     constructor(props){
         super(props);
+        this.onComplete = this.onComplete.bind(this);
     }
     //Define a callback methods on survey complete
     onComplete(survey, options) {
         //Write survey results into database
         //   console.log("Survey results: " + JSON.stringify(survey.data));
-        sendFeedbackData({...survey.data, timestamp:new Date().toLocaleString()});
+    
+        sendFeedbackData({...survey.data, tutorialSurvey: this.props.tutorialSurvey||false, timestamp:new Date().toLocaleString()});
     }
     render() {
         //Create the model and pass it into react Survey component

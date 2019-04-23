@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import bindAll from "lodash.bindall";
 import { loadNewTutorial, nextInstruction, setFocusTarget, markInstructionComplete } from "../reducers/tutorial";
 import ScratchBlocks from "scratch-blocks";
-import analytics, { stitchClient, sendFeedbackData } from "../lib/custom-analytics";
+import analytics, { stitchClient, sendFeedbackData, saveProfileData } from "../lib/custom-analytics";
 
 import { addBlocksToWorkspace, testBlocks, workspaceFromXml } from "../lib/hints/hint-test-workspace-setup";
 
@@ -345,7 +345,8 @@ const steps = [
                 Well done! You have just learned the basics of creating and calling custom blocks!
                 </p>`,
                 customAction: "this.props.onShowProcedureShareToggle()",
-                customizedNextButtonText: "Continue"
+                customizedNextButtonText: "Continue",
+                recordStatus: 'completion'
             },
             {
                 customContent: `
@@ -371,7 +372,6 @@ const steps = [
         ]
     }
 ];
-// <p>A useful tip is to look for the similar code that you tend to make a copy of them to reuse in your project.</p>
 
 class Tutorial extends React.Component {
     constructor(props) {
@@ -436,16 +436,22 @@ class Tutorial extends React.Component {
         this.workspace.drawHighlightBox(id1, id2, color ? { color: color } : null);
     }
 
+    
+
     componentDidMount() {
         this.props.vm.addListener("workspaceUpdate", this.onWorkspaceUpdate);
         //testing:
-        // this.props.onMarkInstructionComplete(2,2);
+        // this.props.onMarkInstructionComplete(1, 9); //complete tutorial
+        this.props.onMarkInstructionComplete(2,2); //survey
     }
 
     componentDidUpdate() {
         const { steps, currentStep, currentInstruction } = this.props.tutorial;
         if (steps.length > 0) {
             const instruction = steps[currentStep].instructions[currentInstruction];
+            if (instruction.recordStatus) {
+                saveProfileData(`tutorial_${instruction.recordStatus}`, new Date().toLocaleString());
+            }
             if (instruction.customAction) {
                 eval(instruction.customAction);
             }
@@ -485,6 +491,7 @@ class Tutorial extends React.Component {
                     isDevMode
                     onNextInstruction={this.props.onNextInstruction}
                     onMarkInstructionComplete={this.props.onMarkInstructionComplete}
+                    handleSaveProfileData={this.handleSaveProfileData}
                 />
             );
         } else {

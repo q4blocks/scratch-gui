@@ -26,12 +26,45 @@ const initializeAnalytics = userId => {
 
 const sendFeedbackData = data => {
     console.log('feedback sent');
-    stitchClient.auth.loginWithCredential(new AnonymousCredential()).then(user=>{
-        db.collection('feedback').updateOne({userId: stitchClient.auth.user.id}, {$set:data}, {upsert:true})
+    stitchClient.auth.loginWithCredential(new AnonymousCredential()).then(user => {
+        const userId = stitchClient.auth.user.id;
+        db.collection('feedback').findOne({ userId: userId }).then(res => {
+            if (res) {
+                const records = [...res.records, data]
+                const entry = Object.assign({},res, {records:records});
+                db.collection('feedback').updateOne({ userId: userId }, { $set: Object.assign({}, res, entry) }, { upsert: true })
+            
+            } else {
+                const entry = {records:[data]};
+                db.collection('feedback').updateOne({ userId: userId }, { $set: entry }, { upsert: true })
+                console.log('new entry', JSON.stringify({ userId, ...entry }));
+            }
+        });
+        // db.collection('feedback').updateOne({ userId: stitchClient.auth.user.id }, { $set: data }, { upsert: true })
+    })
+}
+
+
+
+const saveProfileData = (key, value) => {
+    console.log('saving data');
+    const entry = {};
+    entry[key] = value;
+
+    stitchClient.auth.loginWithCredential(new AnonymousCredential()).then(user => {
+        const userId = stitchClient.auth.user.id;
+        db.collection('profile').findOne({ userId: userId }).then(res => {
+            if (res) {
+                db.collection('profile').updateOne({ userId: userId }, { $set: Object.assign({}, res, { ...entry }) }, { upsert: true })
+            } else {
+                // console.log('new entry', JSON.stringify({ userId, ...entry }));
+                db.collection('profile').updateOne({ userId: userId }, { $set: { userId, ...entry } }, { upsert: true })
+            }
+        });
     })
 }
 
 
 export default analytics;
-export { stitchClient, sendFeedbackData };
+export { stitchClient, sendFeedbackData, saveProfileData };
 
