@@ -144,13 +144,13 @@ class CustomizedMenuBar extends React.Component {
           </div>
           {this.props.qualityHintToggleVisible ? <FeatureToggle
             className='code-hint-feature-toggle'
-            featureName='Code Hints'
+            featureName='Code Wizard'
             isOn={this.props.isQualityHintEnabled}
             onToggle={this.props.onToggleQualityHintFeature}
           /> : null}
           {this.props.procedureShareToggleVisible ? <FeatureToggle
             className='procedure-share-feature-toggle'
-            featureName='Procedure Sharing'
+            featureName='Custom Block Sharing'
             isOn={this.props.isProcedureShareEnabled}
             onToggle={this.props.onToggleProcedureShareFeature}
           /> : null}

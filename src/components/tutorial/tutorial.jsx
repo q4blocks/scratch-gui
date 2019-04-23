@@ -44,19 +44,33 @@ const beaconStyle = {
     cursor: 'default'
 }
 
-const modalMaxSize = {
-    'default': 300,
-    'large': 1000
+const modalSize = {
+    'default': '30vw',
+    'medium': '40vw',
+    'large': '50vw'
 }
 
-const modalContainerStyle = {
-    width: '30vw',
+const getModalContainerStyle = (size)=>({
+    width: modalSize[size||'default'],
     // height: '30vh',
     padding: '2rem',
     background: 'white',
     borderRadius: '10px',
-    textAlign: 'center'
-}
+    textAlign: 'center',
+    lineHeight: 1.6,
+    color: 'rgb(102, 102, 102)',
+    fontSize: '14px',
+    boxSizing: 'border-box'
+})
+
+// const modalContainerStyle = {
+//     width: '30vw',
+//     // height: '30vh',
+//     padding: '2rem',
+//     background: 'white',
+//     borderRadius: '10px',
+//     textAlign: 'center'
+// }
 
 const modalContentStyle = {
     marginBottom:'20px',
@@ -77,8 +91,11 @@ const FloaterContent = props => {
             {instruction.checkUserCode ? (<button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>Next</button>) : null}
         </div>
     ) :
-        (<div style={modalContainerStyle}>
-            <div dangerouslySetInnerHTML={{ __html: instruction.description||instruction.customContent }} style={modalContentStyle}></div>
+        (<div style={getModalContainerStyle(instruction.modalSize)}>
+            <div style={{marginBottom:'1.5rem'}}
+            dangerouslySetInnerHTML={{ __html: instruction.description||instruction.customContent }}>
+            
+            </div>
             <button className={classnames(styles.nextButton)} onClick={() => onNextInstruction()}>{instruction.customizedNextButtonText || 'Next'}</button>
         </div>);
 }
@@ -97,10 +114,11 @@ const TutorialFloater = props => {
             open={true}
             styles={{
                 tooltip: {
-                    maxWidth: modalMaxSize[instruction.modalSize || 'default'],
                     width: "100%"
                 },
-                options: { zIndex: 550 }
+                options: { 
+                    zIndex: 550
+                }
             }}
             getPopper={popper => {
                 setTimeout(() => popper.instance.scheduleUpdate(), 0);

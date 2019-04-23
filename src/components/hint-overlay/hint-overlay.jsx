@@ -6,9 +6,9 @@ import {DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE} from "../../li
 const getHintOverlayText = function (type) {
     switch (type) {
         case DUPLICATE_CODE_SMELL_HINT_TYPE:
-            return "Reuse the repeated code by creating procedure. Right click to see options.";
+            return "You can create a custom block for the highlighted code. Right click to see options.";
         case SHAREABLE_CODE_HINT_TYPE:
-            return "Sharable code found here.";
+            return "This custom block can be shared. Right click to see options";
         default:
             return "Code hint available."
     }

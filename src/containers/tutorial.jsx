@@ -31,7 +31,7 @@ const steps = [
                         <li>Share your custom blocks with other programmers</li>
                     </ul>
                 </div>`,
-                modalSize: "large",
+                // modalSize: "large",
                 beaconAlign: "right-start",
                 floaterPlacement: "center",
                 workspaceSetupCode:
@@ -42,8 +42,8 @@ const steps = [
             },
             {
                 customContent: `
-                <p>We begin with a simple script that makes the sprite move repeatedly in a small circle (by the blocks inside the red line) 
-                and then in a bigger circle (by the blocks inside the blue line).</p>
+                <p>We begin with a simple script that makes the sprite move repeatedly in a small circle (expressed by the blocks inside the red line) 
+                and then in a bigger circle (expressed by the blocks inside the blue line).</p>
                 <p>Click <b>Green Flag</b> to see what it does. Then click "Next"</p>
                `,
                 selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_.firstElementChild`,
@@ -55,8 +55,8 @@ const steps = [
             {
                 customContent: `
                 <p>
-                We will use these blocks for performing circle-around movement in multiple places in the code. Instead of duplicating these blocks, 
-                it is better to create a <b>custom block</b>
+                We will use these blocks to perform a circle-around movement in multiple places in the code. Instead of duplicating these blocks, 
+                it would be better to create a <b>custom block</b>
                 </p>
                `,
                 selectorExpr: `this.workspace.getBlockById('__small-rotation__').svgGroup_`,
@@ -68,8 +68,8 @@ const steps = [
             {
                 customContent: `
                 <p>
-                Let's create a custom block that only performs  <em>small</em> circle-around movement first.
-                Don't worry! We will later make our custom block to also do <em>big</em> circle-around movement.
+                Let's create a custom block that only performs a <em>small</em> circle-around movement first.
+                Don't worry! We will later make our custom block to also perform a<em>big</em> circle-around movement.
                 </p>
                `,
                 selectorExpr: `this.workspace.getBlockById('__small-rotation__').svgGroup_.firstElementChild`,
@@ -96,7 +96,7 @@ const steps = [
             },
             {
                 customContent: `
-                <p>This is the <b>definition</b> block, which describes what your Custom Block does!</p>
+                <p>This is a <b>definition</b> block. It describes what your Custom Block does!</p>
                 <p>Copy the code that performs the small circle-around movement highlighted in red and snap it to this definition block</p>`,
                 selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
                 beaconAlign: "right",
@@ -117,7 +117,7 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Before moving on, click <b>Green Flag</b> to see if your code still works exactly like before. It should!</p>`,
+                <p>Before moving on, click <b>Green Flag</b> to check if your code still works the same way. It should!</p>`,
                 selectorExpr: `document.querySelector('.greenFlag')`,
                 beaconAlign: "left",
                 floaterPlacement: "left",
@@ -125,10 +125,10 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Looks like it is working exactly like before! 
-                You are on your way to master the use of custom block!</p>
-                <p>But the custom block only performs a small circle-around movement though.</p>
-                <p>Luckily, you don't need to create another custom block for performing a big circle-around movement.</p>
+                <p>Looks like it works exactly like before! 
+                You are on your way to mastering the use of custom blocks!</p>
+                <p>But this custom block only performs a small circle-around movement though.</p>
+                <p>Luckily, you don't need to create another custom block to perform a big circle-around movement.</p>
                 </p>
                 `,
                 selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
@@ -138,8 +138,8 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Taking a closer look, small circle-around movement moves 8 steps while the big circle-around movement moves 16 steps.</p> 
-                <p>We need a way to call our custom block with these different inputs.</p>
+                <p>Taking a closer look, the small circle-around movement moves 8 steps while the big circle-around movement moves 16 steps.</p> 
+                <p>We need a way to pass different inputs when calling our custom block.</p>
                 <p>We can do that by adjusting our custom block to take these inputs via custom block's <b>parameters</b></p>
                 `,
                 selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
@@ -194,7 +194,7 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Let's call our custom block with an input value of 8 for the small circle-around movement.</p>
+                <p>Let's call our custom block with the input value of 8 for the small circle-around movement.</p>
                 <p>Type in 8 as the input to our custom block</p>`,
                 beaconAlign: "right",
                 floaterPlacement: "right",
@@ -204,7 +204,7 @@ const steps = [
             {
                 customContent: `
                 <p>This <b>steps</b> parameter block will hold the input value</p>
-                <p>We can use <b>steps</b> parameter anywhere in our custom block's definition.</p>
+                <p>We can use this <b>steps</b> parameter anywhere in our custom block's definition.</p>
                 <p>To use, drag the <b>steps</b> parameter block and drop it into the move block's input (highlighted).
                 Click "Next" when you are done.</p>
                 `,
@@ -231,8 +231,8 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Let's replace the code that performs big circle-around movement with our <b>Circle Around</b> custom block 
-                and give it an input value of 16. Click "Next" when you are done.</p>`,
+                <p>Let's replace the code that performs the big circle-around movement with our <b>Circle Around</b> custom block 
+                and give it the input value of 16. Click "Next" when you are done.</p>`,
                 beaconAlign: "left",
                 floaterPlacement: "left",
                 selectorExpr: `this.workspace.getBlockById('__large-rotation__').svgGroup_.firstElementChild`,
@@ -248,8 +248,8 @@ const steps = [
                 delayNextInstruction: 2000
             },
             {
-                customContent: `Looks like it's working exactly like before, but your code significantly improves.
-                <p><b>Custom blocks</b> is your best friend for making your code easy to understand and reuse.</p>
+                customContent: `Looks like it works exactly like before, but your code looks much better.
+                <p><b>Custom blocks</b> is your best friend if you want to make your code easy to understand and reuse.</p>
                 `,
                 isModal: true,
                 floaterPlacement: "center"
@@ -280,7 +280,7 @@ const steps = [
                 customAction: "this.props.onShowCodeHintToggle()"
             },
             {
-                customContent: `Tap the toggle to enable "Code Wizard" feature`,
+                customContent: `Tap the toggle to enable the "Code Wizard" feature`,
                 selectorExpr: `document.querySelector('.code-hint-feature-toggle')`,
                 beaconAlign: "bottom"
             },
@@ -293,7 +293,7 @@ const steps = [
                 selectorExpr: `document.querySelector('.code-hint-feature-toggle')`
             },
             {
-                customContent: `<p>You will create the custom block again. Don't worry it will be quick this time 
+                customContent: `<p>You will create a custom block again. Don't worry it will be quick this time 
                 with the help of <b>Code Wizard</b></p>
                 <p><b>Mouse over</b> the hint icon to view the improvement suggestions. Click Next when you are done.</p>
                 `,
@@ -304,9 +304,9 @@ const steps = [
             },
             {
                 customContent: `
-                <p>There is no magic really! You already know how to do all this!</p>
+                <p>There is no magic really! You already know how to do all of this!</p>
                 <p>The wizard is not that smart though... you should <b>Right click</b> the definition block to change 
-                the names of custom block and its parameter inputs. You know your code the best!</p>
+                the names of custom blocks and their input parameters. You know your code better than anyone!</p>
                 `,
                 selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_`,
                 beaconAlign: "left",
@@ -349,8 +349,8 @@ const steps = [
             },
             {
                 customContent: `
-                You have unlocked <b>Procedure Sharing</b> feature!
-                You can learn more about this feature by following this link to the short video.</p>
+                You have unlocked the <b>Custom Block Sharing</b> feature!
+                You can learn more about this feature by following this link to a short video.</p>
                 `,
                 selectorExpr: `document.querySelector('.procedure-share-feature-toggle')`,
                 beaconAlign: "bottom",
@@ -361,10 +361,10 @@ const steps = [
                 customContent: `<p>
                     We are working on the <b>Code Wizard</b> feature and would like to hear your feedback!
                     <ul>
-                        <li>Do you find Code Wizard's hint useful in helping you see where you can improve your code? (Scale 1 - 5)</li>
-                        <li>Do you find Code Wizard's "Extract a Custom Block" helpful? (Scale 1-5)</li>
-                        <li>Additional Feedback (e.g., What do you like /dislike? 
-                            How <b>Code Wizard</b> feature can be improved ? (optional text input)</li>
+                        <li>How helpful did you find the Code Wizard's hint in helping you see where you can improve your code? (Scale 1 (least helpful) - 5(helpful))</li>
+                        <li>How helpful did you find the Code Wizard's "Extract a Custom Block" helpful? (Scale 1-5)</li>
+                        <li>Any other comments  (e.g., What did you like/dislike? 
+                            How the <b>Code Wizard</b> feature can be improved ? (optional text input)</li>
                     </ul>
                 </p>`,
                 floaterPlacement: "center",

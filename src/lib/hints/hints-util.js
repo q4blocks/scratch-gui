@@ -57,18 +57,18 @@ const buildHintContextMenu = (type) => {
         case DUPLICATE_CODE_SMELL_HINT_TYPE:
             return [
                 {
-                    item_name: 'Help me extract method',
+                    item_name: 'Help me extract the custom block',
                     itemAction: CONTEXT_MENU_REFACTOR
-                },
-                {
-                    item_name: 'Learn more',
-                    itemAction: CONTEXT_MENU_INFO
                 }
+                // {
+                //     item_name: 'Learn more',
+                //     itemAction: CONTEXT_MENU_INFO
+                // }
             ];
         case SHAREABLE_CODE_HINT_TYPE:
             return [
                 {
-                    item_name: 'Share this procedure',
+                    item_name: 'Share this custom block',
                     itemAction: CONTEXT_MENU_CODE_SHARE
                 }
             ]
