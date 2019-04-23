@@ -499,7 +499,7 @@ class Tutorial extends React.Component {
                 <TutorialComponent
                     {...this.props.tutorial}
                     target={target}
-                    isDevMode
+                    tutorialDevMode={this.props.tutorialDevMode}
                     onNextInstruction={this.props.onNextInstruction}
                     onMarkInstructionComplete={this.props.onMarkInstructionComplete}
                     handleSaveProfileData={this.handleSaveProfileData}

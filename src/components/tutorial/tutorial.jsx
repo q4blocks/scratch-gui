@@ -124,7 +124,7 @@ const TutorialFloater = props => {
     );
 }
 
-const GotoStep = ({ isDevMode, steps, onMarkInstructionComplete }) => {
+const GotoStep = ({  steps, onMarkInstructionComplete }) => {
     return (<div className='stepGotos'>{
         steps.map((step, stepKey) => {
             return !step.instructions ? null :
@@ -168,7 +168,7 @@ class Tutorial extends React.Component {
                     ))}
                 </Steps>
 
-                {this.props.isDevMode && <GotoStep steps={steps} onMarkInstructionComplete={this.props.onMarkInstructionComplete} />}
+                {this.props.tutorialDevMode && <GotoStep steps={steps} onMarkInstructionComplete={this.props.onMarkInstructionComplete} />}
 
                 {!instruction.showSurvey && <Popper referenceElement={target ? target : virtualReferenceElement} placement={instruction.beaconAlign}>
                     {({ ref, style, placement, arrowProps }) => (

@@ -182,8 +182,7 @@ const mapDispatchToProps = (dispatch, props) => ({
     hintWithRefactoringSupport: true,
   })),
   onUpdateProjectId: (value) => {
-    console.log('updated', value);
-    window.open('/#' + value, "_self");
+    window.open('/editor/' + value, "_self"); //todo: later detect if has updateProjectId callback otherwise use hash mechanism #
   }
 });
 

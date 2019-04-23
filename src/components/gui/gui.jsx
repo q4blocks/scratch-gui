@@ -135,6 +135,7 @@ const GUIComponent = props => {
         qualityHintToggleVisible,
         showCustomMenuBar,
         showSurveyCallBack,
+        tutorialDevMode,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -177,7 +178,7 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 
-                {showTutorial?<Tutorial showSurveyCallBack={showSurveyCallBack}/>:null}
+                {showTutorial?<Tutorial showSurveyCallBack={showSurveyCallBack} tutorialDevMode={tutorialDevMode}/>:null}
 
                 {customOptions.previewInfoVisible ? (
                     <PreviewModal />
