@@ -17,6 +17,7 @@ import { sendAnalysisReq, getProgramXml } from '../lib/hints/analysis-server-api
 import { applyTransformation } from '../lib/hints/transform-api';
 import { addBlocksToWorkspace, testBlocks, getTestHints } from '../lib/hints/hint-test-workspace-setup';
 
+import analytics from "../lib/custom-analytics";
 
 const isProductionMode = true;
 const isTesting = false;
@@ -140,15 +141,24 @@ class HintOverlay extends React.Component {
             case CONTEXT_MENU_REFACTOR: {
                 applyTransformation(hintId, this.props.vm, this.workspace, this.analysisInfo);
                 this.props.removeHint(hintId); //remove hint when the specified action is taken
+                analytics.event({
+                    category: "Feature",
+                    action: "Extract custom block",
+                    label: JSON.stringify({projectId:this.props.projectId, withinTutorial: this.props.showTutorial})
+                });
                 break;
             }
             case CONTEXT_MENU_CODE_SHARE: {
-                console.log('Post request to save procedure to library');
                 const block = this.workspace.getBlockById(hint.blockId);
                 const entry = getProcedureEntry(block);
                 updateShareSnippetOnLocalStorage(entry);
-                //todo: remove the hint
-                window.open('/playground-authoring');
+
+                analytics.event({
+                    category: "Feature",
+                    action: "Share Custom Block",
+                    label: JSON.stringify({projectId:this.props.projectId, withinTutorial: this.props.showTutorial})
+                });
+                window.open('/authoring');
                 break;
             }
         }
@@ -230,9 +240,15 @@ class HintOverlay extends React.Component {
     onMouseLeave(hintId) {
         const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
         switch (hint.type) {
-            case DUPLICATE_CODE_SMELL_HINT_TYPE:
+            case DUPLICATE_CODE_SMELL_HINT_TYPE:{
                 highlightDuplicateBlocks(hintId, false, this.workspace, this.analysisInfo);
+                analytics.event({
+                    category: "Feature",
+                    action: "View Hints",
+                    label: JSON.stringify({projectId:this.props.projectId, withinTutorial: this.props.showTutorial})
+                });
                 break;
+            }
         }
     }
 
@@ -277,7 +293,8 @@ const mapStateToProps = state => {
     return {
         vm: state.scratchGui.vm,
         hintState: state.scratchGui.hintState,
-        currentTargetId
+        currentTargetId,
+        projectId: state.scratchGui.projectState.projectId
     };
 };
 

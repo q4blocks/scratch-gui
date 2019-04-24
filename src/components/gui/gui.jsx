@@ -235,6 +235,7 @@ const GUIComponent = props => {
                     procedureShareToggleVisible={procedureShareToggleVisible}
                     qualityHintToggleVisible={qualityHintToggleVisible}
                     onUpdateProjectTitle={onUpdateProjectTitle}
+                    showTutorial={showTutorial}
                 />:null):(<MenuBar
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
@@ -351,7 +352,7 @@ const GUIComponent = props => {
                                         <Watermark />
                                     </Box>
                                     <Box className="hint-overlay">
-                                        {hintMode?(<HintOverlay />):null}
+                                        {hintMode?(<HintOverlay showTutorial={showTutorial}/>):null}
                                     </Box>
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>

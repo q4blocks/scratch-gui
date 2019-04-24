@@ -10,7 +10,7 @@ import SB3Downloader from '../../containers/sb3-downloader.jsx';
 import { MenuItem, MenuSection } from '../menu/menu.jsx';
 import MenuBarMenu from '../menu-bar/menu-bar-menu.jsx';
 import ProjectIdInput from './project-id-input.jsx';
-
+import analytics from "../../lib/custom-analytics";
 
 import { setHintOptions } from '../../reducers/hints-state';
 import {
@@ -33,10 +33,10 @@ import {
 import Toggle from 'react-toggled'
 
 
-const FeatureToggle = ({className, featureName, isOn, onToggle }) => (
+const FeatureToggle = ({ className, featureName, isOn, onToggle }) => (
   <Toggle onToggle={onToggle}>
     {({ on = isOn, getTogglerProps }) => (
-      <div className={classNames(className,customStyles.featureItem)}>
+      <div className={classNames(className, customStyles.featureItem)}>
         <div style={{ padding: '2px' }}>
           {featureName}
         </div>
@@ -136,7 +136,7 @@ class CustomizedMenuBar extends React.Component {
         )}
       >
         <div style={{ display: 'flex' }} className='custom-features'>
-          <div className='projectIdInput' style={{ display: 'flex', padding: '4px', marginRight:'50px' }}>
+          <div className='projectIdInput' style={{ display: 'flex', padding: '4px', marginRight: '50px' }}>
             <ProjectIdInput
               className={classNames(styles.titleFieldGrowable)}
               onUpdateProjectId={this.props.onUpdateProjectId}
@@ -146,13 +146,27 @@ class CustomizedMenuBar extends React.Component {
             className='code-hint-feature-toggle'
             featureName='Code Wizard'
             isOn={this.props.isQualityHintEnabled}
-            onToggle={this.props.onToggleQualityHintFeature}
+            onToggle={value => {
+              analytics.event({
+                category: "Feature",
+                action: "Tap Code Hint Toggle",
+                label: JSON.stringify({ enabled: value, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
+              });
+              this.props.onToggleQualityHintFeature(value)
+            }}
           /> : null}
           {this.props.procedureShareToggleVisible ? <FeatureToggle
             className='procedure-share-feature-toggle'
             featureName='Custom Block Sharing'
             isOn={this.props.isProcedureShareEnabled}
-            onToggle={this.props.onToggleProcedureShareFeature}
+            onToggle={value => {
+              analytics.event({
+                category: "Feature",
+                action: "Tap Custom Block Sharing Toggle",
+                label: JSON.stringify({ enabled: value, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
+              });
+              this.props.onToggleProcedureShareFeature(value)
+            }}
           /> : null}
         </div>
       </div>
@@ -167,20 +181,26 @@ const mapStateToProps = (state, props) => {
     procedureShareToggleVisible: props.procedureShareToggleVisible || state.scratchGui.customMenu.procedureShareToggleVisible,
     qualityHintToggleVisible: props.qualityHintToggleVisible || state.scratchGui.customMenu.qualityHintToggleVisible,
     isProcedureShareEnabled: isVisible && showProcedureSharingHint,
-    isQualityHintEnabled: isVisible && showQualityHint
+    isQualityHintEnabled: isVisible && showQualityHint,
+    projectId: state.scratchGui.projectState.projectId,
+    showTutorial: props.showTutorial
   }
 }
 
-const mapDispatchToProps = (dispatch, props) => ({
-  onToggleProcedureShareFeature: (value) => dispatch(setHintOptions({
-    isVisible: true,
-    showProcedureSharingHint: value
-  })),
-  onToggleQualityHintFeature: (value) => dispatch(setHintOptions({
-    isVisible: true,
-    showQualityHint: value,
-    hintWithRefactoringSupport: true,
-  })),
+const mapDispatchToProps = (dispatch, ownProps) => ({
+  onToggleProcedureShareFeature: (value) => {
+    dispatch(setHintOptions({
+      isVisible: true,
+      showProcedureSharingHint: value
+    }))
+  },
+  onToggleQualityHintFeature: (value) => {
+    dispatch(setHintOptions({
+      isVisible: true,
+      showQualityHint: value,
+      hintWithRefactoringSupport: true,
+    }))
+  },
   onUpdateProjectId: (value) => {
     window.open('/editor/' + value, "_self"); //todo: later detect if has updateProjectId callback otherwise use hash mechanism #
   }
