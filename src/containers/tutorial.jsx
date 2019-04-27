@@ -191,18 +191,6 @@ const steps = [
                 floaterPlacement: "bottom",
                 selectorExpr: `document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`,
                 triggerNextTarget: `document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`,
-                // selectorExpr: `
-                // (() => {
-                //     let targetDiv
-                //     let divs = document.querySelectorAll("div[class*='custom-procedures_option-card']");
-                //     [].forEach.call(divs, div => {
-                //         if (div.innerText.includes('number')) {
-                //             targetDiv = div
-                //         }
-                //     });
-                //     return targetDiv;
-                // })()
-                // `
             },
             {
                 customContent: `Give a meaningful name to the input (e.g., <b>"step size"</b>). Then click "OK".`,
@@ -339,8 +327,8 @@ const steps = [
             {
                 customContent: `
                 <p>There is no magic really! You already know how to do all of this!</p>
-                <p>The wizard is not that smart though... you should <b>Right click</b> the definition block to change 
-                the names of custom blocks and their input parameters. You know your code better than anyone!</p>
+                <p>The wizard is not that smart though... you should edit the names of custom blocks 
+                and their input parameters if you use this feature later. You know your code better than anyone!</p>
                 `,
                 selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_`,
                 beaconAlign: "left",

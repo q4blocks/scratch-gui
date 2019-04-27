@@ -7,7 +7,6 @@ const stitchClient = Stitch.hasAppClient(stitchClientId) ? Stitch.getAppClient(s
 const db = stitchClient.getServiceClient(RemoteMongoClient.factory, 'mongodb-atlas').db('user-study');
 
 stitchClient.auth.loginWithCredential(new AnonymousCredential()).then(user => {
-    console.log('user id', user.id);
     initializeAnalytics(user.id);
 });
 

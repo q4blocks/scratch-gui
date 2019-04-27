@@ -8,7 +8,7 @@ import GoogleAnalytics from 'react-ga';
 // });
 
 GoogleAnalytics.initialize('UA-138525408-1', {
-    debug: true
+    // debug: true
 });
 
 export default GoogleAnalytics;
