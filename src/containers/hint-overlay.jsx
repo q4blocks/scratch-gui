@@ -51,6 +51,10 @@ class HintOverlay extends React.Component {
             'onMouseEnter',
             'onMouseLeave'
         ]);
+
+        this.state = {
+            analysisInfo: null
+        }
     }
 
     componentDidMount() {
@@ -75,9 +79,10 @@ class HintOverlay extends React.Component {
 
     onWorkspaceUpdate(data) {
         if (isTesting && !this.alreadySetup) {
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
+            addBlocksToWorkspace(this.workspace, testBlocks.bug);
             this.workspace.cleanUp();
             this.alreadySetup = true;
         }
@@ -139,7 +144,7 @@ class HintOverlay extends React.Component {
 
         switch (itemAction) {
             case CONTEXT_MENU_REFACTOR: {
-                applyTransformation(hintId, this.props.vm, this.workspace, this.analysisInfo);
+                applyTransformation(hintId, this.props.vm, this.workspace, this.state.analysisInfo);
                 this.props.removeHint(hintId); //remove hint when the specified action is taken
                 analytics.event({
                     category: "Feature",
@@ -165,7 +170,8 @@ class HintOverlay extends React.Component {
     }
 
     analyzeAndGenerateHints() {
-        if(!this.props.hintState.hintMode){
+        const {hintMode, options} = this.props.hintState;
+        if(!hintMode||!options.showQualityHint){
             return Promise.resolve();
         }
         const _vm = this.props.vm;
@@ -173,7 +179,7 @@ class HintOverlay extends React.Component {
             .then(() => getProgramXml(_vm))
             .then(xml => sendAnalysisReq('projectId', 'duplicate_code', xml, isProductionMode))
             .then(json => {
-                const analysisInfo = this.analysisInfo = json;
+                const analysisInfo = this.state.analysisInfo = json;
                 return analysisInfo ? analysisInfoToHints(analysisInfo) : [];
             }).then(hints => {
                 this.props.putAllHints(hints);
@@ -235,7 +241,7 @@ class HintOverlay extends React.Component {
         const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
         switch (hint.type) {
             case DUPLICATE_CODE_SMELL_HINT_TYPE:
-                highlightDuplicateBlocks(hintId, true, this.workspace, this.analysisInfo);
+                highlightDuplicateBlocks(hintId, true, this.workspace, this.state.analysisInfo);
                 break;
         }
     }
@@ -244,7 +250,7 @@ class HintOverlay extends React.Component {
         const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
         switch (hint.type) {
             case DUPLICATE_CODE_SMELL_HINT_TYPE:{
-                highlightDuplicateBlocks(hintId, false, this.workspace, this.analysisInfo);
+                highlightDuplicateBlocks(hintId, false, this.workspace, this.state.analysisInfo);
                 analytics.event({
                     category: "Feature",
                     action: "View Hints",

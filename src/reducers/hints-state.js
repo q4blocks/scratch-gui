@@ -44,21 +44,13 @@ const reducer = function (state, action) {
                     }),
                     isUpdating: true
                 });
-        case PUT_ALL_HINTS:
-            let hintMap = hints.reduce((map, h) => {
-                map[h.hintId] = h;
-                return map;
-            }, {});
-            hintMap = action.hints.reduce((map, h) => {
-                map[h.hintId] = h;
-                return map;
-            }, hintMap);
-
+        case PUT_ALL_HINTS:{
             return Object.assign({}, state, {
                 timestamp,
-                hints: Object.values(hintMap).concat(),
+                hints: action.hints.concat(),
                 isUpdating: true
             })
+        }
         case REMOVE_HINT:
             return Object.assign({}, state,{
                 timestamp,

@@ -84,7 +84,7 @@ export default appTarget => {
                 // customGuiState
                 showCustomMenuBar={true}
                 hintMode={true}
-                showTutorial={true}
+                showTutorial={false}
                 showCustomGuiDevPanel={false}
                 procedureShareToggleVisible={true}
                 qualityHintToggleVisible={true}

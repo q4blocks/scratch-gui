@@ -35,11 +35,12 @@ const applyTransformation = function (hintId, vm, workspace, analysisInfo) {
             }
         });
     }
-    actionSeq.then(() => {
-        if (newBlock) {
-            workspace.cleanUp();
-        }
-    });
+    //TODO: better position the introduced procedure
+    // actionSeq.then(() => {
+        // if (newBlock) {
+        //     workspace.cleanUp();
+        // }
+    // });
 }
 
 const switchTarget = function (vm, targetName) {
