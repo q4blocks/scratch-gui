@@ -5,6 +5,7 @@ const REMOVE_HINT = "REMOVE_HINT";
 const SET_UPDATE_STATUS = "SET_UPDATE_STATUS";
 const SWITCH_HINT_MODE = "SWITCH_HINT_MODE";
 const SET_HINT_OPTIONS = "SET_HINT_OPTIONS";
+const CLEAR_ALL_HINTS = "CLEAR_ALL_HINT"
 
 const hintOptions = {
     isVisible: "isVisible",
@@ -64,6 +65,12 @@ const reducer = function (state, action) {
                 hints: hints.filter(h => h.hintId !== action.hintId),
                 isUpdating: true
             });
+        case CLEAR_ALL_HINTS:
+            return Object.assign({},state,{
+                hints: [],
+                isUpdating: true
+            });
+
         case SET_UPDATE_STATUS:
             return Object.assign({}, state, { isUpdating: action.isUpdating })
         case SWITCH_HINT_MODE:
@@ -107,6 +114,12 @@ const removeHint = function (hintId) {
     }
 }
 
+const clearAllHints = function () {
+    return {
+        type: CLEAR_ALL_HINTS
+    }
+}
+
 const setUpdateStatus = function (isUpdating) {
     return {
         type: SET_UPDATE_STATUS,
@@ -135,7 +148,9 @@ export {
     putHint,
     putAllHints,
     removeHint,
+    clearAllHints as clearHint,
     setUpdateStatus,
     setHintOptions,
+    switchHintMode,
     hintOptions
 };

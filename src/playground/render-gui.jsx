@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {compose} from 'redux';
+import { compose } from 'redux';
 
 import AppStateHOC from '../lib/app-state-hoc.jsx';
 import GUI from '../containers/gui.jsx';
@@ -86,10 +86,10 @@ export default appTarget => {
                 hintMode={true}
                 showTutorial={true}
                 showCustomGuiDevPanel={false}
-                procedureShareToggleVisible={false}
-                qualityHintToggleVisible={false}
+                procedureShareToggleVisible={true}
+                qualityHintToggleVisible={true}
                 tutorialDevMode={true}
-                showSurveyCallBack={(origin)=>{console.log(`open the modal survey! origin: ${origin}`)}}
+                showSurveyCallBack={(origin) => { console.log(`open the modal survey! origin: ${origin}`) }}
             />,
         appTarget);
 };

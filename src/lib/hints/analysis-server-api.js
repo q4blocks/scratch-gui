@@ -3,14 +3,15 @@ const remoteService = 'https://quality-tutor-engine.appspot.com/analyze';
 
 var localServerAvailable;
 if (localServerAvailable === undefined) {
-    fetch("http://localhost:8080").then(res => {
-        if (res.status === 200) {
-            localServerAvailable = true
-        }
-    }, (err) => {
+    // should pass remote endpoint from the parent component
+    // fetch("http://localhost:8080").then(res => {
+    //     if (res.status === 200) {
+    //         localServerAvailable = true
+    //     }
+    // }, (err) => {
         localServerAvailable = false;
-        console.warn("local analysis server not available...switch to remote analysis server one");
-    });
+        // console.warn("local analysis server not available...switch to remote analysis server one");
+    // });
 }
 
 /**

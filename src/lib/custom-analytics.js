@@ -47,7 +47,6 @@ const sendFeedbackData = data => {
 
 
 const saveProfileData = (key, value) => {
-    console.log('saving data');
     const entry = {};
     entry[key] = value;
 

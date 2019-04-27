@@ -5,7 +5,7 @@ import bindAll from "lodash.bindall";
 import { loadNewTutorial, nextInstruction, setFocusTarget, markInstructionComplete } from "../reducers/tutorial";
 import ScratchBlocks from "scratch-blocks";
 import analytics, { stitchClient, sendFeedbackData, saveProfileData } from "../lib/custom-analytics";
-
+import { clearAllHints, switchHintMode, hintOptions } from '../reducers/hints-state';
 import { addBlocksToWorkspace, testBlocks, workspaceFromXml } from "../lib/hints/hint-test-workspace-setup";
 
 import { setProjectId } from '../reducers/project-state';
@@ -38,7 +38,8 @@ const steps = [
                     // "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></statement></block></next></block></next></block></next></block></xml>",
                     "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
                 projectId: '303529631',
-                customizedNextButtonText: "Begin the tutorial"
+                customizedNextButtonText: "Begin the tutorial",
+                customAction: "this.props.switchHintMode(false);"
             },
             {
                 customContent: `
@@ -69,7 +70,7 @@ const steps = [
                 customContent: `
                 <p>
                 Let's create a custom block that only performs a <em>small</em> circle-around movement first.
-                Don't worry! We will later make our custom block to also perform a<em>big</em> circle-around movement.
+                Don't worry! We will later make our custom block to also perform a <em>big</em> circle-around movement.
                 </p>
                `,
                 selectorExpr: `this.workspace.getBlockById('__small-rotation__').svgGroup_.firstElementChild`,
@@ -89,7 +90,7 @@ const steps = [
                 beaconAlign: "right"
             },
             {
-                customContent: `<p>Give your custom block a meaningful name (e.g., "Circle Around"). When you are done, click <b>"OK"</b><p>`,
+                customContent: `<p>Give your custom block a meaningful name (e.g., <b>"Circle Around"</b>). When you are done, click <b>"OK"</b><p>`,
                 selectorExpr: `document.querySelector("div.ReactModalPortal").querySelector("g.blocklyBlockCanvas")`,
                 triggerNextTarget: `document.querySelector('div.ReactModalPortal').querySelectorAll('button')[1]`,
                 beaconAlign: "right"
@@ -97,7 +98,9 @@ const steps = [
             {
                 customContent: `
                 <p>This is a <b>definition</b> block. It describes what your Custom Block does!</p>
-                <p>Copy the code that performs the small circle-around movement highlighted in red and snap it to this definition block</p>`,
+                <p><b>Duplicate</b> the code that performs the <em>small</em> circle-around movement highlighted in red and snap it to this definition block</p>
+                <p>After you are done, click "Next".</p>
+                `,
                 selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
                 beaconAlign: "right",
                 floaterPlacement: "right",
@@ -108,7 +111,9 @@ const steps = [
                 customContent: `<p><b>Great Job!</b> Scratch places all your custom blocks in the <b>"My Blocks"</b> category.</p>
                     <p>These custom blocks can be used to call your definition blocks from anywhere in the workspace. </p>
                     <p>Let's use the custom block you have just created!</p>
-                    <p>Let's replace the blocks in the workspace that perform the small circle-around movement with our custom block</p>`,
+                    <p>Let's <b>replace</b> the blocks in the workspace that perform the <em>small</em> circle-around movement with our custom block</p>
+                    <p>When you are done, click "Next"</p>
+                    `,
                 selectorExpr: `this.flyout.getAllBlocks().find(b=>b.type==='procedures_call').svgGroup_`,
                 focusBlocks: [{ id1: '__small-rotation__', color: HIGHLIGHT_COLOR.RED }],
                 beaconAlign: "bottom",
@@ -117,11 +122,11 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Before moving on, click <b>Green Flag</b> to check if your code still works the same way. It should!</p>`,
+                <p>Before moving on, click <b>Green Flag</b> to check if your code still works the same way. <b>It should!</b></p>`,
                 selectorExpr: `document.querySelector('.greenFlag')`,
                 beaconAlign: "left",
                 floaterPlacement: "left",
-                delayNextInstruction: 2000
+                delayNextInstruction: 4000
             },
             {
                 customContent: `
@@ -134,11 +139,12 @@ const steps = [
                 selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_`,
                 beaconAlign: "right",
                 floaterPlacement: "right",
-                checkUserCode: true
+                checkUserCode: true,
+                customAction: "this.props.vm.stopAll()"
             },
             {
                 customContent: `
-                <p>Taking a closer look, the small circle-around movement moves 8 steps while the big circle-around movement moves 16 steps.</p> 
+                <p>Taking a closer look, the <em>small</em> circle-around movement moves <em>8 steps</em> while the <em>big</em> circle-around movement moves <em>16 steps</em>.</p> 
                 <p>We need a way to pass different inputs when calling our custom block.</p>
                 <p>We can do that by adjusting our custom block to take these inputs via custom block's <b>parameters</b></p>
                 `,
@@ -158,35 +164,48 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Let's adjust our <b>definition</b> block to take <b>steps</b> as an input parameter<p>
-                <p>Right click on the definition block and select "Edit"</p>
+                <p>Let's adjust our <b>definition</b> block to take <b>"step size"</b> as an input parameter<p>
+                <p>Right click on the definition block and select <b>"Edit"</b></p>
                 `,
                 selectorExpr: `this.workspace.getAllBlocks().find(b=>b.type==='procedures_prototype').svgGroup_`,
                 triggerNextTarget: `document.querySelectorAll('.goog-menuitem-content')[2]`,
                 triggerTargetEvent: 'contextmenu',
                 beaconAlign: "right",
                 floaterPlacement: "right",
-                delayNextInstruction: 100
+                delayNextInstruction: 50
             },
             {
-                customContent: `
-                <p>Click Edit</p>`,
-                beaconAlign: "right",
-                floaterPlacement: "right",
-                selectorExpr: `document.querySelectorAll('.goog-menuitem')[2]`,
-                triggerTargetEvent: 'mouseup',
-                delayNextInstruction: 200,
-                isIntermediateInstruction: true
-            },
-            {
-                customContent: `
-                <p>Click <b>Add an input</b> then click <b>OK</b></p>`,
+                customContent: `<span>Select "Edit"</span>`,
                 beaconAlign: "bottom",
                 floaterPlacement: "bottom",
-                selectorExpr: `document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`
+                selectorExpr: `document.querySelector('.blocklyContextMenu')`,
+                triggerNextTarget: `document.querySelectorAll('.goog-menuitem')[2]`,
+                triggerTargetEvent: 'mouseup',
+                delayNextInstruction: 100,
+                // isIntermediateInstruction: true
             },
             {
-                customContent: `Give a meaningful name to the input (e.g., steps). Then click OK.`,
+                customContent: `
+                <p>Click <b>"Add an input"</b></p>`,
+                beaconAlign: "bottom",
+                floaterPlacement: "bottom",
+                selectorExpr: `document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`,
+                triggerNextTarget: `document.querySelectorAll("div[class*='custom-procedures_option-card']")[0]`,
+                // selectorExpr: `
+                // (() => {
+                //     let targetDiv
+                //     let divs = document.querySelectorAll("div[class*='custom-procedures_option-card']");
+                //     [].forEach.call(divs, div => {
+                //         if (div.innerText.includes('number')) {
+                //             targetDiv = div
+                //         }
+                //     });
+                //     return targetDiv;
+                // })()
+                // `
+            },
+            {
+                customContent: `Give a meaningful name to the input (e.g., <b>"step size"</b>). Then click "OK".`,
                 beaconAlign: "right",
                 floaterPlacement: "right",
                 selectorExpr: `Blockly.getMainWorkspace().getAllBlocks()[0].svgGroup_`,
@@ -194,7 +213,7 @@ const steps = [
             },
             {
                 customContent: `
-                <p>Let's call our custom block with the input value of 8 for the small circle-around movement.</p>
+                <p>Let's call our custom block with the input value of <em>8</em> for the <em>small</em> circle-around movement.</p>
                 <p>Type in 8 as the input to our custom block</p>`,
                 beaconAlign: "right",
                 floaterPlacement: "right",
@@ -203,10 +222,10 @@ const steps = [
             },
             {
                 customContent: `
-                <p>This <b>steps</b> parameter block will hold the input value</p>
-                <p>We can use this <b>steps</b> parameter anywhere in our custom block's definition.</p>
-                <p>To use, drag the <b>steps</b> parameter block and drop it into the move block's input (highlighted).
-                Click "Next" when you are done.</p>
+                <p>This <b>step size</b> parameter block will hold the input value</p>
+                <p>We can use this <b>step size</b> parameter anywhere in our custom block's definition.</p>
+                <p>To use, drag the <b>step size</b> parameter block and drop it into the move block's input (currently has the value 8 in it).</p>
+                <p>Click "Next" when you are done.</p>
                 `,
                 beaconAlign: "top",
                 floaterPlacement: "top",
@@ -223,21 +242,24 @@ const steps = [
                 delayNextInstruction: 2000
             },
             {
-                customContent: `<p>Working great! With a parameter <b>steps</b>, our custom block is more useful.</p>
-                <p>We can finally use it to perform the big circle-around movement!<p>
+                customContent: `<p>Working great! With a parameter <b>step size</b>, our custom block is more useful.</p>
+                <p>We can finally use it to perform the <em>big</em> circle-around movement!<p>
                 `,
                 isModal: true,
-                floaterPlacement: "center"
+                floaterPlacement: "center",
             },
             {
                 customContent: `
-                <p>Let's replace the code that performs the big circle-around movement with our <b>Circle Around</b> custom block 
-                and give it the input value of 16. Click "Next" when you are done.</p>`,
+                <p>Let's replace the code that performs the <em>big</em> circle-around movement with our <b>Circle Around</b> custom block 
+                and give it the input value of <em>16</em>.</p>
+                <p>Click "Next" when you are done.</p>`,
                 beaconAlign: "left",
                 floaterPlacement: "left",
                 selectorExpr: `this.workspace.getBlockById('__large-rotation__').svgGroup_.firstElementChild`,
                 checkUserCode: true,
-                focusBlocks: [{ id1: '__large-rotation__', color: HIGHLIGHT_COLOR.BLUE }]
+                focusBlocks: [{ id1: '__large-rotation__', color: HIGHLIGHT_COLOR.BLUE }],
+                customAction: "this.props.vm.stopAll()"
+
             },
             {
                 customContent: `
@@ -265,37 +287,49 @@ const steps = [
                 test: true,
                 customContent: ``,
                 checkUserCode: true,
-                workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
+                workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='procedures_definition' id='?[^2U*dVqjyP1/^;s03C' x='0' y='0'><statement name='custom_block'><shadow type='procedures_prototype' id='I/+O)jN.Mmt~DFf82iEu'><mutation proccode='Circle Around %s' argumentids='[&quot;}KLV%PEU6v=S7k2G*~XQ&quot;]' argumentnames='[&quot;step size&quot;]' argumentdefaults='[&quot;&quot;]' warp='false'></mutation><value name='}KLV%PEU6v=S7k2G*~XQ'><shadow type='argument_reporter_string_number' id='P4j`/tj=QKJHW)~Cbtb4'><field name='VALUE'>step size</field></shadow></value></shadow></statement><next><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow><block type='argument_reporter_string_number' id='vK/v@6@saD}9xbhy_mro'><field name='VALUE'>step size</field></block></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block><block type='event_whenflagclicked' id='__greenflag__' x='0' y='296'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='procedures_call' id='~MpfTa3a5[b/eN3}PIqK'><mutation proccode='Circle Around %s' argumentids='[&quot;}KLV%PEU6v=S7k2G*~XQ&quot;]' warp='false'></mutation><value name='}KLV%PEU6v=S7k2G*~XQ'><shadow type='text' id='-mTH0AnD!vo{5Jc^%?{6'><field name='TEXT'>8</field></shadow></value><next><block type='procedures_call' id='aQ^Xn+jr?YExWv!y5u_0'><mutation proccode='Circle Around %s' argumentids='[&quot;}KLV%PEU6v=S7k2G*~XQ&quot;]' warp='false'></mutation><value name='}KLV%PEU6v=S7k2G*~XQ'><shadow type='text' id='cOB0wqZG[?s%7thMJ7FH'><field name='TEXT'>16</field></shadow></value></block></next></block></statement></block></next></block></next></block></next></block></xml>",
                 delayNextInstruction: 2000,
                 isIntermediateInstruction: true,
-                autoNext: true
+                autoNext: true,
+                customAction: "this.props.vm.stopAll(); this.props.switchHintMode(true);",
             },
             {
+                test: true,
                 isModal: true,
                 floaterPlacement: "center",
                 customContent: `<h3>Bonus Feature: Code Wizard Unlocked!</h3>
                 <p><b>Code Wizard</b> feature provides you with suggestions and helps to create <b>Custom Blocks</b> in your project.</p>
                 `,
                 customizedNextButtonText: "Try it out",
-                customAction: "this.props.onShowCodeHintToggle()"
+                customAction: "this.props.onShowCodeHintToggle();"
             },
             {
-                customContent: `Tap the toggle to enable the "Code Wizard" feature`,
-                selectorExpr: `document.querySelector('.code-hint-feature-toggle')`,
-                beaconAlign: "bottom"
+                customContent: ``,
+                checkUserCode: true,
+                delayNextInstruction: 2000,
+                isIntermediateInstruction: true,
+                autoNext: true,
+                workspaceSetupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='__greenflag__' x='94' y='356'><next><block type='motion_pointindirection' id='5D8/lOi*ez?L?]g:Jf16'><value name='DIRECTION'><shadow type='math_angle' id='fdEf3Z{0RgCW|VA`:sWM'><field name='NUM'>90</field></shadow></value><next><block type='motion_gotoxy' id='qkU;n/VdHe*=6#O$BI*w'><value name='X'><shadow type='math_number' id=')|vDEhyVpv^37|86U_p:'><field name='NUM'>0</field></shadow></value><value name='Y'><shadow type='math_number' id=',N.d]yQ5GaEjyW(eqV!5'><field name='NUM'>0</field></shadow></value><next><block type='control_forever' id='[-9M@[PxGGZJ1-qt/frn'><statement name='SUBSTACK'><block type='control_repeat' id='__small-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='41Q24urK5FdwuxP/%R_1'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='@g`*zKNybwlqc|VR]eZ1'><value name='STEPS'><shadow type='math_number' id='?L2h~z?Rt}l^pF[%3Bz;'><field name='NUM'>8</field></shadow></value><next><block type='motion_turnright' id='Pv;`~cP%q/2RJl~$dF`r'><value name='DEGREES'><shadow type='math_number' id=':d=7D*9HnQBpVJ:ulBui'><field name='NUM'>10</field></shadow></value></block></next></block></statement><next><block type='control_repeat' id='__large-rotation__'><value name='TIMES'><shadow type='math_whole_number' id='Bh4DS?}@e,(y4u@FcmRG'><field name='NUM'>36</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='z=Q`YbRL`Uc)rxL7}WTV'><value name='STEPS'><shadow type='math_number' id='}X;Ch0|QdXHW`of%*O)u'><field name='NUM'>16</field></shadow></value><next><block type='motion_turnright' id='M8}K:4UF8|z:)i=RQjv2'><value name='DEGREES'><shadow type='math_number' id='Q[LO_[Ba5VN:lHCT@uX['><field name='NUM'>10</field></shadow></value></block></next></block></statement></block></next></block></statement></block></next></block></next></block></next></block></xml>",
             },
             {
                 customContent: `
                 <p>Let's see how it works with the original example.</p>
-                <p><b>Code Wizard</b> is available to help when you see the light bulb hint icons.</p>
                 `,
                 isModal: true,
-                selectorExpr: `document.querySelector('.code-hint-feature-toggle')`
+                beaconAlign: "top",
+                floaterPlacement: "top",
+                selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_.firstElementChild`
+            },
+            {
+                customContent: `Tap the toggle to enable the "Code Wizard" feature`,
+                selectorExpr: `document.querySelector('.code-hint-feature-toggle')`,
+                beaconAlign: "bottom",
             },
             {
                 customContent: `<p>You will create a custom block again. Don't worry it will be quick this time 
                 with the help of <b>Code Wizard</b></p>
-                <p><b>Mouse over</b> the hint icon to view the improvement suggestions. Click Next when you are done.</p>
+                <p><b>Code Wizard</b> is available to help when you see the light bulb hint icons.</p>
+                <p><b>Mouse over</b> the <em>hint icon</em> to view the improvement suggestions. Click Next when you are done.</p>
                 `,
                 selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_`,
                 checkUserCode: true,
@@ -342,7 +376,7 @@ const steps = [
                 isModal: true,
                 floaterPlacement: "center",
                 customContent: `<p>
-                Well done! You have just learned the basics of creating and calling custom blocks!
+                <b>Well done!</b> You have just learned the basics of creating and calling custom blocks!
                 </p>`,
                 customAction: "this.props.onShowProcedureShareToggle()",
                 customizedNextButtonText: "Continue",
@@ -352,7 +386,7 @@ const steps = [
                 test: true,
                 customContent: `
                 You have unlocked the <b>Custom Block Sharing</b> feature!
-                You can learn more about this feature by following this link to a short guide.</p>
+                You can learn more about this feature later by visiting the <b>How To</b> page from the homepage.</p>
                 `,
                 selectorExpr: `document.querySelector('.procedure-share-feature-toggle')`,
                 beaconAlign: "bottom",
@@ -396,7 +430,7 @@ class Tutorial extends React.Component {
                 }`
         });
 
-        if(!this.props.tutorial.isComplete){
+        if (!this.props.tutorial.isComplete) {
             setTimeout(() => {
                 this.props.onNextInstruction();
             }, delay);
@@ -440,17 +474,17 @@ class Tutorial extends React.Component {
         this.workspace.drawHighlightBox(id1, id2, color ? { color: color } : null);
     }
 
-    setTutorialCompleted(){
-        this.setState({completed: true});
+    setTutorialCompleted() {
+        this.setState({ completed: true });
     }
 
-    
+
 
     componentDidMount() {
         this.props.vm.addListener("workspaceUpdate", this.onWorkspaceUpdate);
         //testing:
         // this.props.onMarkInstructionComplete(1, 9); //complete tutorial
-        this.props.onMarkInstructionComplete(2,2); //survey
+        // this.props.onMarkInstructionComplete(2,2); //survey
     }
 
     componentDidUpdate() {
@@ -468,7 +502,7 @@ class Tutorial extends React.Component {
 
     render() {
         const { steps, currentStep, currentInstruction, isComplete } = this.props.tutorial;
-        if (isComplete&&steps.length>0) {
+        if (isComplete && steps.length > 0) {
             return (<div></div>);
         }
         if (steps.length > 0 && currentStep < steps.length && currentInstruction < steps[currentStep].instructions.length) {
@@ -528,6 +562,7 @@ const mapDispatchToProps = dispatch => ({
     },
     onShowProcedureShareToggle: () => dispatch(setCustomFeatureToggleVisible(featureNames.PROCEDURE_SHARE, true)),
     onShowCodeHintToggle: () => dispatch(setCustomFeatureToggleVisible(featureNames.QUALITY_HINT, true)),
+    switchHintMode: (on) => dispatch(switchHintMode(on))
 
 });
 
