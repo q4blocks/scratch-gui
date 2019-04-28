@@ -222,8 +222,8 @@ const steps = [
                 <p>Let's pass the <em>step size</em> value to the move block. Drag the <b>step size</b> parameter block and drop it into the move block's input (currently has the value 8 in it).</p>
                 <p>Click "Next" when you are done.</p>
                 `,
-                beaconAlign: "top",
-                floaterPlacement: "top",
+                beaconAlign: "right",
+                floaterPlacement: "right",
                 // selectorExpr: `Blockly.getMainWorkspace().getAllBlocks().find(b=>b.type==='procedures_definition').svgGroup_.firstElementChild`,
                 selectorExpr: `Blockly.getMainWorkspace().getAllBlocks().find(b=>b.type==='argument_reporter_string_number').svgGroup_`,
                 checkUserCode: true
@@ -354,7 +354,7 @@ const steps = [
         ]
     },
     {
-        title: "Sharing the Custom Block",
+        title: "Unlocking Custom Block Sharing",
         description: `Sharing your custom block with others`,
         instructions: [
             {
