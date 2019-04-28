@@ -57,7 +57,7 @@ const buildHintContextMenu = (type) => {
         case DUPLICATE_CODE_SMELL_HINT_TYPE:
             return [
                 {
-                    item_name: 'Help me extract the custom block',
+                    item_name: 'Help me create the custom block',
                     itemAction: CONTEXT_MENU_REFACTOR
                 }
                 // {

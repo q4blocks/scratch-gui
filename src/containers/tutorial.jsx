@@ -334,8 +334,8 @@ const steps = [
             {
                 customContent: `
                 <p>There is no magic really! You already know how to do all of this!</p>
-                <p>The wizard is not that smart though... you should edit the names of custom blocks 
-                and their input parameters if you use this feature later. You know your code better than anyone!</p>
+                <p>The wizard is not that smart though... When you use this feature, you should edit the names of custom blocks 
+                and their input parameters. You know your code better than anyone!</p>
                 `,
                 selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_`,
                 beaconAlign: "left",

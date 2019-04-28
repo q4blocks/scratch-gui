@@ -35,12 +35,7 @@ const applyTransformation = function (hintId, vm, workspace, analysisInfo) {
             }
         });
     }
-    //TODO: better position the introduced procedure
-    // actionSeq.then(() => {
-        // if (newBlock) {
-        //     workspace.cleanUp();
-        // }
-    // });
+    return actionSeq;
 }
 
 const switchTarget = function (vm, targetName) {

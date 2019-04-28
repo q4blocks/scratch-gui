@@ -9,7 +9,7 @@ import ScratchBlocks from 'scratch-blocks';
 import { updateHint, putAllHints, removeHint, setHintManager } from '../reducers/hints-state';
 import HintOverlayComponent from '../components/hint-overlay/hint-overlay.jsx';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
-import {  getProcedureEntry, highlightDuplicateBlocks } from '../lib/hints/hints-util';
+import { getProcedureEntry, highlightDuplicateBlocks } from '../lib/hints/hints-util';
 
 import HintManager from '../lib/hint-manager';
 import analytics from "../lib/custom-analytics";
@@ -55,12 +55,14 @@ class HintOverlay extends React.Component {
     onHandleHintMenuItemClick(hint, itemAction) {
         switch (itemAction) {
             case CONTEXT_MENU_REFACTOR: {
-                this.props.hintManager.applyTransformation(hint.hintId);
+                const res = this.props.hintManager.applyTransformation(hint.hintId);
                 analytics.event({
                     category: "Feature",
                     action: "Extract custom block",
                     label: JSON.stringify({ projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
                 });
+
+
                 break;
             }
             case CONTEXT_MENU_CODE_SHARE: {
@@ -82,11 +84,16 @@ class HintOverlay extends React.Component {
     componentDidMount() {
         this.workspace = ScratchBlocks.getMainWorkspace();
         this.props.setHintManager(new HintManager(
-            this.props.vm, this.workspace, this.props.dispatch, {projectId:this.props.projectId}));
+            this.props.vm, this.workspace, this.props.dispatch,
+            {
+                projectId: this.props.projectId
+            }));
+        //quick fix for tutorial mode
     }
 
     componentDidUpdate() {
-        this.props.hintManager.updateHintState(this.props.hintState)
+        this.props.hintManager.updateHintState(this.props.hintState);
+        this.props.hintManager.updateOptions({isTutorialMode: this.props.showTutorial});
     }
 
     render() {

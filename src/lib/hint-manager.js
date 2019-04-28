@@ -28,7 +28,8 @@ class HintManager {
         this.vm = vm;
         this.workspace = workspace;
         this.dispatch = dispatch;
-        this.projectId = options?options.projectId:'0';
+        this.options = options;
+        this.projectId = options ? options.projectId : '0';
 
         bindAll(this, [
             'blockListener',
@@ -59,7 +60,11 @@ class HintManager {
         this.hintState = hintState;
     }
 
-    getAnalysisInfo(){
+    updateOptions(options) {
+        this.options = Object.assign({}, this.options, options);
+    }
+
+    getAnalysisInfo() {
         return this.analysisInfo;
     }
 
@@ -87,9 +92,16 @@ class HintManager {
             });
     }
 
-    applyTransformation(hintId){
+    applyTransformation(hintId) {
         this.workspace.removeChangeListener(this.blockListener);
-        applyTransformation(hintId, this.vm, this.workspace, this.analysisInfo);
+        const actionSeq = applyTransformation(hintId, this.vm, this.workspace, this.analysisInfo);
+        //TODO: better position the introduced procedure
+        //quick fix for tutorial mode:
+        if (this.options.isTutorialMode) {
+            actionSeq.then(() => {
+                this.workspace.cleanUp();
+            });
+        }
         this.workspace.addChangeListener(
             this.blockListener);
     }
@@ -108,7 +120,7 @@ class HintManager {
 
     updateHintTracking() {
         //when no need to reanalyze (but only update its location tracking)
-        const {hints, blocksSharableHints} = this.hintState;
+        const { hints, blocksSharableHints } = this.hintState;
         this.dispatch(putHintMap(
             {
                 hints: this.calculateHintTracking(hints),
