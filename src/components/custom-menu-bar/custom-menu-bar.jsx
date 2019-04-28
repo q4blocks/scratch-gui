@@ -11,7 +11,7 @@ import { MenuItem, MenuSection } from '../menu/menu.jsx';
 import MenuBarMenu from '../menu-bar/menu-bar-menu.jsx';
 import ProjectIdInput from './project-id-input.jsx';
 import analytics from "../../lib/custom-analytics";
-
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../../lib/hints/constants';
 import { setHintOptions } from '../../reducers/hints-state';
 import {
   openAccountMenu,
@@ -30,76 +30,26 @@ import {
   closeLoginMenu,
   loginMenuOpen
 } from '../../reducers/menus';
-import Toggle from 'react-toggled'
+import Toggle from 'react-toggled';
+import Toggle2 from 'react-toggle';
+import '!style-loader!css-loader!react-toggle/style.css';
 
 
-const FeatureToggle = ({ className, featureName, isOn, onToggle }) => (
-  <Toggle onToggle={onToggle}>
-    {({ on = isOn, getTogglerProps }) => (
-      <div className={classNames(className, customStyles.featureItem)}>
-        <div style={{ padding: '2px' }}>
-          {featureName}
-        </div>
 
-        <span
-          className="container"
-          style={{
-            position: "relative",
-            display: "inline-block",
-            width: "40px",
-            height: "20px"
-          }}
-        >
-          <input
-            type="checkbox"
-            style={{
-              width: "100%",
-              height: "100%",
-              margin: 0
-            }}
-            {...getTogglerProps()}
-          />
-          <span
-            className="switch"
-            style={{
-              position: "absolute",
-              top: 0,
-              left: 0,
-              display: "flex",
-              alignItems: "center",
-              width: "100%",
-              height: "100%",
-              pointerEvents: "none"
-            }}
-          >
-            <span
-              className="track"
-              style={{
-                flex: 1,
-                height: "100%",
-                borderRadius: "10px",
-                background: on ? "#83b8fa" : "#0f58bd"
-              }}
-            />
-            <span
-              className="slider"
-              style={{
-                position: "absolute",
-                width: "16px",
-                height: "16px",
-                borderRadius: "50%",
-                background: "#fff1d7",
-                transition: "transform 0.3s",
-                transform: on ? "translateX(22px)" : "translateX(2px)"
-              }}
-            />
-          </span>
-        </span>
+const FeatureToggle = props => {
+  const { featureName, checked, handleOnChange } = props;
+  return (
+    <div className={classNames(props.className, customStyles.featureItemWrapper)}>
+      <div>{featureName}</div>
+      <Toggle2
+        checked={checked}
+        name='burritoIsReady'
+        value='yes'
+        onChange={handleOnChange} />
+    </div>
+  )
+};
 
-      </div>
-    )}
-  </Toggle>
-)
 
 const LoadFromFile = props => {
   return (
@@ -145,27 +95,41 @@ class CustomizedMenuBar extends React.Component {
           {this.props.qualityHintToggleVisible ? <FeatureToggle
             className='code-hint-feature-toggle'
             featureName='Code Wizard'
-            isOn={this.props.isQualityHintEnabled}
-            onToggle={value => {
+            checked={this.props.showQualityHint}
+            handleOnChange={() => {
+              const isEnabled = !this.props.showQualityHint;
+              this.props.onToggleQualityHintFeature(isEnabled)
+              if(isEnabled){
+                this.props.hintManager.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
+              }else{
+                this.props.hintManager.clearAll(DUPLICATE_CODE_SMELL_HINT_TYPE);
+              }
+              
               analytics.event({
                 category: "Feature",
                 action: "Tap Code Hint Toggle",
-                label: JSON.stringify({ enabled: value, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
+                label: JSON.stringify({ enabled: !this.props.showQualityHint, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
               });
-              this.props.onToggleQualityHintFeature(value)
             }}
           /> : null}
+
           {this.props.procedureShareToggleVisible ? <FeatureToggle
-            className='procedure-share-feature-toggle'
-            featureName='Custom Block Sharing'
-            isOn={this.props.isProcedureShareEnabled}
-            onToggle={value => {
+             className='procedure-share-feature-toggle'
+             featureName='Custom Block Sharing'
+            checked={this.props.showProcedureSharingHint}
+            handleOnChange={() => {
+              const isEnabled = !this.props.showProcedureSharingHint;
+              this.props.onToggleProcedureShareFeature(isEnabled);
+              if(isEnabled){
+                this.props.hintManager.generateHints(SHAREABLE_CODE_HINT_TYPE);
+              }else{
+                this.props.hintManager.clearAll(SHAREABLE_CODE_HINT_TYPE);
+              }
               analytics.event({
                 category: "Feature",
                 action: "Tap Custom Block Sharing Toggle",
-                label: JSON.stringify({ enabled: value, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
+                label: JSON.stringify({ enabled: isEnabled, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
               });
-              this.props.onToggleProcedureShareFeature(value)
             }}
           /> : null}
         </div>
@@ -175,30 +139,28 @@ class CustomizedMenuBar extends React.Component {
 }
 
 const mapStateToProps = (state, props) => {
-  const { isVisible, showProcedureSharingHint, showQualityHint } = state.scratchGui.hintState.options;
+  const { showProcedureSharingHint, showQualityHint } = state.scratchGui.hintState.options;
   return {
     fileMenuOpen: fileMenuOpen(state),
     procedureShareToggleVisible: props.procedureShareToggleVisible || state.scratchGui.customMenu.procedureShareToggleVisible,
     qualityHintToggleVisible: props.qualityHintToggleVisible || state.scratchGui.customMenu.qualityHintToggleVisible,
-    isProcedureShareEnabled: isVisible && showProcedureSharingHint,
-    isQualityHintEnabled: isVisible && showQualityHint,
+    showProcedureSharingHint: showProcedureSharingHint,
+    showQualityHint: showQualityHint,
     projectId: state.scratchGui.projectState.projectId,
-    showTutorial: props.showTutorial
+    showTutorial: props.showTutorial,
+    hintManager: state.scratchGui.hintState.hintManager
   }
 }
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  onToggleProcedureShareFeature: (value) => {
+  onToggleProcedureShareFeature: (isOn) => {
     dispatch(setHintOptions({
-      isVisible: true,
-      showProcedureSharingHint: value
+      showProcedureSharingHint: isOn
     }))
   },
-  onToggleQualityHintFeature: (value) => {
+  onToggleQualityHintFeature: (isOn) => {
     dispatch(setHintOptions({
-      isVisible: true,
-      showQualityHint: value,
-      hintWithRefactoringSupport: true,
+      showQualityHint: isOn
     }))
   },
   onUpdateProjectId: (value) => {

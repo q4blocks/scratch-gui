@@ -103,7 +103,6 @@ test("hint options", () => {
     let state = {
         hints: [],
         options: {
-            isVisible: true,
             showQualityHint: false,
             showProcedureSharingHint: true
         }
@@ -111,7 +110,6 @@ test("hint options", () => {
 
     const newState1 = hintStateReducer(state, setHintOptions({}));
     expect(newState1.options).toEqual({
-        isVisible: true,
         showQualityHint: false,
         showProcedureSharingHint: true
     });
@@ -122,7 +120,6 @@ test("hint options", () => {
     }));
 
     expect(newState2.options).toEqual({
-        isVisible: true,
         showQualityHint: true,
         showProcedureSharingHint: false
     });

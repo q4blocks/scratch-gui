@@ -6,9 +6,11 @@ const SET_UPDATE_STATUS = "SET_UPDATE_STATUS";
 const SWITCH_HINT_MODE = "SWITCH_HINT_MODE";
 const SET_HINT_OPTIONS = "SET_HINT_OPTIONS";
 const CLEAR_ALL_HINTS = "CLEAR_ALL_HINT"
+const SET_HINT_MANAGER = "SET_HINT_MANAGER";
+const PUT_HINT_MAP = "PUT_HINT_MAP";
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
 
 const hintOptions = {
-    isVisible: "isVisible",
     hintWithRefactoringSupport: "hintWithRefactoringSupport",
     showProcedureSharingHint: "showProcedureSharingHint"
 }
@@ -17,9 +19,10 @@ const initialState = {
     hintMode: true,
     timestamp: null,
     hints: [],
+    blocksSharableHints: [],
     isUpdating: false,
+    hintManager: null,
     options: {
-        isVisible: false,
         showQualityHint: false,
         hintWithRefactoringSupport: true,
         showProcedureSharingHint: false
@@ -30,6 +33,8 @@ const reducer = function (state, action) {
     if (typeof state === 'undefined') state = initialState;
     const { timestamp, hints, isUpdating } = state;
     switch (action.type) {
+        case SET_HINT_MANAGER:
+            return Object.assign({}, state, {hintManager: action.hintManager})
         case UPDATE_HINT:
             const { hintId, changes } = action;
             return Object.assign({}, state,
@@ -45,12 +50,23 @@ const reducer = function (state, action) {
                     isUpdating: true
                 });
         case PUT_ALL_HINTS:{
+            if(action.hintType===DUPLICATE_CODE_SMELL_HINT_TYPE){
+                return Object.assign({}, state, {
+                    hints: action.hints.concat(),
+                })
+            }else if(action.hintType===SHAREABLE_CODE_HINT_TYPE){
+                return Object.assign({}, state, {
+                    blocksSharableHints: action.hints.concat(),
+                })
+            }
+        }
+        case PUT_HINT_MAP: {
             return Object.assign({}, state, {
-                timestamp,
-                hints: action.hints.concat(),
-                isUpdating: true
+                hints: action.hintMap.hints,
+                blocksSharableHints: action.hintMap.blocksSharableHints
             })
         }
+
         case REMOVE_HINT:
             return Object.assign({}, state,{
                 timestamp,
@@ -91,11 +107,19 @@ const putHint = function (hint) {
     };
 }
 
-const putAllHints = function (hints) {
+const putAllHints = function (hints,hintType) {
     return {
         type: PUT_ALL_HINTS,
-        hints
+        hints,
+        hintType
     };
+}
+
+const putHintMap = function ({hints, blocksSharableHints}){
+    return {
+        type: PUT_HINT_MAP,
+        hintMap: {hints, blocksSharableHints}
+    }
 }
 
 
@@ -119,6 +143,8 @@ const setUpdateStatus = function (isUpdating) {
     }
 }
 
+
+
 const switchHintMode = function (isInHintMode) {
     return {
         type: SWITCH_HINT_MODE,
@@ -133,6 +159,13 @@ const setHintOptions = function (options) {
     }
 }
 
+const setHintManager = function(hintManager){
+    return {
+        type: SET_HINT_MANAGER,
+        hintManager
+    }
+}
+
 export {
     reducer as default,
     initialState as hintsInitialState,
@@ -144,5 +177,7 @@ export {
     setUpdateStatus,
     setHintOptions,
     switchHintMode,
+    setHintManager,
+    putHintMap,
     hintOptions
 };

@@ -15,10 +15,11 @@ const getHintOverlayText = function (type) {
 };
 
 const HintOverlayComponent = props => {
-    const { hints, options } = props.hintState;
+    const { hints, blocksSharableHints, options } = props.hintState;
+    const allHints = hints.concat(blocksSharableHints);
     return (
         <div>
-            {hints
+            {allHints
                 .filter(h => h.styles)
                 .map(h => <Floater
                     content={getHintOverlayText(h.type)}
