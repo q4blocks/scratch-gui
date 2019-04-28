@@ -4,6 +4,7 @@ import { addBlocksToWorkspace, testBlocks, getTestHints } from './hints/hint-tes
 import { putAllHints, putHintMap } from '../reducers/hints-state';
 import { sendAnalysisReq, getProgramXml } from './hints/analysis-server-api';
 import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints } from './hints/hints-util';
+import { applyTransformation } from './hints/transform-api';
 import debounce from 'lodash.debounce';
 import ScratchBlocks from 'scratch-blocks';
 
@@ -86,8 +87,7 @@ class HintManager {
             'updateHintTracking'
         ]);
         this.attachVM();
-
-
+        this.computeQualityHintsDebounced = debounce(this.computeQualityHints, 100);
     }
 
     blockListener(e) {
@@ -110,6 +110,10 @@ class HintManager {
         this.hintState = hintState;
     }
 
+    getAnalysisInfo(){
+        return this.analysisInfo;
+    }
+
 
     computeQualityHints() {
         // const {hintMode, options} = this.props.hintState;
@@ -122,6 +126,7 @@ class HintManager {
             .then(xml => sendAnalysisReq('projectId', 'duplicate_code', xml, isProductionMode))
             .then(json => {
                 const analysisInfo = json;
+                this.analysisInfo = analysisInfo;
                 return analysisInfo ? analysisInfoToHints(analysisInfo) : [];
             }).then(hints => {
                 const trackedHints = this.calculateHintTracking(hints);
@@ -140,6 +145,13 @@ class HintManager {
             });
     }
 
+    applyTransformation(hintId){
+        this.workspace.removeChangeListener(this.blockListener);
+        applyTransformation(hintId, this.vm, this.workspace, this.analysisInfo);
+        this.workspace.addChangeListener(
+            this.blockListener);
+    }
+
 
     onWorkspaceMetricsChange() {
         console.log('metric change')
@@ -147,8 +159,7 @@ class HintManager {
 
     generateHints(hintType) {
         if (hintType === DUPLICATE_CODE_SMELL_HINT_TYPE) {
-            this.computeQualityHints();
-            console.log('generateHints: ', DUPLICATE_CODE_SMELL_HINT_TYPE);
+            this.computeQualityHintsDebounced();
         } else if (hintType === SHAREABLE_CODE_HINT_TYPE) {
             this.computeSharableCustomBlocks();
         }

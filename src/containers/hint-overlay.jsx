@@ -47,9 +47,66 @@ class HintOverlay extends React.Component {
             // 'onWorkspaceMetricsChange',
             // 'blockListener',
             // 'onWorkspaceUpdate'
+            'onMouseEnter',
+            'onMouseLeave',
+            'onHandleHintMenuItemClick'
         ]);
 
 
+    }
+
+    onMouseEnter(hintId) {
+        const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
+        switch (hint.type) {
+            case DUPLICATE_CODE_SMELL_HINT_TYPE:
+                highlightDuplicateBlocks(hintId, true, this.workspace, this.props.hintManager.getAnalysisInfo());
+                break;
+        }
+    }
+
+    onMouseLeave(hintId) {
+        const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
+        switch (hint.type) {
+            case DUPLICATE_CODE_SMELL_HINT_TYPE:{
+                highlightDuplicateBlocks(hintId, false, this.workspace, this.props.hintManager.getAnalysisInfo());
+                analytics.event({
+                    category: "Feature",
+                    action: "View Hints",
+                    label: JSON.stringify({projectId:this.props.projectId, withinTutorial: this.props.showTutorial})
+                });
+                break;
+            }
+        }
+    }
+    onHandleHintMenuItemClick(hintId, itemAction) {
+        const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
+
+        switch (itemAction) {
+            case CONTEXT_MENU_REFACTOR: {
+                // applyTransformation(hintId, this.props.vm, this.workspace, this.props.hintManager.getAnalysisInfo());
+                this.props.hintManager.applyTransformation(hintId);
+                // this.props.removeHint(hintId); //remove hint when the specified action is taken
+                analytics.event({
+                    category: "Feature",
+                    action: "Extract custom block",
+                    label: JSON.stringify({projectId:this.props.projectId, withinTutorial: this.props.showTutorial})
+                });
+                break;
+            }
+            case CONTEXT_MENU_CODE_SHARE: {
+                const block = this.workspace.getBlockById(hint.blockId);
+                const entry = getProcedureEntry(block);
+                updateShareSnippetOnLocalStorage(entry);
+
+                analytics.event({
+                    category: "Feature",
+                    action: "Share Custom Block",
+                    label: JSON.stringify({projectId:this.props.projectId, withinTutorial: this.props.showTutorial})
+                });
+                window.open('/authoring');
+                break;
+            }
+        }
     }
 
     componentDidMount() {
