@@ -30,9 +30,9 @@ const HintOverlayComponent = props => {
                     offset={30}
                 >
                     <HintIcon key={h.hintId} hint={h} options={options}
-                              onHandleHintMenuItemClick={() => itemAction => props.onHandleHintMenuItemClick(h.hintId, itemAction)}
-                              onMouseEnter={() => props.onMouseEnter(h.hintId)}
-                              onMouseLeave={() => props.onMouseLeave(h.hintId)}
+                              onHandleHintMenuItemClick={() => itemAction => props.onHandleHintMenuItemClick(h, itemAction)}
+                              onMouseEnter={() => props.onMouseEnter(h)}
+                              onMouseLeave={() => props.onMouseLeave(h)}
                     />
                 </Floater>)
             }

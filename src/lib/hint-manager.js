@@ -27,9 +27,6 @@ const highlightDuplicateBlocks = function (state, workspace, analysisInfo) {
     }
 };
 
-
-
-
 const populateHintIcons = function (currentTargetName, workspace, analysisInfo) {
     for (let recordKey of Object.keys(analysisInfo['records'])) {
         let record = analysisInfo['records'][recordKey];
@@ -69,21 +66,20 @@ const addFunctionListener = (object, property, callback) => {
     };
 };
 
-const isTesting = true;
+const isTesting = false;
 const isProductionMode = true;
 class HintManager {
-    constructor(vm, workspace, dispatch, hintState) {
+    constructor(vm, workspace, dispatch, hintState, options) {
         this.hintState = hintState;
         this.vm = vm;
         this.workspace = workspace;
         this.dispatch = dispatch;
-        console.log('hintManager instantiated')
+        this.projectId = options?options.projectId:'0';
+
         bindAll(this, [
-            // 'onWorkspaceMetricsChange',
             'blockListener',
             'onWorkspaceUpdate',
             'generateHints',
-            'hideHints',
             'updateHintTracking'
         ]);
         this.attachVM();
@@ -93,7 +89,6 @@ class HintManager {
     blockListener(e) {
         //if hintState.options showQualityHint
         if (!(['ui', 'endDrag'].includes(e.type))) {
-            console.log(e.type);
             if (this.hintState.options.showQualityHint) {
                 this.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
             }
@@ -114,16 +109,11 @@ class HintManager {
         return this.analysisInfo;
     }
 
-
     computeQualityHints() {
-        // const {hintMode, options} = this.props.hintState;
-        // if(!hintMode||!options.showQualityHint){
-        //     return Promise.resolve();
-        // }
         const _vm = this.vm;
         return Promise.resolve()
             .then(() => getProgramXml(_vm))
-            .then(xml => sendAnalysisReq('projectId', 'duplicate_code', xml, isProductionMode))
+            .then(xml => sendAnalysisReq(this.projectId, 'duplicate_code', xml, isProductionMode))
             .then(json => {
                 const analysisInfo = json;
                 this.analysisInfo = analysisInfo;
@@ -131,7 +121,6 @@ class HintManager {
             }).then(hints => {
                 const trackedHints = this.calculateHintTracking(hints);
                 this.dispatch(putAllHints(trackedHints, DUPLICATE_CODE_SMELL_HINT_TYPE));
-                console.log('generate some hints', hints)
             });
     }
 
@@ -141,7 +130,6 @@ class HintManager {
             .then(hints => {
                 const trackedHints = this.calculateHintTracking(hints);
                 this.dispatch(putAllHints(trackedHints, SHAREABLE_CODE_HINT_TYPE));
-                console.log('compute sharable custom blocks', hints);
             });
     }
 
@@ -166,7 +154,6 @@ class HintManager {
     }
 
     clearAll(hintType) {
-        console.log('clear All');
         this.dispatch(putAllHints([], hintType));
     }
 
@@ -181,19 +168,12 @@ class HintManager {
         ));
     }
 
-    hideHints(type) {
-        // console.log('should hideAllHints');
-
-        // this.props.hintState.hints.filter(h => h.type === SHAREABLE_CODE_HINT_TYPE).map(h => {
-    }
-
-
     onWorkspaceUpdate() {
         if (isTesting && !this.alreadySetup) {
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
-            addBlocksToWorkspace(this.workspace, testBlocks.bug);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
+            // addBlocksToWorkspace(this.workspace, testBlocks.bug);
             this.workspace.cleanUp();
             this.alreadySetup = true;
         }
@@ -213,8 +193,6 @@ class HintManager {
         this.vm.removeListener('workspaceUpdate', this.onWorkspaceUpdate);
         // this.props.vm.removeListener('targetsUpdate', this.onTargetsUpdate);
     }
-
-
 }
 
 
