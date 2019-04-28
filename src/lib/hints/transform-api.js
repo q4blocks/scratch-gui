@@ -44,7 +44,7 @@ const applyTransformation = function (hintId, vm, workspace, analysisInfo) {
 }
 
 const switchTarget = function (vm, targetName) {
-    console.log("switch target to:" + target);
+    // console.log("switch target to:" + target);
     let targetId = Scratch.vm.runtime.targets.filter(t => t.getName() === targetName)[0].id;
     return vm.setEditingTarget(targetId);
 }

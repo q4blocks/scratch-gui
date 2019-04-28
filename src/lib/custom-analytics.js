@@ -24,7 +24,6 @@ const initializeAnalytics = userId => {
 }
 
 const sendFeedbackData = data => {
-    console.log('feedback sent');
     stitchClient.auth.loginWithCredential(new AnonymousCredential()).then(user => {
         const userId = stitchClient.auth.user.id;
         db.collection('feedback').findOne({ userId: userId }).then(res => {
@@ -36,7 +35,7 @@ const sendFeedbackData = data => {
             } else {
                 const entry = {records:[data]};
                 db.collection('feedback').updateOne({ userId: userId }, { $set: entry }, { upsert: true })
-                console.log('new entry', JSON.stringify({ userId, ...entry }));
+                // console.log('new entry', JSON.stringify({ userId, ...entry }));
             }
         });
         // db.collection('feedback').updateOne({ userId: stitchClient.auth.user.id }, { $set: data }, { upsert: true })

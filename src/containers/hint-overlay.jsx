@@ -80,7 +80,6 @@ class HintOverlay extends React.Component {
     }
 
     componentDidMount() {
-        console.log('mounted');
         this.workspace = ScratchBlocks.getMainWorkspace();
         this.props.setHintManager(new HintManager(
             this.props.vm, this.workspace, this.props.dispatch, {projectId:this.props.projectId}));

@@ -1,6 +1,5 @@
-import { connect } from 'react-redux';
 import bindAll from 'lodash.bindall';
-import { addBlocksToWorkspace, testBlocks, getTestHints } from './hints/hint-test-workspace-setup';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE } from './hints/constants';
 import { putAllHints, putHintMap } from '../reducers/hints-state';
 import { sendAnalysisReq, getProgramXml } from './hints/analysis-server-api';
 import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints } from './hints/hints-util';
@@ -8,54 +7,8 @@ import { applyTransformation } from './hints/transform-api';
 import debounce from 'lodash.debounce';
 import ScratchBlocks from 'scratch-blocks';
 
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from './hints/constants';
-const highlightDuplicateBlocks = function (state, workspace, analysisInfo) {
-    if (!state) {
-        workspace.removeHighlightBox();
-        return;
-    }
-    for (let recordKey of Object.keys(analysisInfo['records'])) {
-        let record = analysisInfo['records'][recordKey];
-        debugger;
-        if (record.smell.type === 'DuplicateCode') {
-            let fragments = record.smell['fragments'];
-            for (let fNo in fragments) {
-                let blockFragments = fragments[fNo].stmtIds;
-                workspace.drawHighlightBox(blockFragments[0], blockFragments[blockFragments.length - 1]);
-            }
-        }
-    }
-};
+import { addBlocksToWorkspace, testBlocks, getTestHints } from './hints/hint-test-workspace-setup';
 
-const populateHintIcons = function (currentTargetName, workspace, analysisInfo) {
-    for (let recordKey of Object.keys(analysisInfo['records'])) {
-        let record = analysisInfo['records'][recordKey];
-        if (record.smell.type === 'DuplicateCode') {
-            let fragments = record.smell['fragments'];
-            let f = fragments[0]; //use first fragment
-            let anchorBlockId = f.stmtIds[0]; //and first block of each fragment clone to place hint
-            let block = workspace.getBlockById(anchorBlockId);
-            if (block) {
-                if (!block.isShadow_ && !block.hint) {
-                    block.setHintText(record.smell.id || record.smell.smellId);
-                }
-                if (block.hint) {
-                    block.hint.setVisible(true);
-                }
-            }
-        }
-        // if(record.smell.type === 'DuplicateSprite'){
-        //     let sprites = record.smell['sprites'];
-        //     let targets = sprites.map(s=>s.spriteName);
-        //     if(targets.indexOf(currentTargetName)>-1){
-        //         console.log('TODO: show hint at this editing target' + currentTargetName);
-        //         const hintData = {"id": record.smell.id||record.smell.smellId};
-        //         workspace.setHint(hintData);
-        //         workspace.showHint();   
-        //     }
-        // }
-    }
-}
 
 const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];
@@ -68,6 +21,7 @@ const addFunctionListener = (object, property, callback) => {
 
 const isTesting = false;
 const isProductionMode = true;
+
 class HintManager {
     constructor(vm, workspace, dispatch, hintState, options) {
         this.hintState = hintState;
@@ -140,11 +94,6 @@ class HintManager {
             this.blockListener);
     }
 
-
-    onWorkspaceMetricsChange() {
-        console.log('metric change')
-    }
-
     generateHints(hintType) {
         if (hintType === DUPLICATE_CODE_SMELL_HINT_TYPE) {
             this.computeQualityHintsDebounced();
@@ -196,8 +145,4 @@ class HintManager {
 }
 
 
-export {
-    highlightDuplicateBlocks,
-    populateHintIcons,
-    HintManager as default
-}
+export default HintManager;
