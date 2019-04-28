@@ -25,10 +25,10 @@ const steps = [
                 <h3>Welcome Scratchers!</h3> 
                 <div style="text-align: left">
                 <p><b>Procedure</b> is a very powerful programming construct, supported in Scratch as a <b>Custom Block</b>.
-                By completing this tutorial, you will learn how to:</p>
+                By completing this tutorial, you will:</p>
                     <ul>
-                        <li>Define and use custom blocks</li>
-                        <li>Share your custom blocks with other programmers</li>
+                        <li>Learn how to define and use custom blocks</li>
+                        <li>Unlock custom block sharing feature</li>
                     </ul>
                 </div>`,
                 // modalSize: "large",
@@ -219,7 +219,7 @@ const steps = [
                 customContent: `
                 <p>This <b>step size</b> parameter block will hold the input value</p>
                 <p>We can use this <b>step size</b> parameter anywhere in our custom block's definition.</p>
-                <p>To use, drag the <b>step size</b> parameter block and drop it into the move block's input (currently has the value 8 in it).</p>
+                <p>Let's pass the <em>step size</em> value to the move block. Drag the <b>step size</b> parameter block and drop it into the move block's input (currently has the value 8 in it).</p>
                 <p>Click "Next" when you are done.</p>
                 `,
                 beaconAlign: "top",
@@ -246,7 +246,7 @@ const steps = [
             {
                 customContent: `
                 <p>Let's replace the code that performs the <em>big</em> circle-around movement with our <b>Circle Around</b> custom block 
-                and give it the input value of <em>16</em>.</p>
+                and give it the <em>step size</em> input value of <em>16</em>.</p>
                 <p>Click "Next" when you are done.</p>`,
                 beaconAlign: "left",
                 floaterPlacement: "left",
@@ -324,7 +324,7 @@ const steps = [
                 customContent: `<p>You will create a custom block again. Don't worry it will be quick this time 
                 with the help of <b>Code Wizard</b></p>
                 <p><b>Code Wizard</b> is available to help when you see the light bulb hint icons.</p>
-                <p><b>Mouse over</b> the <em>hint icon</em> to view the improvement suggestions. Click Next when you are done.</p>
+                <p><b>Mouse over</b> the <em>hint icon</em> to view the suggestion and follow what it suggests. When you are done, click "Next".</p>
                 `,
                 selectorExpr: `this.workspace.getBlockById('__greenflag__').svgGroup_`,
                 checkUserCode: true,
