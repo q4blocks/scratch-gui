@@ -1,13 +1,17 @@
 const TOGGLE_CUSTOM_FEATURE = 'TOGGLE_CUSTOM_FEATURE';
 const SET_CUSTOM_FEATURE_TOGGLE_VISIBLE = 'SET_CUSTOM_FEATURE_TOGGLE_VISIBLE';
+const SET_SHOW_TUTORIAL = 'SET_SHOW_TUTORIAL';
+
 const initialState = {
     procedureShareToggleVisible: false,
-    qualityHintToggleVisible: false
+    qualityHintToggleVisible: false,
+    showTutorial: false
 }
 
 const featureNames = {
     PROCEDURE_SHARE: 'PROCEDURE_SHARE',
-    QUALITY_HINT: 'QUALITY_HINT'
+    QUALITY_HINT: 'QUALITY_HINT',
+    TUTORIAL: 'TUTORIAL'
 }
 
 const reducer = function (state, action) {
@@ -27,6 +31,8 @@ const reducer = function (state, action) {
             else if(action.feature === featureNames.QUALITY_HINT) {
                 return Object.assign({}, state, { qualityHintToggleVisible: action.isVisible });
             }
+        case SET_SHOW_TUTORIAL:
+            return Object.assign({}, state, {showTutorial: action.shouldShowTutorial});
         default:
             return state;
     }
@@ -43,10 +49,16 @@ const setCustomFeatureToggleVisible = (featureName, isVisible) =>({
     visible: isVisible
 });
 
+const setShowTutorial = shouldShowTutorial => ({
+    type: SET_SHOW_TUTORIAL,
+    shouldShowTutorial
+})
+
 export {
     reducer as default,
     initialState as customMenuInitialState,
     toggleCustomFeature,
     setCustomFeatureToggleVisible,
+    setShowTutorial,
     featureNames
 };

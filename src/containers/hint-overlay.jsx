@@ -113,7 +113,7 @@ HintOverlay.propTypes = {
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state,props) => {
     const targets = state.scratchGui.targets;
     const currentTargetId = targets.editingTarget;
     return {
@@ -121,7 +121,9 @@ const mapStateToProps = state => {
         hintState: state.scratchGui.hintState,
         hintManager: state.scratchGui.hintState.hintManager,
         currentTargetId,
-        projectId: state.scratchGui.projectState.projectId
+        projectId: state.scratchGui.projectState.projectId,
+        showTutorial: props.showTutorial||state.scratchGui.customMenu.showTutorial  
+    //fix probably not the right place to put showTutorial in customMenu; should be part of state.scratchGui.tutorial
     };
 };
 

@@ -151,7 +151,7 @@ class Tutorial extends React.Component {
         this.setState({
             finalModalHasClosed: true
         });
-        this.props.showSurveyCallBack('post-tutorial-session');
+        this.props.showSurveyCallBack('post-tutorial-session'); //trigger at the end of tutorial
     }
     render() {
         const { target, currentStep, currentInstruction, steps } = this.props;

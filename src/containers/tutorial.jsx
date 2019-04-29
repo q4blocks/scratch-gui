@@ -274,7 +274,7 @@ const steps = [
         ]
     },
     {
-        title: "Bonus Feature: Code Wizard",
+        title: "Feature: Code Wizard",
         description: ``,
         instructions: [
             {
@@ -292,7 +292,7 @@ const steps = [
                 test: true,
                 isModal: true,
                 floaterPlacement: "center",
-                customContent: `<h3>Bonus Feature: Code Wizard Unlocked!</h3>
+                customContent: `<h3>Custom Feature: Code Wizard</h3>
                 <p><b>Code Wizard</b> feature provides you with suggestions and helps to create <b>Custom Blocks</b> in your project.</p>
                 `,
                 customizedNextButtonText: "Try it out",
@@ -354,7 +354,7 @@ const steps = [
         ]
     },
     {
-        title: "Unlocking Custom Block Sharing",
+        title: "Custom Feature: Custom Block Sharing",
         description: `Sharing your custom block with others`,
         instructions: [
             {
@@ -380,8 +380,8 @@ const steps = [
             {
                 test: true,
                 customContent: `
-                You have unlocked the <b>Custom Block Sharing</b> feature!
-                You can learn more about this feature later by visiting the <b>How To</b> page from the homepage.</p>
+                If you find your custom blocks to be useful not just for you but for others, you can share them!
+                You can learn more about <b>Custom Block Sharing</b> feature later by visiting the <b>How To</b> page from the homepage.</p>
                 `,
                 selectorExpr: `document.querySelector('.procedure-share-feature-toggle')`,
                 beaconAlign: "bottom",
@@ -524,7 +524,7 @@ class Tutorial extends React.Component {
                     this.onNextInstruction(instruction.delayNextInstruction || 200);
                 }, { once: true });
             }
-            return (
+            return this.props.showTutorial?(
                 <TutorialComponent
                     {...this.props.tutorial}
                     target={target}
@@ -534,16 +534,18 @@ class Tutorial extends React.Component {
                     handleSaveProfileData={this.handleSaveProfileData}
                     showSurveyCallBack={this.props.showSurveyCallBack}
                 />
-            );
+            ):null;
         } else {
             return null;
         }
     }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state,props) => ({
     tutorial: state.scratchGui.tutorial,
-    vm: state.scratchGui.vm
+    vm: state.scratchGui.vm,
+    showTutorial: props.showTutorial||state.scratchGui.customMenu.showTutorial  
+    //fix probably not the right place to put showTutorial in customMenu; should be part of state.scratchGui.tutorial
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -13,6 +13,7 @@ import ProjectIdInput from './project-id-input.jsx';
 import analytics from "../../lib/custom-analytics";
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../../lib/hints/constants';
 import { setHintOptions } from '../../reducers/hints-state';
+import {showTutorial, setShowTutorial} from '../../reducers/custom-menu';
 import {
   openAccountMenu,
   closeAccountMenu,
@@ -85,6 +86,7 @@ class CustomizedMenuBar extends React.Component {
           customStyles.customMenuBar
         )}
       >
+      <div style={{display:'flex', alignItems:'center', marginLeft:'1rem', marginRight:'2rem'}}><a style={{cursor: 'pointer'}}onClick={()=>window.open("/","_self")}>Go Back to MyBlocks</a></div>
         <div style={{ display: 'flex' }} className='custom-features'>
           <div className='projectIdInput' style={{ display: 'flex', padding: '4px', marginRight: '50px' }}>
             <ProjectIdInput
@@ -132,6 +134,9 @@ class CustomizedMenuBar extends React.Component {
               });
             }}
           /> : null}
+          <div style={{display:'flex', alignItems:'center', marginRight:'1rem'}}><a style={{cursor: 'pointer'}}onClick={this.props.onShowTutorial}>Custom Block Tutorial</a></div>
+          <div style={{display:'flex', alignItems:'center', marginRight:'1rem'}}>|</div>
+          <div style={{display:'flex', alignItems:'center'}}><a style={{cursor: 'pointer'}}onClick={()=>this.props.showSurveyCallBack('editor-session')}>Take a Survey</a></div>
         </div>
       </div>
     </React.Fragment>);
@@ -147,7 +152,7 @@ const mapStateToProps = (state, props) => {
     showProcedureSharingHint: showProcedureSharingHint,
     showQualityHint: showQualityHint,
     projectId: state.scratchGui.projectState.projectId,
-    showTutorial: props.showTutorial,
+    showTutorial: props.showTutorial||state.scratchGui.customMenu.showTutorial,
     hintManager: state.scratchGui.hintState.hintManager
   }
 }
@@ -165,7 +170,8 @@ const mapDispatchToProps = (dispatch, ownProps) => ({
   },
   onUpdateProjectId: (value) => {
     window.open('/editor/' + value, "_self"); //todo: later detect if has updateProjectId callback otherwise use hash mechanism #
-  }
+  },
+  onShowTutorial: ()=>{dispatch(setShowTutorial(true))}
 });
 
 export default injectIntl(connect(

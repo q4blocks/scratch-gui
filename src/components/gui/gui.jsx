@@ -178,7 +178,7 @@ const GUIComponent = props => {
                 {...componentProps}
             >
                 
-                {showTutorial?<Tutorial showSurveyCallBack={showSurveyCallBack} tutorialDevMode={tutorialDevMode}/>:null}
+                <Tutorial showTutorial={showTutorial} showSurveyCallBack={showSurveyCallBack} tutorialDevMode={tutorialDevMode}/>
 
                 {customOptions.previewInfoVisible ? (
                     <PreviewModal />
@@ -236,6 +236,7 @@ const GUIComponent = props => {
                     qualityHintToggleVisible={qualityHintToggleVisible}
                     onUpdateProjectTitle={onUpdateProjectTitle}
                     showTutorial={showTutorial}
+                    showSurveyCallBack={showSurveyCallBack}
                 />:null):(<MenuBar
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
