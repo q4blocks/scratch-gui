@@ -33,6 +33,7 @@ const analysisInfoToHints = function (analysisInfo) {
     for (let recordKey of Object.keys(analysisInfo['records'])) {
         let record = analysisInfo['records'][recordKey];
         let { type, smellId, target, fragments } = record.smell;
+        if(!record.refactoring.metadata.success) continue;
         if (type === 'DuplicateCode') {
             let f = fragments[0]; //use first fragment
             let anchorBlockId = f.stmtIds[0]; //and first block of each fragment clone to place hint
