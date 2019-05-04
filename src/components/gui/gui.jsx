@@ -136,6 +136,8 @@ const GUIComponent = props => {
         showCustomMenuBar,
         showSurveyCallBack,
         tutorialDevMode,
+        showQualityHint,
+        userStudyMode,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -236,6 +238,7 @@ const GUIComponent = props => {
                     qualityHintToggleVisible={qualityHintToggleVisible}
                     onUpdateProjectTitle={onUpdateProjectTitle}
                     showTutorial={showTutorial}
+                    userStudyMode={userStudyMode}
                     showSurveyCallBack={showSurveyCallBack}
                 />:null):(<MenuBar
                     accountNavOpen={accountNavOpen}
@@ -353,7 +356,7 @@ const GUIComponent = props => {
                                         <Watermark />
                                     </Box>
                                     <Box className="hint-overlay">
-                                        {hintMode?(<HintOverlay showTutorial={showTutorial}/>):null}
+                                        {hintMode?(<HintOverlay userStudyMode={userStudyMode} showTutorial={showTutorial} showQualityHint={showQualityHint}/>):null}
                                     </Box>
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>

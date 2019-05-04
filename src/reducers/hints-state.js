@@ -8,7 +8,7 @@ const SET_HINT_OPTIONS = "SET_HINT_OPTIONS";
 const CLEAR_ALL_HINTS = "CLEAR_ALL_HINT"
 const SET_HINT_MANAGER = "SET_HINT_MANAGER";
 const PUT_HINT_MAP = "PUT_HINT_MAP";
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
 
 const hintOptions = {
     hintWithRefactoringSupport: "hintWithRefactoringSupport",
@@ -20,6 +20,7 @@ const initialState = {
     timestamp: null,
     hints: [],
     blocksSharableHints: [],
+    renamables: [],
     isUpdating: false,
     hintManager: null,
     options: {
@@ -58,12 +59,17 @@ const reducer = function (state, action) {
                 return Object.assign({}, state, {
                     blocksSharableHints: action.hints.concat(),
                 })
+            }else if(action.hintType===RENAMABLE_CUSTOM_BLOCK){
+                return Object.assign({}, state, {
+                    renamables: action.hints.concat(),   //maybe renamables
+                })
             }
         }
         case PUT_HINT_MAP: {
             return Object.assign({}, state, {
                 hints: action.hintMap.hints,
-                blocksSharableHints: action.hintMap.blocksSharableHints
+                blocksSharableHints: action.hintMap.blocksSharableHints,
+                renamables: action.hintMap.renamables
             })
         }
 
@@ -115,10 +121,10 @@ const putAllHints = function (hints,hintType) {
     };
 }
 
-const putHintMap = function ({hints, blocksSharableHints}){
+const putHintMap = function ({hints, blocksSharableHints, renamables}){
     return {
         type: PUT_HINT_MAP,
-        hintMap: {hints, blocksSharableHints}
+        hintMap: {hints, blocksSharableHints, renamables}
     }
 }
 

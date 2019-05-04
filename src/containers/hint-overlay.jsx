@@ -6,14 +6,13 @@ import { connect } from 'react-redux';
 import VM from 'scratch-vm';
 import ScratchBlocks from 'scratch-blocks';
 
-import { updateHint, putAllHints, removeHint, setHintManager } from '../reducers/hints-state';
+import { updateHint, putAllHints, removeHint, setHintManager, setHintOptions } from '../reducers/hints-state';
 import HintOverlayComponent from '../components/hint-overlay/hint-overlay.jsx';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
 import { getProcedureEntry, highlightDuplicateBlocks } from '../lib/hints/hints-util';
 
 import HintManager from '../lib/hint-manager';
 import analytics from "../lib/custom-analytics";
-
 const SNIPPET_LOCAL_STORAGE_KEY = '__snippet__';
 const updateShareSnippetOnLocalStorage = snippetEntry => {
     const serializedSnippet = JSON.stringify(snippetEntry);
@@ -78,22 +77,32 @@ class HintOverlay extends React.Component {
                 window.open('/authoring');
                 break;
             }
+            case CONTEXT_MENU_RENAME_BLOCK: {
+                ScratchBlocks.Procedures.editProcedureCallback_(this.workspace.getBlockById(hint.blockId));
+                break;
+            }
         }
     }
 
     componentDidMount() {
         this.workspace = ScratchBlocks.getMainWorkspace();
+        const options = {
+            projectId: this.props.projectId,
+            userStudyMode: this.props.userStudyMode
+        }
         this.props.setHintManager(new HintManager(
-            this.props.vm, this.workspace, this.props.dispatch,
-            {
-                projectId: this.props.projectId
-            }));
+            this.props.vm, this.workspace, this.props.dispatch, this.props.hintState,
+            options));
         //quick fix for tutorial mode
+        //auto switch on if showQualityHint is passed from parent
+        this.props.dispatch(setHintOptions({
+            showQualityHint: this.props.showQualityHint || false
+        }));
     }
 
     componentDidUpdate() {
         this.props.hintManager.updateHintState(this.props.hintState);
-        this.props.hintManager.updateOptions({isTutorialMode: this.props.showTutorial});
+        this.props.hintManager.updateOptions({ isTutorialMode: this.props.showTutorial });
     }
 
     render() {
@@ -113,7 +122,7 @@ HintOverlay.propTypes = {
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
-const mapStateToProps = (state,props) => {
+const mapStateToProps = (state, props) => {
     const targets = state.scratchGui.targets;
     const currentTargetId = targets.editingTarget;
     return {
@@ -122,8 +131,8 @@ const mapStateToProps = (state,props) => {
         hintManager: state.scratchGui.hintState.hintManager,
         currentTargetId,
         projectId: state.scratchGui.projectState.projectId,
-        showTutorial: props.showTutorial||state.scratchGui.customMenu.showTutorial  
-    //fix probably not the right place to put showTutorial in customMenu; should be part of state.scratchGui.tutorial
+        showTutorial: props.showTutorial || state.scratchGui.customMenu.showTutorial
+        //fix probably not the right place to put showTutorial in customMenu; should be part of state.scratchGui.tutorial
     };
 };
 

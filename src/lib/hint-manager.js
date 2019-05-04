@@ -1,8 +1,8 @@
 import bindAll from 'lodash.bindall';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE } from './hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK } from './hints/constants';
 import { putAllHints, putHintMap } from '../reducers/hints-state';
 import { sendAnalysisReq, getProgramXml } from './hints/analysis-server-api';
-import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints } from './hints/hints-util';
+import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints, generateRenamableCodeHints } from './hints/hints-util';
 import { applyTransformation } from './hints/transform-api';
 import debounce from 'lodash.debounce';
 import ScratchBlocks from 'scratch-blocks';
@@ -46,6 +46,7 @@ class HintManager {
         if (!(['ui', 'endDrag'].includes(e.type))) {
             if (this.hintState.options.showQualityHint) {
                 this.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
+                this.generateHints(RENAMABLE_CUSTOM_BLOCK);
             }
         }
     }
@@ -92,12 +93,21 @@ class HintManager {
             });
     }
 
+    computeRenamableCustomBlocks(){
+        Promise.resolve()
+            .then(() => generateRenamableCodeHints(this.workspace, this.hintState))
+            .then(hints => {
+                const trackedHints = this.calculateHintTracking(hints);
+                this.dispatch(putAllHints(trackedHints, RENAMABLE_CUSTOM_BLOCK));
+            });
+    }
+
     applyTransformation(hintId) {
         this.workspace.removeChangeListener(this.blockListener);
         const actionSeq = applyTransformation(hintId, this.vm, this.workspace, this.analysisInfo);
         //TODO: better position the introduced procedure
         //quick fix for tutorial mode:
-        if (this.options.isTutorialMode) {
+        if (this.options.isTutorialMode||this.options.userStudyMode) {
             actionSeq.then(() => {
                 this.workspace.cleanUp();
             });
@@ -111,6 +121,8 @@ class HintManager {
             this.computeQualityHintsDebounced();
         } else if (hintType === SHAREABLE_CODE_HINT_TYPE) {
             this.computeSharableCustomBlocks();
+        } else if (hintType === RENAMABLE_CUSTOM_BLOCK) {
+            this.computeRenamableCustomBlocks();
         }
     }
 
@@ -118,22 +130,30 @@ class HintManager {
         this.dispatch(putAllHints([], hintType));
     }
 
+    clearHintMap(hintTypes){
+        const map = {};
+        hintTypes.forEach(t=>map[t]=[]);
+
+        this.dispatch(putHintMap(map));
+    }
+
     updateHintTracking() {
         //when no need to reanalyze (but only update its location tracking)
-        const { hints, blocksSharableHints } = this.hintState;
+        const { hints, blocksSharableHints, renamables } = this.hintState;
         this.dispatch(putHintMap(
             {
                 hints: this.calculateHintTracking(hints),
-                blocksSharableHints: this.calculateHintTracking(blocksSharableHints)
+                blocksSharableHints: this.calculateHintTracking(blocksSharableHints),
+                renamables: this.calculateHintTracking(renamables)
             }
         ));
     }
 
     onWorkspaceUpdate() {
         if (isTesting && !this.alreadySetup) {
-            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
+            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
             // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
-            // addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
+            addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
             // addBlocksToWorkspace(this.workspace, testBlocks.bug);
             this.workspace.cleanUp();
             this.alreadySetup = true;

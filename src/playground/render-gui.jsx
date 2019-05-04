@@ -83,12 +83,14 @@ export default appTarget => {
                 onClickLogo={onClickLogo}
                 // customGuiState
                 showCustomMenuBar={true}
+                userStudyMode={true}
                 hintMode={true}
                 showTutorial={false}
                 showCustomGuiDevPanel={false}
                 procedureShareToggleVisible={true}
                 qualityHintToggleVisible={true}
                 tutorialDevMode={false}
+                showQualityHint={true}
                 showSurveyCallBack={(origin) => { console.log(`open the modal survey! origin: ${origin}`) }}
             />,
         appTarget);

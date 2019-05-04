@@ -1,5 +1,5 @@
 import ScratchBlocks from 'scratch-blocks';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from './constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK } from './constants';
 
 /**
  *  Use blockId specified in hint item as the location target for positioning hint icon
@@ -33,7 +33,7 @@ const analysisInfoToHints = function (analysisInfo) {
     for (let recordKey of Object.keys(analysisInfo['records'])) {
         let record = analysisInfo['records'][recordKey];
         let { type, smellId, target, fragments } = record.smell;
-        if(!record.refactoring.metadata.success) continue;
+        if (!record.refactoring.metadata.success) continue;
         if (type === 'DuplicateCode') {
             let f = fragments[0]; //use first fragment
             let anchorBlockId = f.stmtIds[0]; //and first block of each fragment clone to place hint
@@ -71,6 +71,13 @@ const buildHintContextMenu = (type) => {
                 {
                     item_name: 'Share this custom block',
                     itemAction: CONTEXT_MENU_CODE_SHARE
+                }
+            ]
+        case RENAMABLE_CUSTOM_BLOCK:
+            return [
+                {
+                    item_name: 'Rename this custom block',
+                    itemAction: CONTEXT_MENU_RENAME_BLOCK
                 }
             ]
     }
@@ -113,15 +120,15 @@ const formatXmlString = function (xmlStr) {
     return str;
 }
 
-const generateShareableCodeHints = function (workspace, hintState){
+const generateShareableCodeHints = function (workspace, hintState) {
     const blocksDb = Object.values(workspace.blockDB_);
     const procedureDefs = blocksDb.filter(b => !b.isShadow_ && b.type === 'procedures_definition');
-    
+
     const shareableCodeHints = procedureDefs.map(b => {
         let oldHint = hintState.hints.find(h => b.id === h.blockId);
         if (oldHint) return oldHint;
         let blockId = b.id;
-        let hintId = "custom_block" + Math.round(Math.random(1,2)*100000); //hintId is also block id;
+        let hintId = "custom_block" + Math.round(Math.random(1, 2) * 100000); //hintId is also block id;
 
         const hintMenuItems = buildHintContextMenu(SHAREABLE_CODE_HINT_TYPE);
         return { type: SHAREABLE_CODE_HINT_TYPE, hintId, blockId, hintMenuItems };
@@ -130,9 +137,29 @@ const generateShareableCodeHints = function (workspace, hintState){
     return shareableCodeHints;
 }
 
+const generateRenamableCodeHints = function (workspace, hintState) {
+    const blocksDb = Object.values(workspace.blockDB_);
+    const procedureDefs = blocksDb.filter(b => !b.isShadow_ && b.type === 'procedures_definition');
+
+    const renamableCodeHints = procedureDefs
+        .filter(b => {
+            return b.getInput('custom_block').connection.targetBlock().getProcCode().startsWith("DoSomething");
+        })
+        .map(b => {
+            let oldHint = hintState.hints.find(h => b.id === h.blockId);
+            if (oldHint) return oldHint;
+            let blockId = b.id;
+            let hintId = "custom_block" + Math.round(Math.random(1, 2) * 100000); //hintId is also block id;
+
+            const hintMenuItems = buildHintContextMenu(RENAMABLE_CUSTOM_BLOCK);
+            return { type: RENAMABLE_CUSTOM_BLOCK, hintId, blockId, hintMenuItems };
+        });
+
+    return renamableCodeHints;
+}
 
 export {
     getProcedureEntry, formatXmlString, buildHintContextMenu,
-    highlightDuplicateBlocks, computeHintLocationStyles, analysisInfoToHints, 
-    generateShareableCodeHints
+    highlightDuplicateBlocks, computeHintLocationStyles, analysisInfoToHints,
+    generateShareableCodeHints, generateRenamableCodeHints
 };
