@@ -31,8 +31,7 @@ import {
   closeLoginMenu,
   loginMenuOpen
 } from '../../reducers/menus';
-import Toggle from 'react-toggled';
-import Toggle2 from 'react-toggle';
+import Toggle from 'react-toggle';
 import '!style-loader!css-loader!react-toggle/style.css';
 
 
@@ -42,11 +41,12 @@ const FeatureToggle = props => {
   return (
     <div className={classNames(props.className, customStyles.featureItemWrapper)}>
       <div>{featureName}</div>
-      <Toggle2
+      <div id={featureName}>
+      <Toggle
         checked={checked}
-        name='burritoIsReady'
+        name={featureName}
         value='yes'
-        onChange={handleOnChange} />
+        onChange={handleOnChange} /></div>
     </div>
   )
 };
