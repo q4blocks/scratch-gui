@@ -90,10 +90,10 @@ test("update status", () => {
         hints: [],
         isUpdating: false
     };
-    const newState1 = hintStateReducer(state, setUpdateStatus(true));
+    const newState1 = hintStateReducer(state, setUpdateStatus({isUpdating:true}));
     expect(newState1.isUpdating).toBe(true);
 
-    const newState2 = hintStateReducer(newState1, setUpdateStatus(false));
+    const newState2 = hintStateReducer(newState1, setUpdateStatus({isUpdating:false}));
     expect(newState2.isUpdating).toBe(false);
 
 });

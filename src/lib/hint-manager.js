@@ -1,6 +1,6 @@
 import bindAll from 'lodash.bindall';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK } from './hints/constants';
-import { putAllHints, putHintMap } from '../reducers/hints-state';
+import { putAllHints, putHintMap, setUpdateStatus } from '../reducers/hints-state';
 import { sendAnalysisReq, getProgramXml } from './hints/analysis-server-api';
 import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints, generateRenamableCodeHints } from './hints/hints-util';
 import { applyTransformation } from './hints/transform-api';
@@ -70,6 +70,7 @@ class HintManager {
     }
 
     computeQualityHints() {
+        this.dispatch(setUpdateStatus({isUpdating:true}));
         const _vm = this.vm;
         return Promise.resolve()
             .then(() => getProgramXml(_vm))
@@ -81,6 +82,7 @@ class HintManager {
             }).then(hints => {
                 const trackedHints = this.calculateHintTracking(hints);
                 this.dispatch(putAllHints(trackedHints, DUPLICATE_CODE_SMELL_HINT_TYPE));
+                this.dispatch(setUpdateStatus({isUpdating:false}));
             });
     }
 

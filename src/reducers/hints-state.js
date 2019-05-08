@@ -142,7 +142,7 @@ const clearAllHints = function () {
     }
 }
 
-const setUpdateStatus = function (isUpdating) {
+const setUpdateStatus = function ({isUpdating}) {
     return {
         type: SET_UPDATE_STATUS,
         isUpdating

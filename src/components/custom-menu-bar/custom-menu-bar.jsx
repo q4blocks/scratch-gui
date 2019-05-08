@@ -15,25 +15,12 @@ import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_
 import { setHintOptions } from '../../reducers/hints-state';
 import { showTutorial, setShowTutorial } from '../../reducers/custom-menu';
 import {
-  openAccountMenu,
-  closeAccountMenu,
-  accountMenuOpen,
-  openFileMenu,
-  closeFileMenu,
-  fileMenuOpen,
-  openEditMenu,
-  closeEditMenu,
-  editMenuOpen,
-  openLanguageMenu,
-  closeLanguageMenu,
-  languageMenuOpen,
-  openLoginMenu,
-  closeLoginMenu,
-  loginMenuOpen
+  fileMenuOpen
 } from '../../reducers/menus';
 import Toggle from 'react-toggle';
 import '!style-loader!css-loader!react-toggle/style.css';
 
+import Loader from 'react-loader-spinner'
 
 
 const FeatureToggle = props => {
@@ -50,6 +37,21 @@ const FeatureToggle = props => {
     </div>
   )
 };
+
+const StatusIndicator = ({className, isUpdating}) => {
+  return (
+    <div className={classNames(className, customStyles.featureItemWrapper)}>
+      {isUpdating?"is analyzing..."
+      // <Loader 
+      //    type="Ball-Triangle"
+      //    color="aliceblue"
+      //    height="30"	
+      //    width="30"
+      // />
+      :null}
+    </div>
+  )
+}
 
 
 const LoadFromFile = props => {
@@ -83,7 +85,7 @@ class CustomizedMenuBar extends React.Component {
     return this.props.userStudyMode ? (
       <React.Fragment>
         <div className={classNames(customStyles.customMenuBar)}>
-          {this.props.qualityHintToggleVisible ? <FeatureToggle
+          {this.props.qualityHintToggleVisible ? <div style={{display:'flex'}}><FeatureToggle
             className='code-hint-feature-toggle'
             featureName='Code Wizard'
             checked={this.props.showQualityHint}
@@ -104,7 +106,9 @@ class CustomizedMenuBar extends React.Component {
                 label: JSON.stringify({ enabled: !this.props.showQualityHint, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
               });
             }}
-          /> : null}
+          ></FeatureToggle>
+          {this.props.qualityHintToggleVisible ?<StatusIndicator className='hint-status' isUpdating={this.props.qualityHintStatus}/>:null}
+          </div> : null}
         </div>
       </React.Fragment>
     ) : (<React.Fragment>
@@ -143,7 +147,8 @@ class CustomizedMenuBar extends React.Component {
                 label: JSON.stringify({ enabled: !this.props.showQualityHint, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
               });
             }}
-          /> : null}
+            /> : null}
+            
 
           {this.props.procedureShareToggleVisible ? <FeatureToggle
             className='procedure-share-feature-toggle'
@@ -183,7 +188,8 @@ const mapStateToProps = (state, props) => {
     showQualityHint: showQualityHint,
     projectId: state.scratchGui.projectState.projectId,
     showTutorial: props.showTutorial || state.scratchGui.customMenu.showTutorial,
-    hintManager: state.scratchGui.hintState.hintManager
+    hintManager: state.scratchGui.hintState.hintManager,
+    qualityHintStatus: state.scratchGui.hintState.isUpdating
   }
 }
 
