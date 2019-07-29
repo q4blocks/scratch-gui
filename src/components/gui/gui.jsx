@@ -48,6 +48,8 @@ import Tutorial from '../../containers/tutorial.jsx';
 import CustomizedMenuBar from '../custom-menu-bar/custom-menu-bar.jsx';
 import CustomGuiDevPanel from '../../containers/custom-gui-dev-panel.jsx';
 
+import CustomCards from '../../containers/custom-cards.jsx';
+
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -211,6 +213,9 @@ const GUIComponent = props => {
                 {cardsVisible ? (
                     <Cards />
                 ) : null}
+                {true? (
+                    <CustomCards />
+                ): null}
                 {alertsVisible ? (
                     <Alerts className={styles.alertsContainer} />
                 ) : null}
