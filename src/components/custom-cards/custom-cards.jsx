@@ -1,61 +1,62 @@
 // import PropTypes from 'prop-types';
 import React, { Fragment } from 'react';
-// import {FormattedMessage} from 'react-intl';
+import {FormattedMessage} from 'react-intl';
 import Draggable from 'react-draggable';
 
-import styles from './card.css';
-
-// import rightArrow from './icon--next.svg';
-// import leftArrow from './icon--prev.svg';
-
+import styles from './custom-card.css';
+import rightArrow from './icon--next.svg';
+import leftArrow from './icon--prev.svg';
+import closeIcon from './icon--close.svg';
+import shrinkIcon from './icon--shrink.svg';
+import expandIcon from './icon--expand.svg';
 // import helpIcon from '../../lib/assets/icon--tutorials.svg';
-// import closeIcon from './icon--close.svg';
 
 // import {translateVideo} from '../../lib/libraries/decks/translate-video.js';
 
-// const CardHeader = ({onCloseCards, onShowAll, totalSteps, step}) => (
-//     <div className={styles.headerButtons}>
-//         <div
-//             className={styles.allButton}
-//             onClick={onShowAll}
-//         >
-//             <img
-//                 className={styles.helpIcon}
-//                 src={helpIcon}
-//             />
-//             <FormattedMessage
-//                 defaultMessage="Tutorials"
-//                 description="Title for button to return to tutorials library"
-//                 id="gui.cards.all-tutorials"
-//             />
-//         </div>
-//         {totalSteps > 1 ? (
-//             <div className={styles.stepsList}>
-//                 {Array(totalSteps).fill(0)
-//                     .map((_, i) => (
-//                         <div
-//                             className={i === step ? styles.activeStepPip : styles.inactiveStepPip}
-//                             key={`pip-step-${i}`}
-//                         />
-//                     ))}
-//             </div>
-//         ) : null}
-//         <div
-//             className={styles.removeButton}
-//             onClick={onCloseCards}
-//         >
-//             <FormattedMessage
-//                 defaultMessage="Close"
-//                 description="Title for button to close how-to card"
-//                 id="gui.cards.close"
-//             />
-//             <img
-//                 className={styles.closeIcon}
-//                 src={closeIcon}
-//             />
-//         </div>
-//     </div>
-// );
+const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded }) => (
+    <div className={styles.headerButtons}>
+        <div className={styles.allButton}>
+            <span>Tutorial</span>
+        </div>
+        {totalSteps > 1 ? (
+            <div className={styles.stepsList}>
+                {Array(totalSteps).fill(0)
+                    .map((_, i) => (
+                        <div
+                            className={i === step ? styles.activeStepPip : styles.inactiveStepPip}
+                            key={`pip-step-${i}`}
+                        />
+                    ))}
+            </div>
+        ) : null}
+
+        <div
+            className={styles.shrinkExpandButton}
+            onClick={onShrinkExpandCards}
+        >
+            <img
+                draggable={false}
+                src={expanded ? shrinkIcon : expandIcon}
+            />
+            {expanded ?
+                <span>Shrink</span> :
+                <span>Expand</span>
+            }
+        </div>
+        {/* <div
+                className={styles.removeButton}
+                onClick={onCloseCards}
+            >
+                <span>Close</span>
+                <img
+                    className={styles.closeIcon}
+                    src={closeIcon}
+                />
+            </div> */}
+
+    </div>
+)
+
 
 // // Video step needs to know if the card is being dragged to cover the video
 // // so that the mouseup is not swallowed by the iframe.
@@ -81,75 +82,54 @@ import styles from './card.css';
 //     </div>
 // );
 
-// VideoStep.propTypes = {
-//     dragging: PropTypes.bool.isRequired,
-//     video: PropTypes.string.isRequired
-// };
+const ImageStep = ({ title, image }) => (
+    <Fragment>
+        <div className={styles.stepTitle}>
+            {title}
+        </div>
+        <div className={styles.stepImageContainer}>
+            <img
+                className={styles.stepImage}
+                draggable={false}
+                src={image}
+            />
+        </div>
+    </Fragment>
+);
 
-// const ImageStep = ({title, image}) => (
-//     <Fragment>
-//         <div className={styles.stepTitle}>
-//             {title}
-//         </div>
-//         <div className={styles.stepImageContainer}>
-//             <img
-//                 className={styles.stepImage}
-//                 draggable={false}
-//                 src={image}
-//             />
-//         </div>
-//     </Fragment>
-// );
+const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded }) => (
+    <Fragment>
+        {onNextStep ? (
+            <div>
+                <div className={expanded ? (isRtl ? styles.leftCard : styles.rightCard) : styles.hidden} />
+                <div
+                    className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
+                    onClick={onNextStep}
+                >
+                    <img
+                        draggable={false}
+                        src={isRtl ? leftArrow : rightArrow}
+                    />
+                </div>
+            </div>
+        ) : null}
+        {onPrevStep ? (
+            <div>
+                <div className={expanded ? (isRtl ? styles.rightCard : styles.leftCard) : styles.hidden} />
+                <div
+                    className={expanded ? (isRtl ? styles.rightButton : styles.leftButton) : styles.hidden}
+                    onClick={onPrevStep}
+                >
+                    <img
+                        draggable={false}
+                        src={isRtl ? rightArrow : leftArrow}
+                    />
+                </div>
+            </div>
+        ) : null}
+    </Fragment>
+);
 
-// ImageStep.propTypes = {
-//     image: PropTypes.string.isRequired,
-//     title: PropTypes.node.isRequired
-// };
-
-// const NextPrevButtons = ({isRtl, onNextStep, onPrevStep}) => (
-//     <Fragment>
-//         {onNextStep ? (
-//             <div>
-//                 <div className={isRtl ? styles.leftCard : styles.rightCard} />
-//                 <div
-//                     className={isRtl ? styles.leftButton : styles.rightButton}
-//                     onClick={onNextStep}
-//                 >
-//                     <img
-//                         draggable={false}
-//                         src={isRtl ? leftArrow : rightArrow}
-//                     />
-//                 </div>
-//             </div>
-//         ) : null}
-//         {onPrevStep ? (
-//             <div>
-//                 <div className={isRtl ? styles.rightCard : styles.leftCard} />
-//                 <div
-//                     className={isRtl ? styles.rightButton : styles.leftButton}
-//                     onClick={onPrevStep}
-//                 >
-//                     <img
-//                         draggable={false}
-//                         src={isRtl ? rightArrow : leftArrow}
-//                     />
-//                 </div>
-//             </div>
-//         ) : null}
-//     </Fragment>
-// );
-
-// NextPrevButtons.propTypes = {
-//     isRtl: PropTypes.bool,
-//     onNextStep: PropTypes.func,
-//     onPrevStep: PropTypes.func
-// };
-// CardHeader.propTypes = {
-//     onCloseCards: PropTypes.func.isRequired,
-//     onShowAll: PropTypes.func.isRequired,
-//     step: PropTypes.number,
-//     totalSteps: PropTypes.number
-// };
 
 // const PreviewsStep = ({deckIds, content, onActivateDeckFactory, onShowAll}) => (
 //     <Fragment>
@@ -191,104 +171,92 @@ import styles from './card.css';
 //     </Fragment>
 // );
 
-// PreviewsStep.propTypes = {
-//     content: PropTypes.shape({
-//         id: PropTypes.shape({
-//             name: PropTypes.node.isRequired,
-//             img: PropTypes.string.isRequired,
-//             steps: PropTypes.arrayOf(PropTypes.shape({
-//                 title: PropTypes.node,
-//                 image: PropTypes.string,
-//                 video: PropTypes.string,
-//                 deckIds: PropTypes.arrayOf(PropTypes.string)
-//             }))
-//         })
-//     }).isRequired,
-//     deckIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-//     onActivateDeckFactory: PropTypes.func.isRequired,
-//     onShowAll: PropTypes.func.isRequired
-// };
 
 const CustomCards = props => {
-    //     const {
-    //         activeDeckId,
-    //         content,
-    //         dragging,
-    //         isRtl,
-    //         locale,
-    //         onActivateDeckFactory,
-    //         onCloseCards,
-    //         onDrag,
-    //         onStartDrag,
-    //         onEndDrag,
-    //         onShowAll,
-    //         onNextStep,
-    //         onPrevStep,
-    //         step,
-    //         ...posProps
-    //     } = props;
-    //     let {x, y} = posProps;
+    const {
+        activeDeckId,
+        content,
+        dragging,
+        isRtl,
+        locale,
+        onActivateDeckFactory,
+        onCloseCards,
+        onShrinkExpandCards,
+        onDrag,
+        onStartDrag,
+        onEndDrag,
+        onShowAll,
+        onNextStep,
+        onPrevStep,
+        showVideos,
+        step,
+        expanded,
+        ...posProps
+    } = props;
+    let { x, y } = posProps;
 
-    //     if (activeDeckId === null) return;
+    if (activeDeckId === null) return;
 
-    //     if (x === 0 && y === 0) {
-    //         // initialize positions
-    //         x = isRtl ? -292 : 292;
-    //         // The tallest cards are about 385px high, and the default position is pinned
-    //         // to near the bottom of the blocks palette to allow room to work above.
-    //         const tallCardHeight = 385;
-    //         const bottomMargin = 60; // To avoid overlapping the backpack region
-    //         y = window.innerHeight - tallCardHeight - bottomMargin;
-    //     }
+    if (x === 0 && y === 0) {
+        // initialize positions
+        x = isRtl ? -292 : 292;
+        // The tallest cards are about 385px high, and the default position is pinned
+        // to near the bottom of the blocks palette to allow room to work above.
+        const tallCardHeight = 385;
+        const bottomMargin = 60; // To avoid overlapping the backpack region
+        y = window.innerHeight - tallCardHeight - bottomMargin;
+    }
 
-    //     const steps = content[activeDeckId].steps;
+    const steps = content[activeDeckId].steps;
 
     return (
         <Draggable bounds="parent">
             <div className={styles.cardContainer}>
-                I can now be moved around!
+                <div className={styles.card}>
+                    <QISCardHeader
+                        expanded={expanded}
+                        step={step}
+                        totalSteps={steps.length}
+                        onCloseCards={onCloseCards}
+                        onShowAll={onShowAll}
+                        onShrinkExpandCards={onShrinkExpandCards}
+                    />
+                    <div className={expanded ? styles.stepBody : styles.hidden}>
+                        {steps[step].deckIds ? (
+                            // <PreviewsStep
+                            //     content={content}
+                            //     deckIds={steps[step].deckIds}
+                            //     onActivateDeckFactory={onActivateDeckFactory}
+                            //     onShowAll={onShowAll}
+                            // />
+                            <span>Preview</span>
+                        ) : (
+                                steps[step].video ? (
+                                    // <VideoStep
+                                    //     dragging={dragging}
+                                    //     video={translateVideo(steps[step].video, locale)}
+                                    // />
+                                    <span>Video</span>
+                                ) : (
+                                        <ImageStep
+                                            image={steps[step].image}
+                                            title={steps[step].title}
+                                        />
+                                    )
+                            )}
+                        {steps[step].trackingPixel && steps[step].trackingPixel}
+                    </div>
+                    <NextPrevButtons
+                        expanded={expanded}
+                        isRtl={false}
+                        onNextStep={step < steps.length - 1 ? onNextStep : null}
+                        onPrevStep={step > 0 ? onPrevStep : null}
+                    />
                 </div>
+            </div>
         </Draggable>
-        // <Draggable
-        // bounds="parent"
-        // position={{x: x, y: y}}
-        // onDrag={onDrag}
-        // onStart={onStartDrag}
-        // onStop={onEndDrag}
-        // >
-
-        // </Draggable>
     );
 };
 
-// Cards.propTypes = {
-//     activeDeckId: PropTypes.string.isRequired,
-//     content: PropTypes.shape({
-//         id: PropTypes.shape({
-//             name: PropTypes.node.isRequired,
-//             img: PropTypes.string.isRequired,
-//             steps: PropTypes.arrayOf(PropTypes.shape({
-//                 title: PropTypes.node,
-//                 image: PropTypes.string,
-//                 video: PropTypes.string,
-//                 deckIds: PropTypes.arrayOf(PropTypes.string)
-//             }))
-//         })
-//     }),
-//     dragging: PropTypes.bool.isRequired,
-//     isRtl: PropTypes.bool.isRequired,
-//     locale: PropTypes.string.isRequired,
-//     onActivateDeckFactory: PropTypes.func.isRequired,
-//     onCloseCards: PropTypes.func.isRequired,
-//     onDrag: PropTypes.func,
-//     onEndDrag: PropTypes.func,
-//     onNextStep: PropTypes.func.isRequired,
-//     onPrevStep: PropTypes.func.isRequired,
-//     onShowAll: PropTypes.func,
-//     onStartDrag: PropTypes.func,
-//     step: PropTypes.number.isRequired,
-//     x: PropTypes.number,
-//     y: PropTypes.number
-// };
 
 export default CustomCards;

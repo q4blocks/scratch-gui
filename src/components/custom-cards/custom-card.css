@@ -6,6 +6,7 @@
     position:absolute;
     z-index: $z-index-card;
     margin: 0.5rem 2rem;
+    min-width: 468px;
 }
 
 .left-card, .right-card {
@@ -266,4 +267,22 @@
 .active-step-pip {
     background: $ui-white;
     box-shadow: 0px 0px 0px 2px $ui-black-transparent;
+}
+
+.hidden {
+    display: none;
+}
+
+.shrink-expand-button {
+    cursor: pointer;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem;
+}
+
+.shrink-expand-button:hover, .all-button:hover {
+    background-color: $ui-black-transparent;
 }

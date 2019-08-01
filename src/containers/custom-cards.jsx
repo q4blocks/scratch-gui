@@ -1,14 +1,15 @@
 import {connect} from 'react-redux';
 
-// import {
-//     activateDeck,
-//     closeCards,
-//     nextStep,
-//     prevStep,
-//     dragCard,
-//     startDrag,
-//     endDrag
-// } from '../reducers/cards';
+import {
+    activateDeck,
+    closeCards,
+    shrinkExpandCards,
+    nextStep,
+    prevStep,
+    dragCard,
+    startDrag,
+    endDrag
+} from '../reducers/custom-cards';
 
 // import {
 //     openTipsLibrary
@@ -17,29 +18,31 @@ import {connect} from 'react-redux';
 import CustomCardsComponent from '../components/custom-cards/custom-cards.jsx';
 
 const mapStateToProps = state => ({
-    // visible: state.scratchGui.cards.visible,
-    // content: state.scratchGui.cards.content,
-    // activeDeckId: state.scratchGui.cards.activeDeckId,
-    // step: state.scratchGui.cards.step,
-    // x: state.scratchGui.cards.x,
-    // y: state.scratchGui.cards.y,
-    // isRtl: state.locales.isRtl,
-    // locale: state.locales.locale,
-    // dragging: state.scratchGui.cards.dragging
+    visible: state.scratchGui.customCards.visible,
+    content: state.scratchGui.customCards.content,
+    activeDeckId: state.scratchGui.customCards.activeDeckId,
+    step: state.scratchGui.customCards.step,
+    expanded: state.scratchGui.customCards.expanded,
+    x: state.scratchGui.customCards.x,
+    y: state.scratchGui.customCards.y,
+    isRtl: state.locales.isRtl,
+    locale: state.locales.locale,
+    dragging: state.scratchGui.customCards.dragging
 });
 
 const mapDispatchToProps = dispatch => ({
-    // onActivateDeckFactory: id => () => dispatch(activateDeck(id)),
-    // onShowAll: () => {
-    //     dispatch(openTipsLibrary());
-    //     dispatch(closeCards());
-    // },
-    // onCloseCards: () => dispatch(closeCards()),
-    // onNextStep: () => dispatch(nextStep()),
-    // onPrevStep: () => dispatch(prevStep()),
-    // onDrag: (e_, data) => dispatch(dragCard(data.x, data.y)),
-    // onStartDrag: () => dispatch(startDrag()),
-    // onEndDrag: () => dispatch(endDrag())
+    onActivateDeckFactory: id => () => dispatch(activateDeck(id)),
+    onShowAll: () => {
+        dispatch(openTipsLibrary());
+        dispatch(closeCards());
+    },
+    onCloseCards: () => dispatch(closeCards()),
+    onShrinkExpandCards: () => dispatch(shrinkExpandCards()),
+    onNextStep: () => dispatch(nextStep()),
+    onPrevStep: () => dispatch(prevStep()),
+    onDrag: (e_, data) => dispatch(dragCard(data.x, data.y)),
+    onStartDrag: () => dispatch(startDrag()),
+    onEndDrag: () => dispatch(endDrag())
 });
 
 export default connect(
