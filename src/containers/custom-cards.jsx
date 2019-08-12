@@ -8,7 +8,8 @@ import {
     prevStep,
     dragCard,
     startDrag,
-    endDrag
+    endDrag,
+    completeStep
 } from '../reducers/custom-cards';
 
 // import {
@@ -27,7 +28,9 @@ const mapStateToProps = state => ({
     y: state.scratchGui.customCards.y,
     isRtl: state.locales.isRtl,
     locale: state.locales.locale,
-    dragging: state.scratchGui.customCards.dragging
+    dragging: state.scratchGui.customCards.dragging,
+    stepCompleted: state.scratchGui.customCards.stepCompleted,
+    vm: state.scratchGui.vm,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -42,7 +45,8 @@ const mapDispatchToProps = dispatch => ({
     onPrevStep: () => dispatch(prevStep()),
     onDrag: (e_, data) => dispatch(dragCard(data.x, data.y)),
     onStartDrag: () => dispatch(startDrag()),
-    onEndDrag: () => dispatch(endDrag())
+    onEndDrag: () => dispatch(endDrag()),
+    onCompleteStep: () => dispatch(completeStep())
 });
 
 export default connect(

@@ -9,6 +9,7 @@ const PREV_STEP = 'scratch-gui/custom-cards/PREV_STEP';
 const DRAG_CARD = 'scratch-gui/custom-cards/DRAG_CARD';
 const START_DRAG = 'scratch-gui/custom-cards/START_DRAG';
 const END_DRAG = 'scratch-gui/custom-cards/END_DRAG';
+const COMPLETE_STEP = 'scratch-gui/custom-cards/COMPLETE_STEP';
 
 const initialState = {
     visible: true,
@@ -18,7 +19,8 @@ const initialState = {
     x: 0,
     y: 0,
     expanded: true,
-    dragging: false
+    dragging: false,
+    stepCompleted: false
 };
 
 const reducer = function (state, action) {
@@ -50,7 +52,8 @@ const reducer = function (state, action) {
             //     label: `${state.activeDeckId} - ${state.step}`
             // });
             return Object.assign({}, state, {
-                step: state.step + 1
+                step: state.step + 1,
+                stepCompleted: false //completion reset for the new step
             });
         }
         return state;
@@ -75,6 +78,10 @@ const reducer = function (state, action) {
     case END_DRAG:
         return Object.assign({}, state, {
             dragging: false
+        });
+    case COMPLETE_STEP:
+        return Object.assign({}, state, {
+            stepCompleted: true
         });
     default:
         return state;
@@ -120,6 +127,10 @@ const endDrag = function () {
     return {type: END_DRAG};
 };
 
+const completeStep = function () {
+    return {type: COMPLETE_STEP};
+};
+
 export {
     reducer as default,
     initialState as customCardsInitialState,
@@ -131,5 +142,6 @@ export {
     prevStep,
     dragCard,
     startDrag,
-    endDrag
+    endDrag,
+    completeStep
 };

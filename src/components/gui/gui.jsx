@@ -67,7 +67,7 @@ const GUIComponent = props => {
         menuBarVisible: false,
         previewInfoVisible: false,
         backpackVisible: false,
-        customizedGui: true
+        customizedGui: false
     }
     const {
         accountNavOpen,
@@ -140,6 +140,7 @@ const GUIComponent = props => {
         tutorialDevMode,
         showQualityHint,
         userStudyMode,
+        customCardsVisible,
         ...componentProps
     } = omit(props, 'dispatch');
     if (children) {
@@ -213,7 +214,7 @@ const GUIComponent = props => {
                 {cardsVisible ? (
                     <Cards />
                 ) : null}
-                {true? (
+                {customCardsVisible? (
                     <CustomCards />
                 ): null}
                 {alertsVisible ? (

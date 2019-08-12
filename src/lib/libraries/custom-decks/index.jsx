@@ -18,9 +18,9 @@ export default {
         tags: ['help', 'stuck', 'how', 'can', 'say'],
         img: libraryIntro,
         steps: [
-        //     {
-        //     video: 'intro-move-sayhello'
-        // }, 
+            {
+            video: 'intro-move-sayhello'
+        }, 
         {
             title: (
                 <FormattedMessage
