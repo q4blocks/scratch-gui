@@ -1,6 +1,6 @@
 import bindAll from 'lodash.bindall';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK } from './hints/constants';
-import { putAllHints, putHintMap, setUpdateStatus } from '../reducers/hints-state';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, DUPLICATE_CONSTANT_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK } from './hints/constants';
+import { putAllHints, putHintMap, setUpdateStatus, updateHint } from '../reducers/hints-state';
 import { sendAnalysisReq, getProgramXml } from './hints/analysis-server-api';
 import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints, generateRenamableCodeHints } from './hints/hints-util';
 import { applyTransformation } from './hints/transform-api';
@@ -43,10 +43,47 @@ class HintManager {
 
     blockListener(e) {
         //if hintState.options showQualityHint
-        if (!(['ui', 'endDrag'].includes(e.type))) {
+        if (!(['ui', 'endDrag'].includes(e.type))) { //recompute upon code changes
             if (this.hintState.options.showQualityHint) {
                 this.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
+                this.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
                 this.generateHints(RENAMABLE_CUSTOM_BLOCK);
+            }
+        } 
+        if(e.type==='ui'){      
+            const gesture = this.workspace.getGesture(e);  
+            let targetHint = null;
+            
+            if(gesture&&gesture.startField_){
+                const activeField = gesture.startField_;
+                const shadowId = activeField.sourceBlock_.id;
+                // todo: find any hints that its valueIds contains showdowId
+                targetHint = this.hintState.hints.find(h => h.valueIds.indexOf(shadowId)>=0);
+                
+                if (e.newValue){
+                    if (targetHint) {
+                        if(targetHint.hintId!==this.currentHintId){
+                            // a different hint so hide the previous one first
+                            this.dispatch(updateHint(this.currentHintId, {
+                                styles: Object.assign({}, targetHint.styles, { 'visibility': 'hidden' })
+                            }));
+                        }
+                        this.currentHintId = targetHint.hintId; //keep track of currently shown hint
+                        this.dispatch(updateHint(targetHint.hintId, {
+                            blockId: shadowId,
+                            styles: Object.assign({}, targetHint.styles, { 'visibility': 'visible' })
+                        }));
+                    } 
+                }
+            }
+            
+            // click on empty space 
+            if(e.newValue===null){
+                targetHint = this.hintState.hints.find(h => h.hintId === this.currentHintId);
+                this.dispatch(updateHint(targetHint.hintId, {
+                    styles: Object.assign({}, targetHint.styles, { 'visibility': 'hidden' })
+                }));
+                this.currentHintId = null;
             }
         }
     }
@@ -69,12 +106,12 @@ class HintManager {
         return this.analysisInfo;
     }
 
-    computeQualityHints() {
-        this.dispatch(setUpdateStatus({isUpdating:true}));
+    computeQualityHints(hintType) {
+        this.dispatch(setUpdateStatus({ isUpdating: true }));
         const _vm = this.vm;
         return Promise.resolve()
             .then(() => getProgramXml(_vm))
-            .then(xml => sendAnalysisReq(this.projectId, 'duplicate_code', xml, isProductionMode))
+            .then(xml => sendAnalysisReq(this.projectId, hintType, xml, isProductionMode))
             .then(json => {
                 const analysisInfo = json;
                 this.analysisInfo = analysisInfo;
@@ -82,7 +119,7 @@ class HintManager {
             }).then(hints => {
                 const trackedHints = this.calculateHintTracking(hints);
                 this.dispatch(putAllHints(trackedHints, DUPLICATE_CODE_SMELL_HINT_TYPE));
-                this.dispatch(setUpdateStatus({isUpdating:false}));
+                this.dispatch(setUpdateStatus({ isUpdating: false }));
             });
     }
 
@@ -95,7 +132,7 @@ class HintManager {
             });
     }
 
-    computeRenamableCustomBlocks(){
+    computeRenamableCustomBlocks() {
         Promise.resolve()
             .then(() => generateRenamableCodeHints(this.workspace, this.hintState))
             .then(hints => {
@@ -109,7 +146,7 @@ class HintManager {
         const actionSeq = applyTransformation(hintId, this.vm, this.workspace, this.analysisInfo);
         //TODO: better position the introduced procedure
         //quick fix for tutorial mode:
-        if (this.options.isTutorialMode||this.options.userStudyMode) {
+        if (this.options.isTutorialMode || this.options.userStudyMode) {
             actionSeq.then(() => {
                 this.workspace.cleanUp();
             });
@@ -120,11 +157,13 @@ class HintManager {
 
     generateHints(hintType) {
         if (hintType === DUPLICATE_CODE_SMELL_HINT_TYPE) {
-            this.computeQualityHintsDebounced();
+            this.computeQualityHintsDebounced(hintType);
         } else if (hintType === SHAREABLE_CODE_HINT_TYPE) {
             this.computeSharableCustomBlocks();
         } else if (hintType === RENAMABLE_CUSTOM_BLOCK) {
             this.computeRenamableCustomBlocks();
+        } else if (hintType === DUPLICATE_CONSTANT_HINT_TYPE) {
+            this.computeQualityHintsDebounced(hintType); //merge with duplicate code
         }
     }
 
@@ -132,9 +171,9 @@ class HintManager {
         this.dispatch(putAllHints([], hintType));
     }
 
-    clearHintMap(hintTypes){
+    clearHintMap(hintTypes) {
         const map = {};
-        hintTypes.forEach(t=>map[t]=[]);
+        hintTypes.forEach(t => map[t] = []);
 
         this.dispatch(putHintMap(map));
     }

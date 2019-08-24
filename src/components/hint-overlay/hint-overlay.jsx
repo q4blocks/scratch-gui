@@ -1,12 +1,14 @@
 import React from 'react';
 import Floater from 'react-floater';
 import HintIcon from './hint-icon.jsx';
-import {DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK} from "../../lib/hints/constants";
+import {DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE} from "../../lib/hints/constants";
 
 const getHintOverlayText = function (type) {
     switch (type) {
         case DUPLICATE_CODE_SMELL_HINT_TYPE:
             return "Consider creating a custom block for the highlighted code. Right click on the hint icon to see options.";
+        case DUPLICATE_CONSTANT_HINT_TYPE:
+                return "Consider creating a variable to hold this commonly used value. Right click on the hint icon to see options.";
         case SHAREABLE_CODE_HINT_TYPE:
             return "This custom block can be shared. Right click on the hint icon to see options";
         case RENAMABLE_CUSTOM_BLOCK:

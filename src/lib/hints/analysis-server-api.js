@@ -23,7 +23,7 @@ if (localServerAvailable === undefined) {
  */
 const sendAnalysisReq = function (projectId, analysisType, xml, isProductionMode) {
     let url = isProductionMode ? remoteService : localService;
-    url = localServerAvailable ? localService : remoteService;
+    // url = localServerAvailable ? localService : remoteService;
     return fetch(url, {
         method: "POST",
         mode: "cors",

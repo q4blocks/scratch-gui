@@ -1,5 +1,5 @@
 import ScratchBlocks from 'scratch-blocks';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK } from './constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE } from './constants';
 
 /**
  *  Use blockId specified in hint item as the location target for positioning hint icon
@@ -21,7 +21,8 @@ const computeHintLocationStyles = function (hint, workspace) {
         styles: {
             position: 'absolute',
             top: computeTop(blockSvg, workspace) + 'px',
-            left: computeLeft(blockSvg, workspace) + 'px'
+            left: computeLeft(blockSvg, workspace) + 'px',
+            visibility: hint.styles?hint.styles.visibility:'hidden' //default hidden
         }
     };
     return changes;
@@ -45,6 +46,17 @@ const analysisInfoToHints = function (analysisInfo) {
                 hintId: smellId,
                 blockId: anchorBlockId,
                 hintMenuItems
+            };
+            hints.push(hint);
+        }
+
+        if (type === 'DuplicateConstant') {
+            const hint = {
+                type: DUPLICATE_CONSTANT_HINT_TYPE,
+                hintId: smellId,
+                blockId: record.smell.valueIds[0],
+                valueIds: record.smell.valueIds,
+                "hintMenuItems": []
             };
             hints.push(hint);
         }
