@@ -30,6 +30,7 @@ import throttle from 'redux-throttle';
 import hintStateReducer, {hintsInitialState} from './hints-state';
 import tutorialReducer, {tutorialInitialState} from './tutorial';
 import customMenuReducer, {customMenuInitialState} from './custom-menu';
+import customCardsReducer, {customCardsInitialState} from './custom-cards';
 
 import decks from '../lib/libraries/decks/index.jsx';
 
@@ -64,8 +65,8 @@ const guiInitialState = {
     vmStatus: vmStatusInitialState,
     hintState: hintsInitialState,
     tutorial: tutorialInitialState,
-    customMenu: customMenuInitialState
-    
+    customMenu: customMenuInitialState,
+    customCards: customCardsInitialState
 };
 
 const initPlayer = function (currentState) {
@@ -177,7 +178,8 @@ const guiReducer = combineReducers({
     vmStatus: vmStatusReducer,
     hintState: hintStateReducer,
     tutorial: tutorialReducer,
-    customMenu: customMenuReducer
+    customMenu: customMenuReducer,
+    customCards: customCardsReducer
 });
 
 export {
