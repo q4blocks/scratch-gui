@@ -14,7 +14,7 @@ const COMPLETE_STEP = 'scratch-gui/custom-cards/COMPLETE_STEP';
 const initialState = {
     visible: true,
     content: decks,
-    activeDeckId: 'intro-move-sayhello',
+    activeDeckId: 'scratching-with-a-square',
     step: 0,
     x: 0,
     y: 0,

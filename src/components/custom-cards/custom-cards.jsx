@@ -11,13 +11,13 @@ import leftArrow from './icon--prev.svg';
 import closeIcon from './icon--close.svg';
 import shrinkIcon from './icon--shrink.svg';
 import expandIcon from './icon--expand.svg';
-
 import isEqual from 'lodash.isequal';
 
-import {workspaceFromXml,addBlocksToWorkspace} from '../../lib/hints/hint-test-workspace-setup.js';
-// import helpIcon from '../../lib/assets/icon--tutorials.svg';
+import { workspaceFromXml, addBlocksToWorkspace } from '../../lib/hints/hint-test-workspace-setup.js';
 
-// import {translateVideo} from '../../lib/libraries/decks/translate-video.js';
+// reference for latest update: https://github.com/LLK/scratch-gui/blob/develop/src/components/cards/cards.jsx
+
+const enableCloseCard = false;
 
 const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded }) => (
     <div className={styles.headerButtons}>
@@ -49,16 +49,16 @@ const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, ex
                 <span>Expand</span>
             }
         </div>
-        <div
-                className={styles.removeButton}
-                onClick={onCloseCards}
-            >
-                <span>Close</span>
-                <img
-                    className={styles.closeIcon}
-                    src={closeIcon}
-                />
-            </div>
+        {enableCloseCard && <div
+            className={styles.removeButton}
+            onClick={onCloseCards}
+        >
+            <span>Close</span>
+            <img
+                className={styles.closeIcon}
+                src={closeIcon}
+            />
+        </div>}
 
     </div>
 )
@@ -66,7 +66,7 @@ const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, ex
 
 // // Video step needs to know if the card is being dragged to cover the video
 // // so that the mouseup is not swallowed by the iframe.
-const VideoStep = ({video, dragging}) => (
+const VideoStep = ({ video, dragging }) => (
     <div className={styles.stepVideo}>
         {dragging ? (
             <div className={styles.videoCover} />
@@ -88,50 +88,57 @@ const VideoStep = ({video, dragging}) => (
     </div>
 );
 
-const checkStmtSequence = ({topBlock, expected}) => {
+const checkStmtSequence = ({ topBlock, expected }) => {
     window.topBlock = topBlock;
     let curBlock = topBlock;
     let actual = [];
-    
-    while(curBlock){
+
+    while (curBlock) {
         actual.push(curBlock.type);
         curBlock = curBlock.getNextBlock();
     }
     return isEqual(actual, expected);
 }
 
-const workspaceContainsScript = ({workspace, expected}) => {
+const workspaceContainsScript = ({ workspace, expected }) => {
     window.workspace = workspace;
-    const found = workspace.getTopBlocks().find(topBlock=>checkStmtSequence({topBlock, expected}));
+    const found = workspace.getTopBlocks().find(topBlock => checkStmtSequence({ topBlock, expected }));
     return !!found;
 }
 
-const checkStepCompletion = ({ onCompleteStep, vm }) => () => {
-    //compute
-    const workspace = ScratchBlocks.getMainWorkspace();
-    let expected = ["event_whenflagclicked", "looks_say"];
-    let isComplete = workspaceContainsScript({workspace, expected});
-    // iterate all top blocks
-    // then check the presence of a sequence of blocks in each script
-    // easiest is to check if workspace contains a specific block command
-    // workspaceContainsBlock
-    // workspaceContainsBlocks
-    // workspaceContainsScript
-    // if complete
+const checkStepCompletion = ({ onCompleteStep, vm, expected }) => () => {
+    let isComplete = null;
+    if (!expected) {
+         isComplete =  true;//not specified => auto complete
+    } else {
+        //compute
+        const workspace = ScratchBlocks.getMainWorkspace();
+        isComplete = workspaceContainsScript({ workspace, expected });
+        //simply complete
+        // isComplete =  true;
+
+        // iterate all top blocks
+        // then check the presence of a sequence of blocks in each script
+        // easiest is to check if workspace contains a specific block command
+        // workspaceContainsBlock
+        // workspaceContainsBlocks
+        // workspaceContainsScript
+        // if complete
+    }
 
     isComplete ? onCompleteStep() : () => { };
 }
 
-const populateWorkspace = ({vm}) => {
+const populateWorkspace = ({ vm }) => {
     const xml = "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='Ony-C:+ZPxHTLTtaS.Xe' x='271' y='172'><next><block type='looks_say' id='b({q2a.SUmk:*heo3XyX'><value name='MESSAGE'><shadow type='text' id='y*vbe.Gw4tAB3:Eq24LA'><field name='TEXT'>Hello!</field></shadow></value></block></next></block></xml>";
     vm.addListener("workspaceUpdate", () => {
         const workspace = Blockly.getMainWorkspace();
-        if(workspace){
-            setTimeout(()=>{
+        if (workspace) {
+            setTimeout(() => {
                 workspaceFromXml(workspace, xml);
                 //auto check //to be removed
-                setTimeout(()=>{workspaceContainsScript({workspace, script:null}),1000});
-            
+                setTimeout(() => { workspaceContainsScript({ workspace, script: null }), 1000 });
+
             }, 100);
         }
     });
@@ -154,14 +161,18 @@ const ImageStep = ({ title, image, stepCompleted, onCompleteStep }) => {
     )
 };
 
-const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted }) => (
+const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted, checkCompletion }) => (
     <Fragment>
         {onNextStep ? (
             <div>
                 <div className={expanded ? (isRtl ? styles.leftCard : styles.rightCard) : styles.hidden} />
                 <div
                     className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
-                    onClick={stepCompleted ? onNextStep : () => { console.log("complete this step first"); }}
+                    onClick={stepCompleted ? onNextStep() : () => {
+                        checkCompletion();
+
+                        console.log("complete this step first");
+                    }}
                 >
                     <img
                         draggable={false}
@@ -269,10 +280,10 @@ const CustomCards = props => {
 
     const steps = content[activeDeckId].steps;
 
-    populateWorkspace({vm});
+    // populateWorkspace({ vm });
 
     return (
-        <Draggable bounds="parent">
+        <Draggable bounds="parent" position={{ x: x, y: y }}>
             <div className={styles.cardContainer}>
                 <div className={styles.card}>
                     <QISCardHeader
@@ -296,7 +307,7 @@ const CustomCards = props => {
                                 steps[step].video ? (
                                     <VideoStep
                                         dragging={dragging}
-                                        video={"apchqdve3p"}
+                                        video={steps[step].video}
                                     />
                                     // <span>Video</span>
                                 ) : (
@@ -309,14 +320,14 @@ const CustomCards = props => {
                             )}
                         {steps[step].trackingPixel && steps[step].trackingPixel}
                     </div>
-                    {/* <div className={styles.seeAllButton} onClick={checkStepCompletion({ onCompleteStep, vm })}>Check</div>
-                    <div>This step is {stepCompleted ? "complete" : "incomplete"}</div> */}
+                    <div>This step is {stepCompleted ? "complete" : "incomplete"}</div>
                     <NextPrevButtons
                         expanded={expanded}
                         isRtl={false}
                         onNextStep={step < steps.length - 1 ? onNextStep : null}
                         onPrevStep={step > 0 ? onPrevStep : null}
                         stepCompleted={stepCompleted}
+                        checkCompletion={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}
                     />
                 </div>
             </div>

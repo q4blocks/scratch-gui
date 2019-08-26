@@ -19,8 +19,8 @@ const addFunctionListener = (object, property, callback) => {
     };
 };
 
-const isTesting = false;
-const isProductionMode = true;
+const isTesting = true;
+const isProductionMode = false;
 
 class HintManager {
     constructor(vm, workspace, dispatch, hintState, options) {
@@ -192,10 +192,16 @@ class HintManager {
 
     onWorkspaceUpdate() {
         if (isTesting && !this.alreadySetup) {
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
             // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
             // addBlocksToWorkspace(this.workspace, testBlocks.bug);
+
+            // Duplicate Constant
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicateConst0);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicateConst1);
+            // addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicateConst2);
+
             this.workspace.cleanUp();
             this.alreadySetup = true;
         }

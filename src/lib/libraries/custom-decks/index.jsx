@@ -1,5 +1,5 @@
 import React from 'react';
-import {FormattedMessage} from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 // Intro
 import libraryIntro from './intro/lib-getting-started.jpg';
@@ -7,7 +7,7 @@ import stepMove from './intro/intro1.gif';
 import stepMoveSayHello from './intro/intro2.gif';
 
 export default {
-    'intro-move-sayhello': {
+    'scratching-with-a-square': {
         name: (
             <FormattedMessage
                 defaultMessage="Getting Started"
@@ -19,33 +19,23 @@ export default {
         img: libraryIntro,
         steps: [
             {
-            video: 'intro-move-sayhello'
-        }, 
-        {
-            title: (
-                <FormattedMessage
-                    defaultMessage="Add a move block"
-                    description="Step name for 'Add a move block' step"
-                    id="gui.howtos.intro-move.step_stepMove"
-                />
-            ),
-            image: stepMove
-        }, {
-            title: (
-                <FormattedMessage
-                    defaultMessage="Click the green flag to start"
-                    description="Step name for 'Add A Say Block' step"
-                    id="gui.howtos.add-a-move-block.step_stepMoveSayHello"
-                />
-            ),
-            image: stepMoveSayHello
-        }, 
-        // {
-        //     deckIds: [
-        //         'add-a-backdrop',
-        //         'add-sprite'
-        //     ]
-        // }
+                // video: 'apchqdve3p',
+                title: (
+                    <p>instruction 1</p>
+                )
+            },
+            {
+                title: (
+                    <p>Instruction 2</p>
+                ),
+                image: stepMove,
+                expected: ["event_whenflagclicked", "looks_say"]
+            }, {
+                title: (
+                   <p>Instruction 3</p>
+                ),
+                image: stepMoveSayHello
+            }
         ],
         urlId: 'getStarted'
     }
