@@ -56,7 +56,7 @@ const analysisInfoToHints = function (analysisInfo) {
                 hintId: smellId,
                 blockId: record.smell.valueIds[0],
                 valueIds: record.smell.valueIds,
-                "hintMenuItems": []
+                "hintMenuItems": buildHintContextMenu(DUPLICATE_CONSTANT_HINT_TYPE)
             };
             hints.push(hint);
         }
@@ -92,6 +92,13 @@ const buildHintContextMenu = (type) => {
                     itemAction: CONTEXT_MENU_RENAME_BLOCK
                 }
             ]
+        case DUPLICATE_CONSTANT_HINT_TYPE:
+            return [
+              {
+                item_name: 'Help me create a constant variable',
+                itemAction: CONTEXT_MENU_REFACTOR
+              }
+            ];
     }
 };
 

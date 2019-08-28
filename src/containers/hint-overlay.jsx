@@ -8,7 +8,7 @@ import ScratchBlocks from 'scratch-blocks';
 
 import { updateHint, putAllHints, removeHint, setHintManager, setHintOptions } from '../reducers/hints-state';
 import HintOverlayComponent from '../components/hint-overlay/hint-overlay.jsx';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, DUPLICATE_CONSTANT_HINT_TYPE } from '../lib/hints/constants';
 import { getProcedureEntry, highlightDuplicateBlocks } from '../lib/hints/hints-util';
 
 import HintManager from '../lib/hint-manager';
@@ -35,6 +35,9 @@ class HintOverlay extends React.Component {
             case DUPLICATE_CODE_SMELL_HINT_TYPE:
                 highlightDuplicateBlocks(hint.hintId, true, this.workspace, this.props.hintManager.getAnalysisInfo());
                 break;
+            case DUPLICATE_CONSTANT_HINT_TYPE:
+                hint.valueIds.forEach(id=>this.workspace.highlightField(id));
+                break;
         }
     }
 
@@ -49,6 +52,9 @@ class HintOverlay extends React.Component {
                 });
                 break;
             }
+            case DUPLICATE_CONSTANT_HINT_TYPE:
+                hint.valueIds.forEach(id=>this.workspace.unHighlightField(id));
+                break;
         }
     }
     onHandleHintMenuItemClick(hint, itemAction) {
@@ -60,8 +66,6 @@ class HintOverlay extends React.Component {
                     action: "Extract custom block",
                     label: JSON.stringify({ projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
                 });
-
-
                 break;
             }
             case CONTEXT_MENU_CODE_SHARE: {

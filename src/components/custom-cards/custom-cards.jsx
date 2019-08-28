@@ -284,7 +284,7 @@ const CustomCards = props => {
         saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
     }
 
-    queryData('5d4354c9de88f284614074bc', 'scratching-with-a-square2').then(res=>{
+    queryData('5d4354c9de88f284614074bc', 'scratching-with-a-square').then(res=>{
         console.log(res);
     });
 
