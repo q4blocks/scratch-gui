@@ -18,10 +18,10 @@ import {
 
 import CustomCardsComponent from '../components/custom-cards/custom-cards.jsx';
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state, ownProps) => ({
     visible: state.scratchGui.customCards.visible,
     content: state.scratchGui.customCards.content,
-    activeDeckId: state.scratchGui.customCards.activeDeckId,
+    activeDeckId: ownProps.activeDeckId || state.scratchGui.customCards.activeDeckId,
     step: state.scratchGui.customCards.step,
     expanded: state.scratchGui.customCards.expanded,
     x: state.scratchGui.customCards.x,

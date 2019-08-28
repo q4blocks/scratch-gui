@@ -135,6 +135,7 @@ const GUIComponent = props => {
         showQualityHint,
         userStudyMode,
         customCardsVisible,
+        customDeckId,
         ...componentProps
     } = omit(props, 'dispatch');
 
@@ -217,7 +218,7 @@ const GUIComponent = props => {
                     <Cards />
                 ) : null}
                 {customCardsVisible? (
-                    <CustomCards />
+                    <CustomCards activeDeckId={customDeckId}/>
                 ): null}
                 {alertsVisible ? (
                     <Alerts className={styles.alertsContainer} />
@@ -470,7 +471,8 @@ GUIComponent.propTypes = {
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
     vm: PropTypes.instanceOf(VM).isRequired,
-    hintMode: PropTypes.bool
+    hintMode: PropTypes.bool,
+    tutorialId: PropTypes.string
 };
 GUIComponent.defaultProps = {
     backpackHost: null,

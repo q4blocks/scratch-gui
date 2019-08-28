@@ -43,5 +43,16 @@ export default {
             }
         ],
         urlId: 'getStarted'
+    },
+
+    'shape-styling': {
+        steps: [
+            {
+                // video: 'apchqdve3p',
+                title: (
+                    <p>shape styling instruction</p>
+                )
+            },
+        ]
     }
 }
