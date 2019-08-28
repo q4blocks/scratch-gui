@@ -66,6 +66,30 @@ import languageIcon from '../language-selector/language-icon.svg';
 
 import scratchLogo from './scratch-logo.svg';
 
+// Hint Feature Toggle
+import Toggle from 'react-toggle';
+import '!style-loader!css-loader!react-toggle/style.css';
+import customStyles from '../custom-menu-bar/custom-menu-bar.css';
+
+import { setHintOptions } from '../../reducers/hints-state';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK } from '../../lib/hints/constants';
+
+const FeatureToggle = props => {
+    const { featureName, checked, handleOnChange } = props;
+    return (
+      <div className={classNames(props.className, customStyles.featureItemWrapper)}>
+        <div>{featureName}</div>
+        <div id={featureName}>
+        <Toggle
+          checked={checked}
+          name={featureName}
+          value='yes'
+          onChange={handleOnChange} /></div>
+      </div>
+    )
+  };
+  
+
 const messages = defineMessages({
     confirmNav: {
         id: 'gui.menuBar.confirmNewWithoutSaving',
@@ -305,7 +329,7 @@ class MenuBar extends React.Component {
                 <div className={styles.mainMenu}>
                     <div className={styles.fileGroup}>
                         <div className={classNames(styles.menuBarItem)}>
-                            <img
+                        {!this.props.customizedGui&&<img
                                 alt="Scratch"
                                 className={classNames(styles.scratchLogo, {
                                     [styles.clickable]: typeof this.props.onClickLogo !== 'undefined'
@@ -313,9 +337,9 @@ class MenuBar extends React.Component {
                                 draggable={false}
                                 src={scratchLogo}
                                 onClick={this.props.onClickLogo}
-                            />
+                            />}
                         </div>
-                        <div
+                        {!this.props.customizedGui&&<div
                             className={classNames(styles.menuBarItem, styles.hoverable, styles.languageMenu)}
                         >
                             <div>
@@ -329,7 +353,7 @@ class MenuBar extends React.Component {
                                 />
                             </div>
                             <LanguageSelector label={this.props.intl.formatMessage(ariaMessages.language)} />
-                        </div>
+                        </div>}
                         <div
                             className={classNames(styles.menuBarItem, styles.hoverable, {
                                 [styles.active]: this.props.fileMenuOpen
@@ -347,14 +371,14 @@ class MenuBar extends React.Component {
                                 place={this.props.isRtl ? 'left' : 'right'}
                                 onRequestClose={this.props.onRequestCloseFile}
                             >
-                                <MenuSection>
+                                {!this.props.customizedGui&&<MenuSection>
                                     <MenuItem
                                         isRtl={this.props.isRtl}
                                         onClick={this.handleClickNew}
                                     >
                                         {newProjectMessage}
                                     </MenuItem>
-                                </MenuSection>
+                                </MenuSection>}
                                 {(this.props.canSave || this.props.canCreateCopy || this.props.canRemix) && (
                                     <MenuSection>
                                         {this.props.canSave ? (
@@ -375,7 +399,7 @@ class MenuBar extends React.Component {
                                     </MenuSection>
                                 )}
                                 <MenuSection>
-                                    <SBFileUploader onUpdateProjectTitle={this.props.onUpdateProjectTitle}>
+                                    {this.props.customizedGui?<div></div>:<SBFileUploader onUpdateProjectTitle={this.props.onUpdateProjectTitle}>
                                         {(className, renderFileInput, loadProject) => (
                                             <MenuItem
                                                 className={className}
@@ -391,7 +415,7 @@ class MenuBar extends React.Component {
                                                 {renderFileInput()}
                                             </MenuItem>
                                         )}
-                                    </SBFileUploader>
+                                    </SBFileUploader>}
                                     <SB3Downloader>{(className, downloadProject) => (
                                         <MenuItem
                                             className={className}
@@ -407,7 +431,7 @@ class MenuBar extends React.Component {
                                 </MenuSection>
                             </MenuBarMenu>
                         </div>
-                        <div
+                        {!this.props.customizedGui&&<div
                             className={classNames(styles.menuBarItem, styles.hoverable, {
                                 [styles.active]: this.props.editMenuOpen
                             })}
@@ -454,10 +478,47 @@ class MenuBar extends React.Component {
                                     )}</TurboMode>
                                 </MenuSection>
                             </MenuBarMenu>
-                        </div>
+                        </div>}
                     </div>
-                    <Divider className={classNames(styles.divider)} />
-                    <div
+                    {/* START-customized gui: quality hints*/}
+                    {this.props.customizedGui&&<Divider className={classNames(styles.divider)} />}
+                    {this.props.customizedGui&&this.props.qualityHintToggleVisible&&<div className={classNames(styles.menuBarItem)}>
+                        
+                    <FeatureToggle
+            className='code-hint-feature-toggle'
+            featureName='Code Wizard'
+            checked={this.props.showQualityHint}
+            handleOnChange={() => {
+              const isEnabled = !this.props.showQualityHint;
+              this.props.onToggleQualityHintFeature(isEnabled)
+              if (isEnabled) {
+                this.props.hintManager.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
+                this.props.hintManager.generateHints(RENAMABLE_CUSTOM_BLOCK);
+              } else {
+                this.props.hintManager.clearAll(DUPLICATE_CODE_SMELL_HINT_TYPE);
+                this.props.hintManager.clearAll(RENAMABLE_CUSTOM_BLOCK);
+              }
+
+            //   analytics.event({
+            //     category: "Feature",
+            //     action: "Tap Code Hint Toggle",
+            //     label: JSON.stringify({ enabled: !this.props.showQualityHint, projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
+            //   });
+            }}
+          ></FeatureToggle>
+
+
+
+
+
+
+
+
+                        
+                        </div>}
+                    {/* END-customized gui: quality hints*/}
+                    {!this.props.customizedGui&&<Divider className={classNames(styles.divider)} />}
+                    {!this.props.customizedGui&&<div
                         aria-label={this.props.intl.formatMessage(ariaMessages.tutorials)}
                         className={classNames(styles.menuBarItem, styles.hoverable)}
                         onClick={this.props.onOpenTipLibrary}
@@ -467,9 +528,9 @@ class MenuBar extends React.Component {
                             src={helpIcon}
                         />
                         <FormattedMessage {...ariaMessages.tutorials} />
-                    </div>
-                    <Divider className={classNames(styles.divider)} />
-                    {this.props.canEditTitle ? (
+                    </div>}
+                    {!this.props.customizedGui&&<Divider className={classNames(styles.divider)} />}
+                    {!this.props.customizedGui&&this.props.canEditTitle ? (
                         <div className={classNames(styles.menuBarItem, styles.growable)}>
                             <MenuBarItemTooltip
                                 enable
@@ -490,7 +551,7 @@ class MenuBar extends React.Component {
                             username={this.props.authorUsername}
                         />
                     ) : null)}
-                    <div className={classNames(styles.menuBarItem)}>
+                    {!this.props.customizedGui&&<div className={classNames(styles.menuBarItem)}>
                         {this.props.canShare ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
                                 <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
@@ -517,8 +578,8 @@ class MenuBar extends React.Component {
                             ) : []
                         )}
                         {this.props.canRemix ? remixButton : []}
-                    </div>
-                    <div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
+                    </div>}
+                    {!this.props.customizedGui&&<div className={classNames(styles.menuBarItem, styles.communityButtonWrapper)}>
                         {this.props.enableCommunity ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
                                 <ProjectWatcher onDoneUpdating={this.props.onSeeCommunity}>
@@ -541,7 +602,7 @@ class MenuBar extends React.Component {
                                 <CommunityButton className={styles.menuBarButton} />
                             </MenuBarItemTooltip>
                         ) : [])}
-                    </div>
+                    </div>}
                 </div>
 
                 {/* show the proper UI in the account menu, given whether the user is
@@ -625,7 +686,7 @@ class MenuBar extends React.Component {
                                 </div>
                             </React.Fragment>
                         )
-                    ) : (
+                    ) : this.props.customizedGui?null : (
                         // ******** no login session is available, so don't show login stuff
                         <React.Fragment>
                             <div className={classNames(styles.menuBarItem, styles.feedbackButtonWrapper)}>
@@ -747,7 +808,9 @@ MenuBar.propTypes = {
     renderLogin: PropTypes.func,
     sessionExists: PropTypes.bool,
     showComingSoon: PropTypes.bool,
-    username: PropTypes.string
+    username: PropTypes.string,
+    customizedGui: PropTypes.bool,
+    qualityHintToggleVisible: PropTypes.bool
 };
 
 MenuBar.defaultProps = {
@@ -757,6 +820,7 @@ MenuBar.defaultProps = {
 const mapStateToProps = state => {
     const loadingState = state.scratchGui.projectState.loadingState;
     const user = state.session && state.session.session && state.session.session.user;
+    const { showQualityHint } = state.scratchGui.hintState.options;
     return {
         accountMenuOpen: accountMenuOpen(state),
         fileMenuOpen: fileMenuOpen(state),
@@ -769,7 +833,9 @@ const mapStateToProps = state => {
         projectChanged: state.scratchGui.projectChanged,
         projectTitle: state.scratchGui.projectTitle,
         sessionExists: state.session && typeof state.session.session !== 'undefined',
-        username: user ? user.username : null
+        username: user ? user.username : null,
+        showQualityHint: showQualityHint,
+        hintManager: state.scratchGui.hintState.hintManager,
     };
 };
 
@@ -790,7 +856,12 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
-    onSeeCommunity: () => dispatch(setPlayer(true))
+    onSeeCommunity: () => dispatch(setPlayer(true)),
+    onToggleQualityHintFeature: (isOn) => {
+        dispatch(setHintOptions({
+          showQualityHint: isOn
+        }))
+      }
 });
 
 export default injectIntl(connect(

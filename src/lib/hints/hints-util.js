@@ -17,12 +17,17 @@ const computeHintLocationStyles = function (hint, workspace) {
         return blockSvg.getBoundingClientRect().x - workspace.svgBackground_.getBoundingClientRect().left + (blockWidth + hintOffset) * workspace.scale;
     }
 
+    let defaultVisibility = 'visible';
+    if(hint.type==='duplicate-constant'){
+        defaultVisibility = 'hidden'; //only show when the active field is part of a detected smell
+    }
+
     const changes = {
         styles: {
             position: 'absolute',
             top: computeTop(blockSvg, workspace) + 'px',
             left: computeLeft(blockSvg, workspace) + 'px',
-            visibility: hint.styles?hint.styles.visibility:'hidden' //default hidden
+            visibility: hint.styles?hint.styles.visibility: defaultVisibility
         }
     };
     return changes;

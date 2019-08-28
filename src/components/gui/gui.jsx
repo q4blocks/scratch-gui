@@ -63,12 +63,6 @@ const messages = defineMessages({
 let isRendererSupported = null;
 
 const GUIComponent = props => {
-    const customOptions = {
-        menuBarVisible: false,
-        previewInfoVisible: false,
-        backpackVisible: false,
-        customizedGui: false
-    }
     const {
         accountNavOpen,
         activeTabIndex,
@@ -143,6 +137,14 @@ const GUIComponent = props => {
         customCardsVisible,
         ...componentProps
     } = omit(props, 'dispatch');
+
+    const customOptions = {
+        menuBarVisible: true,
+        previewInfoVisible: false,
+        backpackVisible: false,
+        customizedGui: showCustomMenuBar
+    }
+
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -238,15 +240,22 @@ const GUIComponent = props => {
                     />
                 ) : null}
                 {showCustomGuiDevPanel?<CustomGuiDevPanel/>:null}
-                {customOptions.customizedGui? 
-                (showCustomMenuBar?<CustomizedMenuBar
+                
+                {
+                    /*
+                    (<CustomizedMenuBar
                     procedureShareToggleVisible={procedureShareToggleVisible}
                     qualityHintToggleVisible={qualityHintToggleVisible}
                     onUpdateProjectTitle={onUpdateProjectTitle}
                     showTutorial={showTutorial}
                     userStudyMode={userStudyMode}
                     showSurveyCallBack={showSurveyCallBack}
-                />:null):(<MenuBar
+                />)
+                    */
+                }
+
+                {customOptions.customizedGui&& 
+                (<MenuBar
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
@@ -271,6 +280,8 @@ const GUIComponent = props => {
                     onShare={onShare}
                     onToggleLoginOpen={onToggleLoginOpen}
                     onUpdateProjectTitle={onUpdateProjectTitle}
+                    customizedGui={customOptions.customizedGui}
+                    qualityHintToggleVisible={qualityHintToggleVisible}
                 />)}
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
