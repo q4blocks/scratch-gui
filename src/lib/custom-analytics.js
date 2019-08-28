@@ -1,6 +1,6 @@
 import analytics from './analytics';
 
-const { Stitch, AnonymousCredential, RemoteMongoClient } = require('mongodb-stitch-browser-sdk');
+const { Stitch, AnonymousCredential, RemoteMongoClient, context } = require('mongodb-stitch-browser-sdk');
 const stitchClientId = 'toolkit-users-vzjer';
 
 const stitchClient = Stitch.hasAppClient(stitchClientId) ? Stitch.getAppClient(stitchClientId) : Stitch.initializeDefaultAppClient(stitchClientId);
@@ -29,11 +29,11 @@ const sendFeedbackData = data => {
         db.collection('feedback').findOne({ userId: userId }).then(res => {
             if (res) {
                 const records = [...res.records, data]
-                const entry = Object.assign({},res, {records:records});
+                const entry = Object.assign({}, res, { records: records });
                 db.collection('feedback').updateOne({ userId: userId }, { $set: Object.assign({}, res, entry) }, { upsert: true })
-            
+
             } else {
-                const entry = {records:[data]};
+                const entry = { records: [data] };
                 db.collection('feedback').updateOne({ userId: userId }, { $set: entry }, { upsert: true })
                 // console.log('new entry', JSON.stringify({ userId, ...entry }));
             }
@@ -61,7 +61,34 @@ const saveProfileData = (key, value) => {
     })
 }
 
+const saveDataToMongo = (collectionName, key, value) => {
+    const entry = {};
+    entry[key] = value;
+
+    stitchClient.auth.loginWithCredential(new AnonymousCredential()).then(user => {
+        const userId = stitchClient.auth.user.id;
+        db.collection(collectionName).findOne({ userId: userId }).then(res => {
+            if (res) {
+                db.collection(collectionName).updateOne({ userId: userId }, { $set: Object.assign({}, res, { ...entry }) }, { upsert: true })
+            } else {
+                db.collection(collectionName).updateOne({ userId: userId }, { $set: { userId, ...entry } }, { upsert: true })
+            }
+        });
+    })
+}
+
+const queryData = (userId, key) => {
+    window.stitchClient = stitchClient;
+    //     const http = context.services.get("CheckCompletion");
+    // stitchClient.callFunction("function0", [userId]).then(result => {
+    //     console.log(result) // Output: 7
+    // });
+    var value = db.collection('completion').findOne({ userId: userId }).then(res => res?res[key]:null);
+    return value;
+}
+
+
 
 export default analytics;
-export { stitchClient, sendFeedbackData, saveProfileData };
+export { stitchClient, sendFeedbackData, saveProfileData, saveDataToMongo, queryData };
 

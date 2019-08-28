@@ -35,6 +35,11 @@ export default {
                    <p>Instruction 3</p>
                 ),
                 image: stepMoveSayHello
+            }, {
+                title: (
+                    <p>Completion Code: ABC</p>
+                ),
+                recordCompletion: true
             }
         ],
         urlId: 'getStarted'

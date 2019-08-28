@@ -80,10 +80,12 @@ class HintManager {
             // click on empty space 
             if(e.newValue===null){
                 targetHint = this.hintState.hints.find(h => h.hintId === this.currentHintId);
-                this.dispatch(updateHint(targetHint.hintId, {
-                    styles: Object.assign({}, targetHint.styles, { 'visibility': 'hidden' })
-                }));
-                this.currentHintId = null;
+                if(targetHint){
+                    this.dispatch(updateHint(targetHint.hintId, {
+                        styles: Object.assign({}, targetHint.styles, { 'visibility': 'hidden' })
+                    }));
+                    this.currentHintId = null;
+                }
             }
         }
     }

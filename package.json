@@ -139,7 +139,7 @@
     }
   },
   "dependencies": {
-    "mongodb-stitch-browser-sdk": "^4.3.2",
+    "mongodb-stitch-browser-sdk": "^4.5.0",
     "rc-steps": "^3.3.1",
     "react-floater": "^0.6.4",
     "react-loader-spinner": "^2.3.0",

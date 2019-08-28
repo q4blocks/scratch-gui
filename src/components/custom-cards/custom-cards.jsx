@@ -14,12 +14,13 @@ import expandIcon from './icon--expand.svg';
 import isEqual from 'lodash.isequal';
 
 import { workspaceFromXml, addBlocksToWorkspace } from '../../lib/hints/hint-test-workspace-setup.js';
-
+import { saveDataToMongo, queryData } from "../../lib/custom-analytics";
 // reference for latest update: https://github.com/LLK/scratch-gui/blob/develop/src/components/cards/cards.jsx
 
 const enableCloseCard = false;
+const bypassCheck = true;
 
-const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded }) => (
+const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded, dbManager }) => (
     <div className={styles.headerButtons}>
         <div className={styles.allButton}>
             <span>Tutorial</span>
@@ -163,16 +164,12 @@ const ImageStep = ({ title, image, stepCompleted, onCompleteStep }) => {
 
 const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted, checkCompletion }) => (
     <Fragment>
-        {onNextStep ? (
+        {stepCompleted&&onNextStep ? (
             <div>
                 <div className={expanded ? (isRtl ? styles.leftCard : styles.rightCard) : styles.hidden} />
                 <div
                     className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
-                    onClick={stepCompleted ? onNextStep() : () => {
-                        checkCompletion();
-
-                        console.log("complete this step first");
-                    }}
+                    onClick={onNextStep}
                 >
                     <img
                         draggable={false}
@@ -281,9 +278,18 @@ const CustomCards = props => {
     const steps = content[activeDeckId].steps;
 
     // populateWorkspace({ vm });
+    if(steps[step].recordCompletion){
+        //dbmanager record tutorial completion
+        console.log('record completion', activeDeckId);
+        saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
+    }
+
+    queryData('5d4354c9de88f284614074bc', 'scratching-with-a-square2').then(res=>{
+        console.log(res);
+    });
 
     return (
-        <Draggable bounds="parent" position={{ x: x, y: y }}>
+        <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
             <div className={styles.cardContainer}>
                 <div className={styles.card}>
                     <QISCardHeader
@@ -309,7 +315,6 @@ const CustomCards = props => {
                                         dragging={dragging}
                                         video={steps[step].video}
                                     />
-                                    // <span>Video</span>
                                 ) : (
                                         <ImageStep
                                             image={steps[step].image}
@@ -320,7 +325,9 @@ const CustomCards = props => {
                             )}
                         {steps[step].trackingPixel && steps[step].trackingPixel}
                     </div>
-                    <div>This step is {stepCompleted ? "complete" : "incomplete"}</div>
+                    
+                    {!steps[step].recordCompletion&&<button onClick={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}>Check</button>}
+                    
                     <NextPrevButtons
                         expanded={expanded}
                         isRtl={false}
