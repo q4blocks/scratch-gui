@@ -15,7 +15,9 @@ import isEqual from 'lodash.isequal';
 
 import { workspaceFromXml, addBlocksToWorkspace } from '../../lib/hints/hint-test-workspace-setup.js';
 import { saveDataToMongo, queryData } from "../../lib/custom-analytics";
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 // reference for latest update: https://github.com/LLK/scratch-gui/blob/develop/src/components/cards/cards.jsx
+
 
 const enableCloseCard = false;
 const bypassCheck = true;
@@ -23,7 +25,7 @@ const bypassCheck = true;
 const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded, dbManager }) => (
     <div className={styles.headerButtons}>
         <div className={styles.allButton}>
-            <span>Tutorial</span>
+            <span>Instructions</span>
         </div>
         {totalSteps > 1 ? (
             <div className={styles.stepsList}>
@@ -110,7 +112,7 @@ const workspaceContainsScript = ({ workspace, expected }) => {
 const checkStepCompletion = ({ onCompleteStep, vm, expected }) => () => {
     let isComplete = null;
     if (!expected) {
-         isComplete =  true;//not specified => auto complete
+        isComplete = true;//not specified => auto complete
     } else {
         //compute
         const workspace = ScratchBlocks.getMainWorkspace();
@@ -130,27 +132,31 @@ const checkStepCompletion = ({ onCompleteStep, vm, expected }) => () => {
     isComplete ? onCompleteStep() : () => { };
 }
 
-const populateWorkspace = ({ vm }) => {
-    const xml = "<xml xmlns='http://www.w3.org/1999/xhtml'><variables></variables><block type='event_whenflagclicked' id='Ony-C:+ZPxHTLTtaS.Xe' x='271' y='172'><next><block type='looks_say' id='b({q2a.SUmk:*heo3XyX'><value name='MESSAGE'><shadow type='text' id='y*vbe.Gw4tAB3:Eq24LA'><field name='TEXT'>Hello!</field></shadow></value></block></next></block></xml>";
-    vm.addListener("workspaceUpdate", () => {
+const populateWorkspace = ({ vm, setupCode }) => {
         const workspace = Blockly.getMainWorkspace();
         if (workspace) {
             setTimeout(() => {
-                workspaceFromXml(workspace, xml);
-                //auto check //to be removed
-                setTimeout(() => { workspaceContainsScript({ workspace, script: null }), 1000 });
-
+                workspaceFromXml(workspace, setupCode);
+                // setTimeout(()=>{
+                //     workspace.cleanUp();
+                // },100)
             }, 100);
         }
-    });
 }
 
-const ImageStep = ({ title, image, stepCompleted, onCompleteStep }) => {
+const ImageStep = ({ title, image, stepCompleted, onCompleteStep, completionCode }) => {
     return (
         <Fragment>
             <div className={styles.stepTitle}>
                 {title}
             </div>
+            {completionCode && <div>
+                <div style={{ color: 'red', marginBottom: '30px', fontWeight: 'bold' }}>{completionCode}</div>
+                <CopyToClipboard text={completionCode}>
+                    <button>Copy the completion code</button>
+                </CopyToClipboard>
+            </div>
+            }
             <div className={styles.stepImageContainer}>
                 <img
                     className={styles.stepImage}
@@ -162,38 +168,51 @@ const ImageStep = ({ title, image, stepCompleted, onCompleteStep }) => {
     )
 };
 
-const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted, checkCompletion }) => (
-    <Fragment>
-        {stepCompleted&&onNextStep ? (
-            <div>
-                <div className={expanded ? (isRtl ? styles.leftCard : styles.rightCard) : styles.hidden} />
-                <div
-                    className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
-                    onClick={onNextStep}
-                >
-                    <img
-                        draggable={false}
-                        src={isRtl ? leftArrow : rightArrow}
-                    />
+const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, vm, stepCompleted, checkCompletion, shouldCleanup, setupCode, dragging }) => {
+    return (
+        <Fragment>
+            {stepCompleted && onNextStep ? (
+                <div>
+                    <div className={expanded ? (isRtl ? styles.leftCard : styles.rightCard) : styles.hidden} />
+                    <div
+                        className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
+                        onClick={(()=>()=>{
+
+                                 // clear
+                                 const workspace = Blockly.getMainWorkspace();
+                                 if (workspace&&shouldCleanup&&!dragging) {
+                                     workspace.clear();
+                                 }
+                                 console.log('drag',dragging);
+                                 if (setupCode){
+                                     populateWorkspace({vm, setupCode});
+                                 }                           
+                            onNextStep();})()}
+                    >
+                        <img
+                            draggable={false}
+                            src={isRtl ? leftArrow : rightArrow}
+                        />
+                    </div>
                 </div>
-            </div>
-        ) : null}
-        {onPrevStep ? (
-            <div>
-                <div className={expanded ? (isRtl ? styles.rightCard : styles.leftCard) : styles.hidden} />
-                <div
-                    className={expanded ? (isRtl ? styles.rightButton : styles.leftButton) : styles.hidden}
-                    onClick={onPrevStep}
-                >
-                    <img
-                        draggable={false}
-                        src={isRtl ? rightArrow : leftArrow}
-                    />
+            ) : null}
+            {onPrevStep ? (
+                <div>
+                    <div className={expanded ? (isRtl ? styles.rightCard : styles.leftCard) : styles.hidden} />
+                    <div
+                        className={expanded ? (isRtl ? styles.rightButton : styles.leftButton) : styles.hidden}
+                        onClick={onPrevStep}
+                    >
+                        <img
+                            draggable={false}
+                            src={isRtl ? rightArrow : leftArrow}
+                        />
+                    </div>
                 </div>
-            </div>
-        ) : null}
-    </Fragment>
-);
+            ) : null}
+        </Fragment>
+    )
+};
 
 
 // const PreviewsStep = ({deckIds, content, onActivateDeckFactory, onShowAll}) => (
@@ -278,15 +297,15 @@ const CustomCards = props => {
     const steps = content[activeDeckId].steps;
 
     // populateWorkspace({ vm });
-    if(steps[step].recordCompletion){
+    if (steps[step].recordCompletion) {
         //dbmanager record tutorial completion
         console.log('record completion', activeDeckId);
         saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
     }
 
-    queryData('5d4354c9de88f284614074bc', 'scratching-with-a-square').then(res=>{
-        console.log(res);
-    });
+    // queryData('5d4354c9de88f284614074bc', 'scratching-with-a-square').then(res => {
+    //     console.log(res);
+    // });
 
     return (
         <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
@@ -320,21 +339,26 @@ const CustomCards = props => {
                                             image={steps[step].image}
                                             title={steps[step].title}
                                             stepCompleted={stepCompleted}
+                                            completionCode={steps[step].completionCode}
                                         />
                                     )
                             )}
                         {steps[step].trackingPixel && steps[step].trackingPixel}
                     </div>
-                    
-                    {!steps[step].recordCompletion&&<button onClick={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}>Check</button>}
-                    
+
+                    {steps[step].expected && <button onClick={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}>Check</button>}
+
                     <NextPrevButtons
                         expanded={expanded}
                         isRtl={false}
+                        dragging={dragging}
                         onNextStep={step < steps.length - 1 ? onNextStep : null}
                         onPrevStep={step > 0 ? onPrevStep : null}
-                        stepCompleted={stepCompleted}
+                        stepCompleted={bypassCheck || !steps[step].expected || stepCompleted}
                         checkCompletion={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}
+                        shouldCleanup={steps[step].shouldCleanup}
+                        vm={vm}
+                        setupCode={steps[step].setupCode}
                     />
                 </div>
             </div>

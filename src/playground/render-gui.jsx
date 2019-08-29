@@ -92,7 +92,11 @@ export default appTarget => {
                 tutorialDevMode={false}
                 showQualityHint={false}
                 showSurveyCallBack={(origin) => { console.log(`open the modal survey! origin: ${origin}`) }}
-                customDeckId={'scratching-with-a-square'}
+                customDeckId={
+                    'scratch-basics'
+                    // 'shape-styling'
+                    // 'squares-in-motion'
+            }
             />,
         appTarget);
 };
