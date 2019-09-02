@@ -18,6 +18,8 @@ import { saveDataToMongo, queryData } from "../../lib/custom-analytics";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // reference for latest update: https://github.com/LLK/scratch-gui/blob/develop/src/components/cards/cards.jsx
 
+// analytics
+import analytics from "../../lib/custom-analytics";
 
 const enableCloseCard = false;
 const bypassCheck = false;
@@ -76,7 +78,6 @@ const VideoStep = ({ video, dragging }) => (
         ) : null}
         <iframe
             allowFullScreen
-            allowTransparency="true"
             frameBorder="0"
             height="338"
             scrolling="no"
@@ -179,46 +180,50 @@ const workspaceContainsScript = ({ workspace, expected, shouldExcludeShadow = tr
     return !!found;
 }
 
-const workspaceContainsBlocks = ({ workspace, blocks }) => {
-    console.log(workspace, 'contains', blocks);
-}
-
-const checkStepCompletion = ({ onCompleteStep, vm, expected }) => () => {
+const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId }) => () => {
     let isComplete = null;
     if (!expected) {
         isComplete = true;//not specified => auto complete
     } else {
-        //compute
         const workspace = ScratchBlocks.getMainWorkspace();
         isComplete = workspaceContainsScript({ workspace, expected });
-        //simply complete
-        // isComplete =  true;
-
-        // iterate all top blocks
-        // then check the presence of a sequence of blocks in each script
-        // easiest is to check if workspace contains a specific block command
-        // workspaceContainsBlock
-        // workspaceContainsBlocks
-        // workspaceContainsScript
-        // if complete
     }
+
+    //analytics
+    analytics.event({
+        category: "Instruction",
+        action: isComplete ? 'pass' : 'fail',
+        label: currentInstructionId
+    });
+
 
     isComplete ? onCompleteStep() : () => { };
 }
 
-const populateWorkspace = ({ vm, setupCode }) => {
+const populateWorkspace = (setupCode) => {
     const workspace = Blockly.getMainWorkspace();
     if (workspace) {
         setTimeout(() => {
             workspaceFromXml(workspace, setupCode);
-            // setTimeout(()=>{
-            //     workspace.cleanUp();
-            // },100)
+            setTimeout(() => {
+                workspace.cleanUp();
+            }, 0)
         }, 100);
     }
 }
 
-const ImageStep = ({ title, image, stepCompleted, onCompleteStep, completionCode }) => {
+const ImageStep = ({ title, image, completionCode, isAlreadySetup, setUpdateCodeStatus, shouldCleanup, dragging, setupCode }) => {
+    if (!isAlreadySetup) {
+        // clear
+        const workspace = Blockly.getMainWorkspace();
+        if (workspace && shouldCleanup && !dragging) {
+            workspace.clear();
+        }
+        if (setupCode) {
+            populateWorkspace(setupCode);
+        }
+        setUpdateCodeStatus(true);
+    }
     return (
         <Fragment>
             <div className={styles.stepTitle}>
@@ -242,7 +247,7 @@ const ImageStep = ({ title, image, stepCompleted, onCompleteStep, completionCode
     )
 };
 
-const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, vm, stepCompleted, checkCompletion, shouldCleanup, setupCode, dragging }) => {
+const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted, setUpdateCodeStatus, currentInstructionId }) => {
     return (
         <Fragment>
             {stepCompleted && onNextStep ? (
@@ -251,15 +256,15 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, vm, stepComp
                     <div
                         className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
                         onClick={(() => () => {
+                            setUpdateCodeStatus(false); //clear setup status to false
 
-                            // clear
-                            const workspace = Blockly.getMainWorkspace();
-                            if (workspace && shouldCleanup && !dragging) {
-                                workspace.clear();
-                            }
-                            if (setupCode) {
-                                populateWorkspace({ vm, setupCode });
-                            }
+                            //analytics
+                            analytics.event({
+                                category: "Instruction",
+                                action: "view",
+                                label: currentInstructionId
+                            });
+
                             onNextStep();
                         })()}
                     >
@@ -289,156 +294,124 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, vm, stepComp
 };
 
 
-// const PreviewsStep = ({deckIds, content, onActivateDeckFactory, onShowAll}) => (
-//     <Fragment>
-//         <div className={styles.stepTitle}>
-//             <FormattedMessage
-//                 defaultMessage="More things to try!"
-//                 description="Title card with more things to try"
-//                 id="gui.cards.more-things-to-try"
-//             />
-//         </div>
-//         <div className={styles.decks}>
-//             {deckIds.slice(0, 2).map(id => (
-//                 <div
-//                     className={styles.deck}
-//                     key={`deck-preview-${id}`}
-//                     onClick={onActivateDeckFactory(id)}
-//                 >
-//                     <img
-//                         className={styles.deckImage}
-//                         draggable={false}
-//                         src={content[id].img}
-//                     />
-//                     <div className={styles.deckName}>{content[id].name}</div>
-//                 </div>
-//             ))}
-//         </div>
-//         <div className={styles.seeAll}>
-//             <div
-//                 className={styles.seeAllButton}
-//                 onClick={onShowAll}
-//             >
-//                 <FormattedMessage
-//                     defaultMessage="See more"
-//                     description="Title for button to see more in how-to library"
-//                     id="gui.cards.see-more"
-//                 />
-//             </div>
-//         </div>
-//     </Fragment>
-// );
 
-
-const CustomCards = props => {
-    const {
-        activeDeckId,
-        content,
-        dragging,
-        isRtl,
-        locale,
-        onActivateDeckFactory,
-        onCloseCards,
-        onShrinkExpandCards,
-        onDrag,
-        onStartDrag,
-        onEndDrag,
-        onShowAll,
-        onNextStep,
-        onPrevStep,
-        showVideos,
-        step,
-        expanded,
-        stepCompleted,
-        onCompleteStep,
-        vm,
-        ...posProps
-    } = props;
-    let { x, y } = posProps;
-
-    if (activeDeckId === null) return;
-
-    if (x === 0 && y === 0) {
-        // initialize positions
-        x = isRtl ? -292 : 292;
-        // The tallest cards are about 385px high, and the default position is pinned
-        // to near the bottom of the blocks palette to allow room to work above.
-        const tallCardHeight = 385;
-        const bottomMargin = 60; // To avoid overlapping the backpack region
-        y = window.innerHeight - tallCardHeight - bottomMargin;
+class CustomCards extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isAlreadySetup: false
+        }
+        this.setUpdateCodeStatus = this.setUpdateCodeStatus.bind(this);
     }
 
-    const steps = content[activeDeckId].steps;
-
-    // populateWorkspace({ vm });
-    if (steps[step].recordCompletion) {
-        //dbmanager record tutorial completion
-        console.log('record completion', activeDeckId);
-        saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
+    setUpdateCodeStatus(alreadySetup) {
+        this.setState({
+            isAlreadySetup: alreadySetup
+        })
     }
 
-    // queryData('5d4354c9de88f284614074bc', 'scratching-with-a-square').then(res => {
-    //     console.log(res);
-    // });
+    render() {
+        const {
+            activeDeckId,
+            content,
+            dragging,
+            isRtl,
+            locale,
+            onActivateDeckFactory,
+            onCloseCards,
+            onShrinkExpandCards,
+            onDrag,
+            onStartDrag,
+            onEndDrag,
+            onShowAll,
+            onNextStep,
+            onPrevStep,
+            showVideos,
+            step,
+            expanded,
+            stepCompleted,
+            onCompleteStep,
+            vm,
+            ...posProps
+        } = this.props;
+        let { x, y } = posProps;
 
-    return (
-        <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
-            <div className={styles.cardContainer}>
-                <div className={styles.card}>
-                    <QISCardHeader
-                        expanded={expanded}
-                        step={step}
-                        totalSteps={steps.length}
-                        onCloseCards={onCloseCards}
-                        onShowAll={onShowAll}
-                        onShrinkExpandCards={onShrinkExpandCards}
-                    />
-                    <div className={expanded ? styles.stepBody : styles.hidden}>
-                        {steps[step].deckIds ? (
-                            // <PreviewsStep
-                            //     content={content}
-                            //     deckIds={steps[step].deckIds}
-                            //     onActivateDeckFactory={onActivateDeckFactory}
-                            //     onShowAll={onShowAll}
-                            // />
-                            <span>Preview</span>
-                        ) : (
-                                steps[step].video ? (
-                                    <VideoStep
-                                        dragging={dragging}
-                                        video={steps[step].video}
-                                    />
-                                ) : (
-                                        <ImageStep
-                                            image={steps[step].image}
-                                            title={steps[step].title}
-                                            stepCompleted={stepCompleted}
-                                            completionCode={steps[step].completionCode}
+        if (activeDeckId === null) return;
+
+        if (x === 0 && y === 0) {
+            // initialize positions
+            x = isRtl ? -292 : 292;
+            // The tallest cards are about 385px high, and the default position is pinned
+            // to near the bottom of the blocks palette to allow room to work above.
+            const tallCardHeight = 385;
+            const bottomMargin = 60; // To avoid overlapping the backpack region
+            y = window.innerHeight - tallCardHeight - bottomMargin;
+        }
+
+        const steps = content[activeDeckId].steps;
+
+        // populateWorkspace({ vm });
+        if (steps[step].recordCompletion) {
+            //dbmanager record tutorial completion
+            console.log('record completion', activeDeckId);
+            saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
+        }
+        return (
+            <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
+                <div className={styles.cardContainer}>
+                    <div className={styles.card}>
+                        <QISCardHeader
+                            expanded={expanded}
+                            step={step}
+                            totalSteps={steps.length}
+                            onCloseCards={onCloseCards}
+                            onShowAll={onShowAll}
+                            onShrinkExpandCards={onShrinkExpandCards}
+                        />
+                        <div className={expanded ? styles.stepBody : styles.hidden}>
+                            {steps[step].deckIds ? (
+                                <span>Preview</span>
+                            ) : (
+                                    steps[step].video ? (
+                                        <VideoStep
+                                            dragging={dragging}
+                                            video={steps[step].video}
                                         />
-                                    )
-                            )}
-                        {steps[step].trackingPixel && steps[step].trackingPixel}
+                                    ) : (
+                                            <ImageStep
+                                                image={steps[step].image}
+                                                title={steps[step].title}
+                                                stepCompleted={stepCompleted}
+                                                completionCode={steps[step].completionCode}
+                                                shouldCleanup={steps[step].shouldCleanup}
+                                                setupCode={steps[step].setupCode}
+                                                isAlreadySetup={this.state.isAlreadySetup}
+                                                setUpdateCodeStatus={this.setUpdateCodeStatus}
+                                            />
+                                        )
+                                )}
+                            {steps[step].trackingPixel && steps[step].trackingPixel}
+                        </div>
+
+                        {steps[step].expected && <button onClick={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}>Check</button>}
+
+                        <NextPrevButtons
+                            expanded={expanded}
+                            isRtl={false}
+                            dragging={dragging}
+                            onNextStep={step < steps.length - 1 ? onNextStep : null}
+                            onPrevStep={step > 0 ? onPrevStep : null}
+                            stepCompleted={bypassCheck || !steps[step].expected || stepCompleted}
+                            checkCompletion={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected, currentInstructionId: steps[step].id })}
+                            isAlreadySetup={this.state.isAlreadySetup}
+                            setUpdateCodeStatus={this.setUpdateCodeStatus}
+                            currentInstructionId={steps[step].id}
+                        />
                     </div>
-
-                    {steps[step].expected && <button onClick={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}>Check</button>}
-
-                    <NextPrevButtons
-                        expanded={expanded}
-                        isRtl={false}
-                        dragging={dragging}
-                        onNextStep={step < steps.length - 1 ? onNextStep : null}
-                        onPrevStep={step > 0 ? onPrevStep : null}
-                        stepCompleted={bypassCheck || !steps[step].expected || stepCompleted}
-                        checkCompletion={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}
-                        shouldCleanup={steps[step].shouldCleanup}
-                        vm={vm}
-                        setupCode={steps[step].setupCode}
-                    />
                 </div>
-            </div>
-        </Draggable>
-    );
-};
-
+            </Draggable>
+        );
+    }
+}
 
 export default CustomCards;
