@@ -20,7 +20,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 
 const enableCloseCard = false;
-const bypassCheck = true;
+const bypassCheck = false;
 
 const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded, dbManager }) => (
     <div className={styles.headerButtons}>
@@ -91,22 +91,96 @@ const VideoStep = ({ video, dragging }) => (
     </div>
 );
 
-const checkStmtSequence = ({ topBlock, expected }) => {
-    window.topBlock = topBlock;
-    let curBlock = topBlock;
-    let actual = [];
-
-    while (curBlock) {
-        actual.push(curBlock.type);
-        curBlock = curBlock.getNextBlock();
+const charsum = function (s) {
+    var i, sum = 0;
+    for (i = 0; i < s.length; i++) {
+        sum += (s.charCodeAt(i) * (i + 1));
     }
-    return isEqual(actual, expected);
+    return sum
+};
+
+const array_hash = function (a) {
+    var i, sum = 0
+    for (i = 0; i < a.length; i++) {
+        var cs = charsum(a[i])
+        sum = sum + (65027 / cs)
+    }
+    return ("" + sum).slice(0, 16)
 }
 
-const workspaceContainsScript = ({ workspace, expected }) => {
+function eqSet(as, bs) {
+    if (as.size !== bs.size) return false;
+    for (var a of as) if (!bs.has(a)) return false;
+    return true;
+}
+
+const checkStmtSequence = ({ topBlock, expected, shouldExcludeShadow }) => {
+
+
+    const expectedHashes = new Set(expected.map(seq => array_hash(seq)));
+    const allTopBlockHashes = new Set(topBlock.map(tb => {
+        let actual = dfsTraverse(tb);
+        let filteredActual = null;
+        if (shouldExcludeShadow) {
+            filteredActual = actual.filter(n => !n.isShadow_).map(b => b.type);
+        }
+        return filteredActual;
+    }).map(seq => array_hash(seq)));
+
+    return expectedHashes.subSetOf(allTopBlockHashes);
+}
+
+const getCousinBlocks = topBlock => {
+    let blocks = [];
+
+    let curBlock = topBlock;
+    while (curBlock) {
+        blocks.push(curBlock);
+        curBlock = curBlock.getNextBlock();
+    }
+    return blocks;
+}
+
+const dfsTraverse = (topBlock) => {
+    let seen = [];
+    let toExplore = [];
+    getCousinBlocks(topBlock).reverse().forEach(b => toExplore.push(b));
+
+    while (toExplore.length > 0) {
+        let next = toExplore.pop();
+        if (seen.indexOf(next) < 0) {
+            seen.push(next); //if not already visited 
+            // get all of its children and next block
+            next.getChildren().reverse().forEach(c => toExplore.push(c));
+        }
+    }
+    return seen;
+}
+
+Set.prototype.subSetOf = function (otherSet) {
+    if (this.size > otherSet.size)
+        return false;
+    else {
+        for (var elem of this) {
+            if (!otherSet.has(elem))
+                return false;
+        }
+        return true;
+    }
+}
+
+
+const workspaceContainsScript = ({ workspace, expected, shouldExcludeShadow = true }) => {
     window.workspace = workspace;
-    const found = workspace.getTopBlocks().find(topBlock => checkStmtSequence({ topBlock, expected }));
+    //test dfs
+    let seen = dfsTraverse(workspace.getTopBlocks()[0]);
+    // const found = workspace.getTopBlocks().find(topBlock => checkStmtSequence({ topBlock, expected, shouldExcludeShadow }));
+    const found = checkStmtSequence({ topBlock: workspace.getTopBlocks(), expected, shouldExcludeShadow });
     return !!found;
+}
+
+const workspaceContainsBlocks = ({ workspace, blocks }) => {
+    console.log(workspace, 'contains', blocks);
 }
 
 const checkStepCompletion = ({ onCompleteStep, vm, expected }) => () => {
@@ -133,15 +207,15 @@ const checkStepCompletion = ({ onCompleteStep, vm, expected }) => () => {
 }
 
 const populateWorkspace = ({ vm, setupCode }) => {
-        const workspace = Blockly.getMainWorkspace();
-        if (workspace) {
-            setTimeout(() => {
-                workspaceFromXml(workspace, setupCode);
-                // setTimeout(()=>{
-                //     workspace.cleanUp();
-                // },100)
-            }, 100);
-        }
+    const workspace = Blockly.getMainWorkspace();
+    if (workspace) {
+        setTimeout(() => {
+            workspaceFromXml(workspace, setupCode);
+            // setTimeout(()=>{
+            //     workspace.cleanUp();
+            // },100)
+        }, 100);
+    }
 }
 
 const ImageStep = ({ title, image, stepCompleted, onCompleteStep, completionCode }) => {
@@ -176,18 +250,18 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, vm, stepComp
                     <div className={expanded ? (isRtl ? styles.leftCard : styles.rightCard) : styles.hidden} />
                     <div
                         className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
-                        onClick={(()=>()=>{
+                        onClick={(() => () => {
 
-                                 // clear
-                                 const workspace = Blockly.getMainWorkspace();
-                                 if (workspace&&shouldCleanup&&!dragging) {
-                                     workspace.clear();
-                                 }
-                                 console.log('drag',dragging);
-                                 if (setupCode){
-                                     populateWorkspace({vm, setupCode});
-                                 }                           
-                            onNextStep();})()}
+                            // clear
+                            const workspace = Blockly.getMainWorkspace();
+                            if (workspace && shouldCleanup && !dragging) {
+                                workspace.clear();
+                            }
+                            if (setupCode) {
+                                populateWorkspace({ vm, setupCode });
+                            }
+                            onNextStep();
+                        })()}
                     >
                         <img
                             draggable={false}
