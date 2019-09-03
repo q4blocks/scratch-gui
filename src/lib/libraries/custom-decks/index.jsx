@@ -13,6 +13,9 @@ import spriteAndMedia from './intro/sprite-and-media.gif';
 import cloningConcept from './intro/cloning-concept.gif';
 import walkingMovement from './intro/walking-movement.gif';
 import catCloning from './intro/cat-cloning.png';
+import originalVsGoal from './custom-block-deck/custom-card-original-vs-goal.png';
+import copyPasteReuse from './custom-block-deck/copy-paste-modify.gif';
+
 export default {
     'scratch-basics': {
         name: (
@@ -143,10 +146,16 @@ export default {
         steps: [
             {
                 title: (
-                    <p> This program generates rows of green squares and blue triangles with decreasingly lighter shades.<br />
-                        The remaining instructions will guide you to improve this program.</p>
-                )
-            }, {
+                    <p> The program behind this card generates a rows of green squares with decreasingly lighter shades (left).<br />
+                       You will modify this program so that it generates 2 more rows: blue triangles and red circles (right).</p>
+                ),
+                image: originalVsGoal
+            },{
+                title: (<p>Copy and paste the existing program part twice.<br/> 
+                Modify the code so that the triangle row starts at (x:-215, y: 60) <br/>
+                and the circle row starts at (x: -215, y:0)</p>),
+                image: copyPasteReuse
+            },{
                 title: (<p>Experiment: Let's modify the change x by ? so that color shades fill the available area.</p>)
             }, {
                 title: (<p>Experiment: Let's modify repeat n so to gain a few more shades.</p>)
