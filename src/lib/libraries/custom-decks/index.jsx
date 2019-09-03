@@ -16,6 +16,8 @@ import catCloning from './intro/cat-cloning.png';
 import originalVsGoal from './custom-block-deck/custom-card-original-vs-goal.png';
 import copyPasteReuse from './custom-block-deck/copy-paste-modify.gif';
 
+import customBlockCfg from './intro/custom-block-cfg.png';
+
 export default {
     'scratch-basics': {
         name: (
@@ -103,11 +105,17 @@ export default {
                 title: (
                     <p>Exercise: Create your own block (custom blocks) for making a cat jump.</p>
                 ),
-                // setupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><variables><variable type='' id='`jEk@4|i[#Fk?(8x)AV.-my variable' islocal='false' iscloud='false'>my variable</variable></variables><block type='event_whenflagclicked' id='nS%|epzBTZ9MAh5R_[^C' x='193' y='-166'><next><block type='control_repeat' id='F)B7WS}*NK-yqCu|~0_}'><value name='TIMES'><shadow type='math_whole_number' id='G~am[V*qX:8pB?+93#2!'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='procedures_call' id='Xlvcm4Dmce60TBqlmzO.'><mutation proccode='jump' argumentids='[]' warp='false'></mutation><next><block type='control_wait' id='BfqXgyLh]9;0$Y[OcH0S'><value name='DURATION'><shadow type='math_positive_number' id=':Dy#+PxNbf)e)xv,r%8F'><field name='NUM'>1</field></shadow></value></block></next></block></statement></block></next></block><block type='procedures_definition' id='4@]:LJ+nntkjHr4h)?F=' x='797' y='-173'><statement name='custom_block'><shadow type='procedures_prototype' id='Rm7[WQ9V@FE.A{TgiPQ@'><mutation proccode='jump' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='motion_changeyby' id='aC55:`CXO@oHd+lwV`BR'><value name='DY'><shadow type='math_number' id='r]6W%A~@1c2*NxLw5GQ)'><field name='NUM'>10</field></shadow></value><next><block type='control_wait' id='SIj}b!@@htQa4|tR+)/;'><value name='DURATION'><shadow type='math_positive_number' id='93l5{b40Hqc03n%b1DdT'><field name='NUM'>0.5</field></shadow></value><next><block type='motion_changeyby' id='O:R=%,,lF{3imodQ%N/f'><value name='DY'><shadow type='math_number' id='-1a#uN3j%.F#kzb7UMJD'><field name='NUM'>-10</field></shadow></value></block></next></block></next></block></next></block></xml>",
+                setupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='event_whenflagclicked' id='*2_U~)FT}hV}IOw`WpgI' x='85' y='-257'><next><block type='procedures_call' id='g=H`Y5OO:g%1*FQZ6|?`'><mutation proccode='jump' argumentids='[]' warp='false'></mutation><next><block type='looks_sayforsecs' id='Z#w){$DU+bEc%yC6C~{9'><value name='MESSAGE'><shadow type='text' id='O|Bgc[[|w0V`3Gz6;13J'><field name='TEXT'>Hello!</field></shadow></value><value name='SECS'><shadow type='math_number' id='3E)nusFZxU6MrHR/[N0k'><field name='NUM'>2</field></shadow></value><next><block type='procedures_call' id='t!lUpD{h{:qsfvVIIxHC'><mutation proccode='jump' argumentids='[]' warp='false'></mutation></block></next></block></next></block></next></block><block type='procedures_definition' id='+T)h:,DF~eAw@DD)7Q#-' x='442' y='-254'><statement name='custom_block'><shadow type='procedures_prototype' id='rz~]Ha`+;%uQvVA|qn%C'><mutation proccode='jump' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='motion_changeyby' id='k(AUhXY}Q][D%L;Q+a|#'><value name='DY'><shadow type='math_number' id='U@zOSWEJ1Gc|kVcEiT61'><field name='NUM'>10</field></shadow></value><next><block type='control_wait' id='e7n0whD12mI*HElF-01A'><value name='DURATION'><shadow type='math_positive_number' id='[ss53aQ(PuYF}3SI?m9g'><field name='NUM'>0.5</field></shadow></value><next><block type='motion_changeyby' id='ru7G};a,FsP~}VE/9CkB'><value name='DY'><shadow type='math_number' id='9FHdK6P-J.{];3Qj=**S'><field name='NUM'>-10</field></shadow></value></block></next></block></next></block></next></block></xml>",
                 expected: [
-                    ["event_whenflagclicked", "control_repeat", "procedures_call", "control_wait"],
+                    ["event_whenflagclicked", "procedures_call", "looks_sayforsecs", "procedures_call"],
                     ["procedures_definition", "motion_changeyby", "control_wait", "motion_changeyby"]
-                ]
+                ],
+                shouldCleanup: true
+            },
+            {
+                id: 'concept-custom-block',
+                title: (<p>Concept: How a custom block works.</p>),
+                image: customBlockCfg,
             },
             {   
                 id: 'concept-cloning',

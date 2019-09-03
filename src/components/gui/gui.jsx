@@ -218,7 +218,7 @@ const GUIComponent = props => {
                     <Cards />
                 ) : null}
                 {customCardsVisible? (
-                    <CustomCards activeDeckId={customDeckId}/>
+                    <CustomCards activeDeckId={customDeckId} qualityHintToggleVisible={qualityHintToggleVisible}/>
                 ): null}
                 {alertsVisible ? (
                     <Alerts className={styles.alertsContainer} />

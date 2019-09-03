@@ -125,6 +125,7 @@ const checkStmtSequence = ({ topBlock, expected, shouldExcludeShadow }) => {
         if (shouldExcludeShadow) {
             filteredActual = actual.filter(n => !n.isShadow_).map(b => b.type);
         }
+        // console.log('expected block sequence',filteredActual);
         return filteredActual;
     }).map(seq => array_hash(seq)));
 
@@ -212,40 +213,58 @@ const populateWorkspace = (setupCode) => {
     }
 }
 
-const ImageStep = ({ title, image, completionCode, isAlreadySetup, setUpdateCodeStatus, shouldCleanup, dragging, setupCode }) => {
-    if (!isAlreadySetup) {
-        // clear
-        const workspace = Blockly.getMainWorkspace();
-        if (workspace && shouldCleanup && !dragging) {
-            workspace.clear();
-        }
-        if (setupCode) {
-            populateWorkspace(setupCode);
-        }
-        setUpdateCodeStatus(true);
+
+
+class ImageStep extends React.Component {
+    constructor(props){
+        super(props);
     }
-    return (
-        <Fragment>
-            <div className={styles.stepTitle}>
-                {title}
-            </div>
-            {completionCode && <div>
-                <div style={{ color: 'red', marginBottom: '30px', fontWeight: 'bold' }}>{completionCode}</div>
-                <CopyToClipboard text={completionCode}>
-                    <button>Copy the completion code</button>
-                </CopyToClipboard>
-            </div>
+
+    componentDidMount(){
+        const {
+            isAlreadySetup, setUpdateCodeStatus, shouldCleanup, dragging, setupCode 
+        } = this.props;
+
+        if (!isAlreadySetup) {
+            // clear
+            const workspace = Blockly.getMainWorkspace();
+            if (workspace && shouldCleanup && !dragging) {
+                workspace.clear();
             }
-            <div className={styles.stepImageContainer}>
-                <img
-                    className={styles.stepImage}
-                    draggable={false}
-                    src={image}
-                />
-            </div>
-        </Fragment>
-    )
-};
+            if (setupCode) {
+                populateWorkspace(setupCode);
+            }
+            setUpdateCodeStatus(true);
+        }
+    }
+
+    render(){
+        const {
+            title, image, completionCode} = this.props;
+        return (
+            <Fragment>
+                <div className={styles.stepTitle}>
+                    {title}
+                </div>
+                {completionCode && <div>
+                    <div style={{ color: 'red', marginBottom: '30px', fontWeight: 'bold' }}>{completionCode}</div>
+                    <CopyToClipboard text={completionCode}>
+                        <button>Copy the completion code</button>
+                    </CopyToClipboard>
+                </div>
+                }
+                <div className={styles.stepImageContainer}>
+                    <img
+                        className={styles.stepImage}
+                        draggable={false}
+                        src={image}
+                    />
+                </div>
+            </Fragment>
+        )
+    }
+}
+
 
 const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted, setUpdateCodeStatus, currentInstructionId }) => {
     return (
@@ -256,6 +275,7 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepComplete
                     <div
                         className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
                         onClick={(() => () => {
+                            console.log('set update code status is called');
                             setUpdateCodeStatus(false); //clear setup status to false
 
                             //analytics
@@ -332,6 +352,7 @@ class CustomCards extends React.Component {
             stepCompleted,
             onCompleteStep,
             vm,
+            qualityHintToggleVisible,
             ...posProps
         } = this.props;
         let { x, y } = posProps;
@@ -348,7 +369,13 @@ class CustomCards extends React.Component {
             y = window.innerHeight - tallCardHeight - bottomMargin;
         }
 
-        const steps = content[activeDeckId].steps;
+        let steps = null; 
+        
+        if(qualityHintToggleVisible){
+            steps = content[activeDeckId].steps.filter(c=>c.onlyVisibleToGroup===undefined||c.onlyVisibleToGroup==='automated')
+        }else{
+            steps = content[activeDeckId].steps.filter(c=>c.onlyVisibleToGroup===undefined||c.onlyVisibleToGroup==='manual')
+        }
 
         // populateWorkspace({ vm });
         if (steps[step].recordCompletion) {
@@ -369,27 +396,25 @@ class CustomCards extends React.Component {
                             onShrinkExpandCards={onShrinkExpandCards}
                         />
                         <div className={expanded ? styles.stepBody : styles.hidden}>
-                            {steps[step].deckIds ? (
-                                <span>Preview</span>
-                            ) : (
-                                    steps[step].video ? (
-                                        <VideoStep
-                                            dragging={dragging}
-                                            video={steps[step].video}
+                            {
+                                steps[step].video ? (
+                                    <VideoStep
+                                        dragging={dragging}
+                                        video={steps[step].video}
+                                    />
+                                ) : (
+                                        <ImageStep
+                                            image={steps[step].image}
+                                            title={steps[step].title}
+                                            stepCompleted={stepCompleted}
+                                            completionCode={steps[step].completionCode}
+                                            shouldCleanup={steps[step].shouldCleanup}
+                                            setupCode={steps[step].setupCode}
+                                            isAlreadySetup={this.state.isAlreadySetup}
+                                            setUpdateCodeStatus={this.setUpdateCodeStatus}
                                         />
-                                    ) : (
-                                            <ImageStep
-                                                image={steps[step].image}
-                                                title={steps[step].title}
-                                                stepCompleted={stepCompleted}
-                                                completionCode={steps[step].completionCode}
-                                                shouldCleanup={steps[step].shouldCleanup}
-                                                setupCode={steps[step].setupCode}
-                                                isAlreadySetup={this.state.isAlreadySetup}
-                                                setUpdateCodeStatus={this.setUpdateCodeStatus}
-                                            />
-                                        )
-                                )}
+                                    )
+                            }
                             {steps[step].trackingPixel && steps[step].trackingPixel}
                         </div>
 
