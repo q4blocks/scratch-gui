@@ -17,6 +17,9 @@ import originalVsGoal from './custom-block-deck/custom-card-original-vs-goal.png
 import copyPasteReuse from './custom-block-deck/copy-paste-modify.gif';
 
 import customBlockCfg from './intro/custom-block-cfg.png';
+import modifyBrightness from './custom-block-deck/modify-brightness-effect.png';
+import modifyRepeat from './custom-block-deck/modify-repeat.png';
+
 
 export default {
     'scratch-basics': {
@@ -152,31 +155,46 @@ export default {
 
     'color-shade-generator': {
         steps: [
+            // {
+            //     title: (
+            //         <p> The program behind this card generates a rows of green squares with decreasingly lighter shades (left).<br />
+            //            You will modify this program so that it generates 2 more rows: blue triangles and red circles (right).</p>
+            //     ),
+            //     image: originalVsGoal
+            // },{
+            //     title: (<p>Copy and paste the existing program part twice.<br/> 
+            //     Modify the code so that the triangle row starts at (x:-215, y: 60) <br/>
+            //     and the circle row starts at (x: -215, y:0)</p>),
+            //     image: copyPasteReuse
+            // },
             {
-                title: (
-                    <p> The program behind this card generates a rows of green squares with decreasingly lighter shades (left).<br />
-                       You will modify this program so that it generates 2 more rows: blue triangles and red circles (right).</p>
-                ),
-                image: originalVsGoal
-            },{
-                title: (<p>Copy and paste the existing program part twice.<br/> 
-                Modify the code so that the triangle row starts at (x:-215, y: 60) <br/>
-                and the circle row starts at (x: -215, y:0)</p>),
-                image: copyPasteReuse
-            },{
-                title: (<p>Experiment: Let's modify the change x by ? so that color shades fill the available area.</p>)
+                title: (<p>Experiment: The brightness increases too dramatically. Let's make it to 9 instead of 15. <br/>
+                Make sure to change the values in two places!</p>),
+                image: modifyBrightness,
+                customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_changeeffectby').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='9').length === 2"
             }, {
-                title: (<p>Experiment: Let's modify repeat n so to gain a few more shades.</p>)
+                title: (<p>Experiment: Let's modify the two repeat blocks by changing it to 9 times instead of just 5.<br/>
+                Make sure to change the values in two places!
+                </p>),
+                image: modifyRepeat,
+                customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='control_repeat').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='9').length === 2"
             }, {
-                title: (<p>Tip: Toggle on the Code Wizard for help</p>),
-                onlyVisibleToGroup: 'automated'
+                title: (<p>Tip: You can extract a custom block from common program parts that tend to be modified together.<br />
+                Such common program parts perform a specific action and are often the result of copying and pasting code.<br />
+                The next instruction will guide you how to improve your code.
+                </p>)
+            },
+            {
+                title: (<p>Tip: Toggle the Code Wizard to </p>),
+                onlyVisibleToGroup: 'automated',
+                // image:
             }, {
-                title: (<p>Tip: Program parts that are modified together often as a result of copy-and-paste code often <br />
-                    suggest an improvement opportunity to extract a custom block from those parts</p>),
-                onlyVisibleToGroup: 'manual'
+                title: (<p>We can make use of custom block that we learn previously! Let's do it!</p>),
+                onlyVisibleToGroup: 'manual',
+                // image: 
             }, {
-                title: (<p>Change x by 35 and change brightness by 8 seem to give a good result. <br />
-                    Let's make these changes in the custom block definition that you just created. </p>)
+                title: (<p>Experiment: We are almost there! <br/>
+                Let's increase the distance between each shape so that they fill the available area.</p>),
             },
             {
                 title: (<p>Please enter the completion code below to the main survey.</p>),

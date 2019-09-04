@@ -181,13 +181,19 @@ const workspaceContainsScript = ({ workspace, expected, shouldExcludeShadow = tr
     return !!found;
 }
 
-const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId }) => () => {
+const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId, customCheck }) => () => {
     let isComplete = null;
     if (!expected) {
         isComplete = true;//not specified => auto complete
     } else {
         const workspace = ScratchBlocks.getMainWorkspace();
         isComplete = workspaceContainsScript({ workspace, expected });
+    }
+
+    
+    if(customCheck){
+        isComplete = isComplete && eval(customCheck);
+         
     }
 
     //analytics
@@ -383,6 +389,9 @@ class CustomCards extends React.Component {
             console.log('record completion', activeDeckId);
             saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
         }
+
+        console.log('custom check',steps[step].customCheck);
+
         return (
             <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
                 <div className={styles.cardContainer}>
@@ -418,7 +427,10 @@ class CustomCards extends React.Component {
                             {steps[step].trackingPixel && steps[step].trackingPixel}
                         </div>
 
-                        {steps[step].expected && <button onClick={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected })}>Check</button>}
+                        {steps[step].expected||steps[step].customCheck && <button onClick={checkStepCompletion({ 
+                            onCompleteStep, vm, expected: steps[step].expected, customCheck:steps[step].customCheck })}>Check</button>}
+
+                        
 
                         <NextPrevButtons
                             expanded={expanded}
@@ -426,7 +438,7 @@ class CustomCards extends React.Component {
                             dragging={dragging}
                             onNextStep={step < steps.length - 1 ? onNextStep : null}
                             onPrevStep={step > 0 ? onPrevStep : null}
-                            stepCompleted={bypassCheck || !steps[step].expected || stepCompleted}
+                            stepCompleted={bypassCheck || (!steps[step].expected && !steps[step].customCheck)|| stepCompleted}
                             checkCompletion={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected, currentInstructionId: steps[step].id })}
                             isAlreadySetup={this.state.isAlreadySetup}
                             setUpdateCodeStatus={this.setUpdateCodeStatus}
