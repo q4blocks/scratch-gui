@@ -390,8 +390,6 @@ class CustomCards extends React.Component {
             saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
         }
 
-        console.log('custom check',steps[step].customCheck);
-
         return (
             <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
                 <div className={styles.cardContainer}>
