@@ -85,7 +85,7 @@ export default appTarget => {
                 showCustomMenuBar={true}
                 userStudyMode={true}
                 hintMode={true}    //to set from user study site
-                qualityHintToggleVisible={false} //  to set user study site (true: hnrf, false: rfg)
+                qualityHintToggleVisible={true} //  to set user study site (true: hnrf, false: rfg)
                 showTutorial={false}
                 showCustomGuiDevPanel={false}
                 procedureShareToggleVisible={true}
@@ -94,9 +94,17 @@ export default appTarget => {
                 showSurveyCallBack={(origin) => { console.log(`open the modal survey! origin: ${origin}`) }}
                 customDeckId={
                     // 'scratch-basics'
-                    'color-shade-generator'
-                    // 'squares-in-motion'
-            }
+                    // 'color-shade-generator'
+                    'particle-radiator'
+                }
+                projectId={
+                    // scratch-basics
+                    // "326026661"
+                    // color-shade-generator
+                    // "326637227"
+                    // particle-radiator
+                    "328143397"
+                }
             />,
         appTarget);
 };

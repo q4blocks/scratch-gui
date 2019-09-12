@@ -10,16 +10,27 @@ import deleteCode from './intro/delete-code.gif';
 import sayRandomNum from './intro/say-random-number.gif';
 import coloringTheCat from './intro/coloring-the-cat.gif';
 import spriteAndMedia from './intro/sprite-and-media.gif';
+import jump0 from './intro/tutorial-noparam-custom-block.gif';
+import jump1 from './intro/tutorial-1param-custom-block.gif'
 import cloningConcept from './intro/cloning-concept.gif';
 import walkingMovement from './intro/walking-movement.gif';
 import catCloning from './intro/cat-cloning.png';
 import originalVsGoal from './custom-block-deck/custom-card-original-vs-goal.png';
 import copyPasteReuse from './custom-block-deck/copy-paste-modify.gif';
 
+//QI
 import customBlockCfg from './intro/custom-block-cfg.png';
 import modifyBrightness from './custom-block-deck/modify-brightness-effect.png';
 import modifyRepeat from './custom-block-deck/modify-repeat.png';
+import enableHintRefactoring from './custom-block-deck/enable-hint-refactoring.gif';
+import modifyChangeXBy from './custom-block-deck/modify-change-x-by.png';
 
+//study tasks
+import cloneAction from './study-tasks/clone-action.png';
+import createCloneSeq from './study-tasks/create-clone-seq.png';
+import studyTask1 from './study-tasks/study-task-1.gif';
+import studyTask2 from './study-tasks/study-task-2.gif';
+import studyTask3 from './study-tasks/study-task-3.gif';
 
 export default {
     'scratch-basics': {
@@ -33,93 +44,120 @@ export default {
         tags: ['help', 'stuck', 'how', 'can', 'say'],
         img: libraryIntro,
         steps: [
-            {
-                id: 'intro-vid',
-                video: 'rpjvs3v9gj'
-            },
-            {
-                id: 'move-say',
-                title: (
-                    <p>Exercise: Follow the animated instruction below and click "Check"</p>
-                ),
-                image: stepMove,
-                expected: [["motion_movesteps", "looks_sayforsecs"]],
-            }, {
-                id: 'gf-move-say',
-                title: (
-                    <p>Exercise: Follow the animated instruction below and click "Check"</p>
-                ),
-                image: stepMoveSayHello,
-                expected: [["event_whenflagclicked", "motion_movesteps", "looks_sayforsecs"]],
-            }, {
-                id: 'tip-delete',
-                title: (
-                    <p>Tip: Right click a block -> Delete to delete the block. <br />
-                        Drag a block to toolbox to also delete all blocks that follow.</p>
-                ),
-                image: deleteCode,
-                shouldCleanup: true
-            }, {
-                id: 'tip-inspect',
-                title: (
-                    <p>Tip: Separate each code part and click it to see what it does.</p>
-                ),
-                image: inspectCode,
-            },
-            {
-                id: 'say-random-num',
-                title: (
-                    <p>Exercise: Make the cat say a random number (1  to 10) when the green flag is clicked. <br />
-                        Click "Check" when you are done.</p>
-                ),
-                image: sayRandomNum,
-                expected: [["event_whenflagclicked", "looks_say", "operator_random"]]
-            },
-            {   id: 'color-random',
-                title: (
-                    <p>Exercise: Change color of the cat for 1 second! Experiment with a different value (0 to 200). <br />
-                        Click "Check" when you are done.</p>
-                ),
-                image: coloringTheCat,
-                shouldCleanup: true,
-                expected: [["event_whenflagclicked", "looks_seteffectto", "control_wait", "looks_cleargraphiceffects"]]
-            }, {
-                id: 'concept-sprite',
-                title: (
-                    <p>Concept: A Scratch program can contain many sprites. <br />
-                        Each sprite has Code, Costumes and Sounds associated with it.</p>
-                ),
-                image: spriteAndMedia,
-                shouldCleanup: true
-            }, 
-            {
-                id: 'walking-anim',
-                title: (
-                    <p>Exercise: Create a basic walking animation using switching costume, wait, and forever blocks.<br />
-                        Click "Check" when you are done.</p>
-                ),
-                image: walkingMovement,
-                expected: [
-                    ["event_whenflagclicked", "control_forever","looks_switchcostumeto","control_wait","looks_switchcostumeto","control_wait"]
-                ]
-            },
+            // {
+            //     id: 'intro-vid',
+            //     video: 'rpjvs3v9gj'
+            // },
+            // {
+            //     id: 'move-say',
+            //     title: (
+            //         <p>Exercise: Follow the animated instruction below and click "Check"</p>
+            //     ),
+            //     image: stepMove,
+            //     expected: [["motion_movesteps", "looks_sayforsecs"]],
+            // }, {
+            //     id: 'gf-move-say',
+            //     title: (
+            //         <p>Exercise: Follow the animated instruction below and click "Check"</p>
+            //     ),
+            //     image: stepMoveSayHello,
+            //     expected: [["event_whenflagclicked", "motion_movesteps", "looks_sayforsecs"]],
+            // }, {
+            //     id: 'tip-delete',
+            //     title: (
+            //         <p>Tip: Right click a block -> Delete to delete the block. <br />
+            //             Drag a block to toolbox to also delete all blocks that follow.</p>
+            //     ),
+            //     image: deleteCode,
+            //     shouldCleanup: true
+            // }, {
+            //     id: 'tip-inspect',
+            //     title: (
+            //         <p>Tip: Separate each code part and click it to see what it does.</p>
+            //     ),
+            //     image: inspectCode,
+            // },
+            // {
+            //     id: 'say-random-num',
+            //     title: (
+            //         <p>Exercise: Make the cat say a random number (1  to 10) when the green flag is clicked. <br />
+            //             Click "Check" when you are done.</p>
+            //     ),
+            //     image: sayRandomNum,
+            //     expected: [["event_whenflagclicked", "looks_say", "operator_random"]],
+            //     shouldCleanup: true
+            // },
+            // {   id: 'color-random',
+            //     title: (
+            //         <p>Exercise: Set the color effect so the cat turns purple 1 second! Experiment with the following values
+            //             (50,100,140,180). If the correct value is set, clicking "Check" will show next instruction button. 
+            //         </p>
+            //     ),
+            //     image: coloringTheCat,
+            //     shouldCleanup: true,
+            //     expected: [[//140
+            //         "event_whenflagclicked", "looks_seteffectto", "control_wait", "looks_cleargraphiceffects"]],
+            //     customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_seteffectto').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='140').length === 1"
+            // }, {
+            //     id: 'concept-sprite',
+            //     title: (
+            //         <p>Concept: A Scratch program can contain many sprites. <br />
+            //             Each sprite has Code, Costumes and Sounds associated with it.</p>
+            //     ),
+            //     image: spriteAndMedia,
+            //     shouldCleanup: true
+            // }, 
+            // {
+            //     id: 'walking-anim',
+            //     title: (
+            //         <p>Exercise: Create a basic walking animation using switching costume, wait, and forever blocks.<br />
+            //             Click "Check" when you are done.</p>
+            //     ),
+            //     image: walkingMovement,
+            //     expected: [
+            //         ["event_whenflagclicked", "control_forever","looks_switchcostumeto","control_wait","looks_switchcostumeto","control_wait"]
+            //     ],
+            //     shouldCleanup: true
+            // },
             {
                 id: 'exercise-custom-block',
                 title: (
-                    <p>Exercise: Create your own block (custom blocks) for making a cat jump.</p>
+                    <p> The small program in the workspace performs makes the cat jump continuously. Click Green Flag to see it looks like.
+                        <br/>Exercise: Follow the steps below to make a jump block and use it to make the cat jump.
+                        Click Green Flag again. The cat jumping animation should remain exactly the same. 
+                        </p>
                 ),
-                setupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='event_whenflagclicked' id='*2_U~)FT}hV}IOw`WpgI' x='85' y='-257'><next><block type='procedures_call' id='g=H`Y5OO:g%1*FQZ6|?`'><mutation proccode='jump' argumentids='[]' warp='false'></mutation><next><block type='looks_sayforsecs' id='Z#w){$DU+bEc%yC6C~{9'><value name='MESSAGE'><shadow type='text' id='O|Bgc[[|w0V`3Gz6;13J'><field name='TEXT'>Hello!</field></shadow></value><value name='SECS'><shadow type='math_number' id='3E)nusFZxU6MrHR/[N0k'><field name='NUM'>2</field></shadow></value><next><block type='procedures_call' id='t!lUpD{h{:qsfvVIIxHC'><mutation proccode='jump' argumentids='[]' warp='false'></mutation></block></next></block></next></block></next></block><block type='procedures_definition' id='+T)h:,DF~eAw@DD)7Q#-' x='442' y='-254'><statement name='custom_block'><shadow type='procedures_prototype' id='rz~]Ha`+;%uQvVA|qn%C'><mutation proccode='jump' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='motion_changeyby' id='k(AUhXY}Q][D%L;Q+a|#'><value name='DY'><shadow type='math_number' id='U@zOSWEJ1Gc|kVcEiT61'><field name='NUM'>10</field></shadow></value><next><block type='control_wait' id='e7n0whD12mI*HElF-01A'><value name='DURATION'><shadow type='math_positive_number' id='[ss53aQ(PuYF}3SI?m9g'><field name='NUM'>0.5</field></shadow></value><next><block type='motion_changeyby' id='ru7G};a,FsP~}VE/9CkB'><value name='DY'><shadow type='math_number' id='9FHdK6P-J.{];3Qj=**S'><field name='NUM'>-10</field></shadow></value></block></next></block></next></block></next></block></xml>",
+                image: jump0,
+                setupCode:
+                "<xml xmlns='http://www.w3.org/1999/xhtml'><variables><variable type='' id='`jEk@4|i[#Fk?(8x)AV.-my variable' islocal='false' iscloud='false'>my variable</variable></variables><block type='event_whenflagclicked' id='XG3B]7tQO?9{fcPe${Ek' x='200' y='329'><next><block type='control_forever' id='r6NRa`6c|S6Q?:^orT2C'><statement name='SUBSTACK'><block type='control_repeat' id='NLH?/iZ2KT4gTJ`G]t!v'><value name='TIMES'><shadow type='math_whole_number' id='Qa-pGAX@}=-#K*YsMl.r'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='motion_changeyby' id='w9@CehxUS_72Tcx4_z;S'><value name='DY'><shadow type='math_number' id='Mc`LlV3LKet:yE308yP8'><field name='NUM'>2</field></shadow></value></block></statement><next><block type='control_wait' id='{r=;7@mSu*cOh|.*Npz('><value name='DURATION'><shadow type='math_positive_number' id='9,7lBs/r~PiI,Utq_-3T'><field name='NUM'>0.1</field></shadow></value><next><block type='control_repeat' id=']$L98xB}[blm)*2@8^$D'><value name='TIMES'><shadow type='math_whole_number' id='cCSAEMik`Xh*V9E$;JK,'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='motion_changeyby' id='U^cvx=fq1}V(B{iy5NgV'><value name='DY'><shadow type='math_number' id='Vr6HQ/R6dmfQg/^?x)!b'><field name='NUM'>-2</field></shadow></value></block></statement></block></next></block></next></block></statement></block></next></block></xml>", 
+                // "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='event_whenflagclicked' id='*2_U~)FT}hV}IOw`WpgI' x='85' y='-257'><next><block type='procedures_call' id='g=H`Y5OO:g%1*FQZ6|?`'><mutation proccode='jump' argumentids='[]' warp='false'></mutation><next><block type='looks_sayforsecs' id='Z#w){$DU+bEc%yC6C~{9'><value name='MESSAGE'><shadow type='text' id='O|Bgc[[|w0V`3Gz6;13J'><field name='TEXT'>Hello!</field></shadow></value><value name='SECS'><shadow type='math_number' id='3E)nusFZxU6MrHR/[N0k'><field name='NUM'>2</field></shadow></value><next><block type='procedures_call' id='t!lUpD{h{:qsfvVIIxHC'><mutation proccode='jump' argumentids='[]' warp='false'></mutation></block></next></block></next></block></next></block><block type='procedures_definition' id='+T)h:,DF~eAw@DD)7Q#-' x='442' y='-254'><statement name='custom_block'><shadow type='procedures_prototype' id='rz~]Ha`+;%uQvVA|qn%C'><mutation proccode='jump' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='motion_changeyby' id='k(AUhXY}Q][D%L;Q+a|#'><value name='DY'><shadow type='math_number' id='U@zOSWEJ1Gc|kVcEiT61'><field name='NUM'>10</field></shadow></value><next><block type='control_wait' id='e7n0whD12mI*HElF-01A'><value name='DURATION'><shadow type='math_positive_number' id='[ss53aQ(PuYF}3SI?m9g'><field name='NUM'>0.5</field></shadow></value><next><block type='motion_changeyby' id='ru7G};a,FsP~}VE/9CkB'><value name='DY'><shadow type='math_number' id='9FHdK6P-J.{];3Qj=**S'><field name='NUM'>-10</field></shadow></value></block></next></block></next></block></next></block></xml>",
                 expected: [
-                    ["event_whenflagclicked", "procedures_call", "looks_sayforsecs", "procedures_call"],
-                    ["procedures_definition", "motion_changeyby", "control_wait", "motion_changeyby"]
+                     ["event_whenflagclicked", "control_forever", "procedures_call"],
+                    ["procedures_definition", "control_repeat", "motion_changeyby", "control_wait", "control_repeat", "motion_changeyby"]
                 ],
                 shouldCleanup: true
             },
             {
-                id: 'concept-custom-block',
-                title: (<p>Concept: How a custom block works.</p>),
-                image: customBlockCfg,
+                id: 'exercise-custom-block-param',
+                title: (
+                    <p> We want to make the cat jump with different heights.
+                        <br/>Exercise: Follow the steps below to introduce a height parameter to the jump block 
+                        and specify 15 and 5 so the cat alternates between high and low jump continuously.
+                        </p>
+                ),
+                image: jump1,
+                // setupCode:
+                // "<xml xmlns='http://www.w3.org/1999/xhtml'><variables><variable type='' id='`jEk@4|i[#Fk?(8x)AV.-my variable' islocal='false' iscloud='false'>my variable</variable></variables><block type='event_whenflagclicked' id='XG3B]7tQO?9{fcPe${Ek' x='213' y='80'><next><block type='control_forever' id='r6NRa`6c|S6Q?:^orT2C'><statement name='SUBSTACK'><block type='procedures_call' id='8lsqu%un%`2q{0%*Wqm#'><mutation proccode='jump' argumentids='[]' warp='false'></mutation></block></statement></block></next></block><block type='procedures_definition' id='LI-IL[,^qf_-B=I=Bjez' x='474' y='80'><statement name='custom_block'><shadow type='procedures_prototype' id='u5H]H[72J4}JhDqh!=7l'><mutation proccode='jump' argumentids='[]' argumentnames='[]' argumentdefaults='[]' warp='false'></mutation></shadow></statement><next><block type='control_repeat' id='NLH?/iZ2KT4gTJ`G]t!v'><value name='TIMES'><shadow type='math_whole_number' id='Qa-pGAX@}=-#K*YsMl.r'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='motion_changeyby' id='w9@CehxUS_72Tcx4_z;S'><value name='DY'><shadow type='math_number' id='Mc`LlV3LKet:yE308yP8'><field name='NUM'>2</field></shadow></value></block></statement><next><block type='control_wait' id='{r=;7@mSu*cOh|.*Npz('><value name='DURATION'><shadow type='math_positive_number' id='9,7lBs/r~PiI,Utq_-3T'><field name='NUM'>0.1</field></shadow></value><next><block type='control_repeat' id=']$L98xB}[blm)*2@8^$D'><value name='TIMES'><shadow type='math_whole_number' id='cCSAEMik`Xh*V9E$;JK,'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='motion_changeyby' id='U^cvx=fq1}V(B{iy5NgV'><value name='DY'><shadow type='math_number' id='Vr6HQ/R6dmfQg/^?x)!b'><field name='NUM'>-2</field></shadow></value></block></statement></block></next></block></next></block></next></block></xml>", 
+                expected: [
+                    ["event_whenflagclicked", "control_forever", "procedures_call", "procedures_call"],
+                    ["procedures_definition", "control_repeat", "motion_changeyby", "control_wait", "control_repeat", "motion_changeyby", "argument_reporter_string_number", "argument_reporter_string_number"]
+                ], // customCheck: 1. cb has a param, 2 jumps (with string input) 
             },
+            // {
+            //     id: 'concept-custom-block',
+            //     title: (<p>Concept: How a custom block works.</p>),
+            //     image: customBlockCfg,
+            // },
             {   
                 id: 'concept-cloning',
                 title: (
@@ -155,46 +193,53 @@ export default {
 
     'color-shade-generator': {
         steps: [
-            // {
-            //     title: (
-            //         <p> The program behind this card generates a rows of green squares with decreasingly lighter shades (left).<br />
-            //            You will modify this program so that it generates 2 more rows: blue triangles and red circles (right).</p>
-            //     ),
-            //     image: originalVsGoal
-            // },{
-            //     title: (<p>Copy and paste the existing program part twice.<br/> 
-            //     Modify the code so that the triangle row starts at (x:-215, y: 60) <br/>
-            //     and the circle row starts at (x: -215, y:0)</p>),
-            //     image: copyPasteReuse
-            // },
             {
-                title: (<p>Experiment: The brightness increases too dramatically. Let's make it to 9 instead of 15. <br/>
-                Make sure to change the values in two places!</p>),
-                image: modifyBrightness,
-                customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_changeeffectby').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='9').length === 2"
-            }, {
-                title: (<p>Experiment: Let's modify the two repeat blocks by changing it to 9 times instead of just 5.<br/>
+                title: (
+                    <p> The program behind this card generates a rows of green squares with decreasingly lighter shades (left).<br />
+                       You will modify this program so that it generates 2 more rows: blue triangles and red circles (right).</p>
+                ),
+                image: originalVsGoal
+            },{
+                title: (<p>Copy and paste the existing program part.<br/> 
+                Modify the code so that the triangle row starts at (x:-215, y: 60) <br/>
+                </p>),
+                image: copyPasteReuse
+            }, 
+            {
+                title: (<p>Experiment: Let's modify the two repeat blocks by changing it from 5 to 9.
                 Make sure to change the values in two places!
                 </p>),
                 image: modifyRepeat,
                 customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='control_repeat').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='9').length === 2"
-            }, {
+            },
+            {
+                title: (<p>Experiment: The brightness increases too dramatically. Let's change it from 15 to 9.
+                Make sure to change the values in two places!</p>),
+                image: modifyBrightness,
+                customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_changeeffectby').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='9').length === 2"
+            }, 
+            {
                 title: (<p>Tip: You can extract a custom block from common program parts that tend to be modified together.<br />
                 Such common program parts perform a specific action and are often the result of copying and pasting code.<br />
                 The next instruction will guide you how to improve your code.
                 </p>)
             },
             {
-                title: (<p>Tip: Toggle the Code Wizard to </p>),
+                title: (<p>Toggle the Code Wizard to see improvement hints and follow its suggestion! Click check when you are done.</p>),
                 onlyVisibleToGroup: 'automated',
-                // image:
-            }, {
-                title: (<p>We can make use of custom block that we learn previously! Let's do it!</p>),
+                image: enableHintRefactoring,
+                customCheck: "(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_prototype').length === 1)&&(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_call').length===2)"
+            }, 
+            {
+                title: (<p>We can make use of a custom block that we learn previously! Let's do it!</p>),
                 onlyVisibleToGroup: 'manual',
-                // image: 
+                video: 'apchqdve3p',
+                customCheck: "(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_prototype').length === 1)&&(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_call').length===2)"
             }, {
-                title: (<p>Experiment: We are almost there! <br/>
-                Let's increase the distance between each shape so that they fill the available area.</p>),
+                title: (<p style={{}}>Experiment: Almost there! We need to increase the distance between each shape clone so that they fill the available area.<br/>
+                Try 30, 40 and 50. If the right value is used, clicking "Check" will show continue button.</p>),
+                image: modifyChangeXBy,
+                customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='motion_changexby').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='40').length === 1"
             },
             {
                 title: (<p>Please enter the completion code below to the main survey.</p>),
@@ -203,33 +248,46 @@ export default {
             }
         ]
     },
-    'squares-in-motion': {
+    'particle-radiator': {
         steps: [
             {
-                // video: 'apchqdve3p',
                 title: (
-                    <p>Squares in Motion</p>
+                    <div><h2>Particle Radiator</h2>
+                    <p>
+                    The next two cards provide an overview of what each program part does.
+                    The remain instructions ask you to modify the program to match the expected animation.
+                    </p></div>
                 )
-            }, {
-                title: (<p>This program animates square clones of alternating color (blue and red) that move outward from the center and disappear. <br />
-                    Exercise: Enhance the animation of the square clones flying outward so that
-                    1) they move further to the edge of stage.
-                    2) their color gradually fade out.
-                    Hints are provided in the next card if needed.
-                </p>)
-            }, {
+            },
+            {
+                image: cloneAction
+            },
+            {
+                image: createCloneSeq
+            },
+            {
+                title: (<p>Modify the input of the Repeat block in the "When I start as a clone" by changing it from 8 to 20</p>),
+                image: studyTask1
+            },
+            {
+                title: (<p>Add a block "change size by" and use 5 as its input</p>),
+                image: studyTask2
+            },
+            {
+                title: (<p>Gradually fade: Add change ghost effect and experiment with effect values (20, 15, 10, 5) so that it looks like the result below.<br/></p>),
+                image: studyTask3
+            },
+            {
                 title: (<p>
-                    1) they move further to the edge of stage
-                2) their color gradually fade out</p>)
+                    Download your completed work file to your computer and upload to the main survey.
+                    To download your completed work, click File and then select "Save to your computer".
+                </p>)
             },
             {
                 title: (
-                    <p>Please enter the completion code below to the main survey.<br />
-                        You will need the completed work file to upload to the main survey. <br />
-                        Please download the work you have completed by clicking File => Save to your computer.
-                    </p>
+                    <p>Please enter the completion code below to the main survey.</p>
                 ),
-                completionCode: 'happy-remixing',
+                completionCode: 'happy-scratching',
                 recordCompletion: true
             }
         ]

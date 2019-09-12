@@ -125,7 +125,7 @@ const checkStmtSequence = ({ topBlock, expected, shouldExcludeShadow }) => {
         if (shouldExcludeShadow) {
             filteredActual = actual.filter(n => !n.isShadow_).map(b => b.type);
         }
-        // console.log('expected block sequence',filteredActual);
+        console.log('expected block sequence',filteredActual);
         return filteredActual;
     }).map(seq => array_hash(seq)));
 
@@ -208,7 +208,7 @@ const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId, c
 }
 
 const populateWorkspace = (setupCode) => {
-    const workspace = Blockly.getMainWorkspace();
+    let workspace = Blockly.getMainWorkspace();
     if (workspace) {
         setTimeout(() => {
             workspaceFromXml(workspace, setupCode);
@@ -226,12 +226,12 @@ class ImageStep extends React.Component {
         super(props);
     }
 
-    componentDidMount(){
+    componentDidUpdate(){
         const {
             isAlreadySetup, setUpdateCodeStatus, shouldCleanup, dragging, setupCode 
         } = this.props;
 
-        if (!isAlreadySetup) {
+        if (setupCode&&!isAlreadySetup) {
             // clear
             const workspace = Blockly.getMainWorkspace();
             if (workspace && shouldCleanup && !dragging) {
@@ -425,7 +425,7 @@ class CustomCards extends React.Component {
                             {steps[step].trackingPixel && steps[step].trackingPixel}
                         </div>
 
-                        {steps[step].expected||steps[step].customCheck && <button onClick={checkStepCompletion({ 
+                        {!!(steps[step].expected||steps[step].customCheck) && <button onClick={checkStepCompletion({ 
                             onCompleteStep, vm, expected: steps[step].expected, customCheck:steps[step].customCheck })}>Check</button>}
 
                         
