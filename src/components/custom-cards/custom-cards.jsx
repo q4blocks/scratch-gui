@@ -356,6 +356,7 @@ class CustomCards extends React.Component {
             step,
             expanded,
             stepCompleted,
+            completed,
             onCompleteStep,
             vm,
             qualityHintToggleVisible,
@@ -389,6 +390,8 @@ class CustomCards extends React.Component {
             console.log('record completion', activeDeckId);
             saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
         }
+
+        console.log(completed);
 
         return (
             <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
@@ -436,7 +439,7 @@ class CustomCards extends React.Component {
                             dragging={dragging}
                             onNextStep={step < steps.length - 1 ? onNextStep : null}
                             onPrevStep={step > 0 ? onPrevStep : null}
-                            stepCompleted={bypassCheck || (!steps[step].expected && !steps[step].customCheck)|| stepCompleted}
+                            stepCompleted={bypassCheck || (!steps[step].expected && !steps[step].customCheck)|| completed.includes(steps[step].id)}
                             checkCompletion={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected, currentInstructionId: steps[step].id })}
                             isAlreadySetup={this.state.isAlreadySetup}
                             setUpdateCodeStatus={this.setUpdateCodeStatus}

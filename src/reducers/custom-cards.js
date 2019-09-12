@@ -14,13 +14,14 @@ const COMPLETE_STEP = 'scratch-gui/custom-cards/COMPLETE_STEP';
 const initialState = {
     visible: true,
     content: decks,
-    activeDeckId: 'scratching-with-a-square',
+    activeDeckId: 'scratch-basics',
     step: 0,
     x: 0,
     y: 0,
     expanded: true,
     dragging: false,
-    stepCompleted: false
+    stepCompleted: false,
+    completed: []
 };
 
 const reducer = function (state, action) {
@@ -81,7 +82,8 @@ const reducer = function (state, action) {
         });
     case COMPLETE_STEP:
         return Object.assign({}, state, {
-            stepCompleted: true
+            stepCompleted: true,
+            completed: Array.from(new Set(state.completed.concat(state.content[state.activeDeckId].steps[state.step].id)))
         });
     default:
         return state;

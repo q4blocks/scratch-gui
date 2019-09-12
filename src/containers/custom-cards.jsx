@@ -30,6 +30,7 @@ const mapStateToProps = (state, ownProps) => ({
     locale: state.locales.locale,
     dragging: state.scratchGui.customCards.dragging,
     stepCompleted: state.scratchGui.customCards.stepCompleted,
+    completed: state.scratchGui.customCards.completed,
     vm: state.scratchGui.vm,
 });
 
