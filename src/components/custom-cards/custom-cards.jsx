@@ -425,8 +425,8 @@ class CustomCards extends React.Component {
                             {steps[step].trackingPixel && steps[step].trackingPixel}
                         </div>
 
-                        {!!(steps[step].expected||steps[step].customCheck) && <button onClick={checkStepCompletion({ 
-                            onCompleteStep, vm, expected: steps[step].expected, customCheck:steps[step].customCheck })}>Check</button>}
+                        {!!(steps[step].expected||steps[step].customCheck) && <div className={styles.footer}><div className={styles.checkButton} onClick={checkStepCompletion({ 
+                            onCompleteStep, vm, expected: steps[step].expected, customCheck:steps[step].customCheck })}>Check</div></div>}
 
                         
 

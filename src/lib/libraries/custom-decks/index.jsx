@@ -48,83 +48,78 @@ export default {
             //     id: 'intro-vid',
             //     video: 'rpjvs3v9gj'
             // },
-            // {
-            //     id: 'move-say',
-            //     title: (
-            //         <p>Exercise: Follow the animated instruction below and click "Check"</p>
-            //     ),
-            //     image: stepMove,
-            //     expected: [["motion_movesteps", "looks_sayforsecs"]],
-            // }, {
-            //     id: 'gf-move-say',
-            //     title: (
-            //         <p>Exercise: Follow the animated instruction below and click "Check"</p>
-            //     ),
-            //     image: stepMoveSayHello,
-            //     expected: [["event_whenflagclicked", "motion_movesteps", "looks_sayforsecs"]],
-            // }, {
-            //     id: 'tip-delete',
-            //     title: (
-            //         <p>Tip: Right click a block -> Delete to delete the block. <br />
-            //             Drag a block to toolbox to also delete all blocks that follow.</p>
-            //     ),
-            //     image: deleteCode,
-            //     shouldCleanup: true
-            // }, {
-            //     id: 'tip-inspect',
-            //     title: (
-            //         <p>Tip: Separate each code part and click it to see what it does.</p>
-            //     ),
-            //     image: inspectCode,
-            // },
-            // {
-            //     id: 'say-random-num',
-            //     title: (
-            //         <p>Exercise: Make the cat say a random number (1  to 10) when the green flag is clicked. <br />
-            //             Click "Check" when you are done.</p>
-            //     ),
-            //     image: sayRandomNum,
-            //     expected: [["event_whenflagclicked", "looks_say", "operator_random"]],
-            //     shouldCleanup: true
-            // },
-            // {   id: 'color-random',
-            //     title: (
-            //         <p>Exercise: Set the color effect so the cat turns purple 1 second! Experiment with the following values
-            //             (50,100,140,180). If the correct value is set, clicking "Check" will show next instruction button. 
-            //         </p>
-            //     ),
-            //     image: coloringTheCat,
-            //     shouldCleanup: true,
-            //     expected: [[//140
-            //         "event_whenflagclicked", "looks_seteffectto", "control_wait", "looks_cleargraphiceffects"]],
-            //     customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_seteffectto').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='140').length === 1"
-            // }, {
-            //     id: 'concept-sprite',
-            //     title: (
-            //         <p>Concept: A Scratch program can contain many sprites. <br />
-            //             Each sprite has Code, Costumes and Sounds associated with it.</p>
-            //     ),
-            //     image: spriteAndMedia,
-            //     shouldCleanup: true
-            // }, 
-            // {
-            //     id: 'walking-anim',
-            //     title: (
-            //         <p>Exercise: Create a basic walking animation using switching costume, wait, and forever blocks.<br />
-            //             Click "Check" when you are done.</p>
-            //     ),
-            //     image: walkingMovement,
-            //     expected: [
-            //         ["event_whenflagclicked", "control_forever","looks_switchcostumeto","control_wait","looks_switchcostumeto","control_wait"]
-            //     ],
-            //     shouldCleanup: true
-            // },
+            {
+                id: 'move-say',
+                title: (
+                    <p>Exercise: Follow the animated instruction below and click "Check"</p>
+                ),
+                image: stepMove,
+                expected: [["motion_movesteps", "looks_sayforsecs"]],
+            }, {
+                id: 'gf-move-say',
+                title: (
+                    <p>Exercise: Put "When Green Flag Clicked" block at the top, click the "Green Flag" button to run your first program.</p>
+                ),
+                image: stepMoveSayHello,
+                expected: [["event_whenflagclicked", "motion_movesteps", "looks_sayforsecs"]],
+            }, 
+            {
+                id: 'tip-inspect',
+                title: (
+                    <p>Tip: Separate each code part and click it to see what it does.</p>
+                ),
+                image: inspectCode,
+            },
+            {
+                id: 'tip-delete',
+                title: (
+                    <p>Tip: Right click a block then select "Delete Block" to delete it.
+                    When a block is dragged, the block sequence connected below it will also move along. 
+                    Placing a block or a sequence of blocks to the toolbox area to delete.
+                    </p>
+                ),
+                image: deleteCode,
+                shouldCleanup: true
+            }, 
+            {   id: 'color-random',
+                title: (
+                    <p>Exercise: Create a program that makes the cat turns purple 1 second when the green flag is clicked.
+                        Experiment with the following color effect values (50,100,140,180).</p>
+                ),
+                image: coloringTheCat,
+                shouldCleanup: true,
+                expected: [[//140
+                    "event_whenflagclicked", "looks_seteffectto", "control_wait", "looks_cleargraphiceffects"]],
+                customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_seteffectto').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='140').length === 1"
+            }, 
+            {
+                id: 'concept-sprite',
+                title: (
+                    <p>Concept: A Scratch program can contain many sprites.
+                    Each sprite has Code, Costumes and Sounds associated with it.</p>
+                ),
+                image: spriteAndMedia,
+                shouldCleanup: true
+            }, 
+            {
+                id: 'walking-anim',
+                title: (
+                    <p>Exercise: Create a basic walking animation.</p>
+                ),
+                image: walkingMovement,
+                expected: [
+                    ["event_whenflagclicked", "control_forever","looks_switchcostumeto","control_wait","looks_switchcostumeto","control_wait"]
+                ],
+                shouldCleanup: true
+            },
             {
                 id: 'exercise-custom-block',
                 title: (
-                    <p> The small program in the workspace performs makes the cat jump continuously. Click Green Flag to see it looks like.
-                        <br/>Exercise: Follow the steps below to make a jump block and use it to make the cat jump.
-                        Click Green Flag again. The cat jumping animation should remain exactly the same. 
+                    <p> The setup program animates cat jumping continuously.
+                        Click Green Flag to see the jumping animation. 
+                        We can make a "jump" custom block out of the program part that performs the jumping action. <br/>
+                        Exercise: Follow the steps below to make a jump block and use it in the code.
+                        Click Green Flag to check whether the "jump" custom block indeed makes the cat jumps. 
                         </p>
                 ),
                 image: jump0,
@@ -141,9 +136,10 @@ export default {
                 id: 'exercise-custom-block-param',
                 title: (
                     <p> We want to make the cat jump with different heights.
-                        <br/>Exercise: Follow the steps below to introduce a height parameter to the jump block 
-                        and specify 15 and 5 so the cat alternates between high and low jump continuously.
-                        </p>
+                        Exercise: Follow the steps below to introduce a height parameter to the "jump" custom block. 
+                        Modify the program so the cat alternates between high jump (jump 15) and low jump (jump 5).
+                        Click Green Flag to see whether the change to "jump" custom block indeed makes the cat jump with different heights.
+                    </p>
                 ),
                 image: jump1,
                 // setupCode:
@@ -153,36 +149,31 @@ export default {
                     ["procedures_definition", "control_repeat", "motion_changeyby", "control_wait", "control_repeat", "motion_changeyby", "argument_reporter_string_number", "argument_reporter_string_number"]
                 ], // customCheck: 1. cb has a param, 2 jumps (with string input) 
             },
-            // {
-            //     id: 'concept-custom-block',
-            //     title: (<p>Concept: How a custom block works.</p>),
-            //     image: customBlockCfg,
-            // },
             {   
                 id: 'concept-cloning',
                 title: (
-                    <p>Concept: Cloning in Scratch is creating multiple copies of itself <br />
+                    <p>Concept: Sprite cloning is creating multiple copies of the character sprite 
                         by using "create clone of "myself" and "when I start as a clone" blocks.</p>
                 ),
                 image: cloningConcept,
                 shouldCleanup: true,
-                setupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='event_whenflagclicked' id='Ed+KUz?n--I~Td}6xi2I' x='99' y='-250'><next><block type='looks_hide' id='{8jqxUwd*%?pt6oC2Wq!'><next><block type='control_repeat' id='gIU9=Mv12Wh@~awauzub'><value name='TIMES'><shadow type='math_whole_number' id='lkypM}p}o-Lz/pqMeSzw'><field name='NUM'>5</field></shadow></value><statement name='SUBSTACK'><block type='control_create_clone_of' id='`^yOe_.aB{y|A}Fej8QL'><value name='CLONE_OPTION'><shadow type='control_create_clone_of_menu' id='[[8S}#7`aMP[IN#;{e|,'><field name='CLONE_OPTION'>_myself_</field></shadow></value></block></statement></block></next></block></next></block><block type='control_start_as_clone' id='enXotOX{(Gyls@7Yb=JV' x='99' y='56'><next><block type='looks_show' id='X%,+1;_b#2bd.4g,l^mt'><next><block type='motion_goto' id='%c3q3613gGFNkD$D66(o'><value name='TO'><shadow type='motion_goto_menu' id='_pdjAzCJtp4#Vdz0bm#0'><field name='TO'>_random_</field></shadow></value><next><block type='looks_say' id='s7owYH^c0?k{~10Y^p7q'><value name='MESSAGE'><shadow type='text' id='KN(cq~:7%TBk|8jdsEX-'><field name='TEXT'>Hello!</field></shadow></value></block></next></block></next></block></next></block></xml>"
             },
             {
                 id: 'exercise-cloning',
                 title: (
-                    <p>A small program is already setup for you. It creates 5 cat clones that go to random position and say "Hello!"<br />
-                        Exercise: Modify the program so each cat clone goes to a random position,<br />
-                        say a random number (1-10), and being set with a random color effect (1-200)<br />
-                        Click "Check" when you are done.</p>
+                    <p>A small program in the workspace creates 5 invisible cat clones, each go to a random position, 
+                        becomes visible, and says "Hello!"<br />
+                        Exercise: Modify the program so each cat clone goes to a random position,
+                        says a random number (1-10), and set itself to a random color effect (1-200)</p>
                 ),
                 image: catCloning,
+                setupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='event_whenflagclicked' id='Ed+KUz?n--I~Td}6xi2I' x='99' y='-250'><next><block type='looks_hide' id='{8jqxUwd*%?pt6oC2Wq!'><next><block type='control_repeat' id='gIU9=Mv12Wh@~awauzub'><value name='TIMES'><shadow type='math_whole_number' id='lkypM}p}o-Lz/pqMeSzw'><field name='NUM'>5</field></shadow></value><statement name='SUBSTACK'><block type='control_create_clone_of' id='`^yOe_.aB{y|A}Fej8QL'><value name='CLONE_OPTION'><shadow type='control_create_clone_of_menu' id='[[8S}#7`aMP[IN#;{e|,'><field name='CLONE_OPTION'>_myself_</field></shadow></value></block></statement></block></next></block></next></block><block type='control_start_as_clone' id='enXotOX{(Gyls@7Yb=JV' x='99' y='56'><next><block type='looks_show' id='X%,+1;_b#2bd.4g,l^mt'><next><block type='motion_goto' id='%c3q3613gGFNkD$D66(o'><value name='TO'><shadow type='motion_goto_menu' id='_pdjAzCJtp4#Vdz0bm#0'><field name='TO'>_random_</field></shadow></value><next><block type='looks_say' id='s7owYH^c0?k{~10Y^p7q'><value name='MESSAGE'><shadow type='text' id='KN(cq~:7%TBk|8jdsEX-'><field name='TEXT'>Hello!</field></shadow></value></block></next></block></next></block></next></block></xml>",
                 shouldCleanup: true
             }, 
             {
                 id: 'completion',
                 title: (
-                    <p>Please enter the completion code below to the main survey.</p>
+                    <p>Please copy and paste the completion code below to the main survey.</p>
                 ),
                 completionCode: 'scratch101',
                 recordCompletion: true
@@ -196,12 +187,12 @@ export default {
             {
                 title: (
                     <p> The program behind this card generates a rows of green squares with decreasingly lighter shades (left).<br />
-                       You will modify this program so that it generates 2 more rows: blue triangles and red circles (right).</p>
+                       You will modify this program so that it generates a blue triangles row.</p>
                 ),
                 image: originalVsGoal
             },{
                 title: (<p>Copy and paste the existing program part.<br/> 
-                Modify the code so that the triangle row starts at (x:-215, y: 60) <br/>
+                Modify the code:  1) switch costume to triangle 2) set go to x, y  to -215 and 60 respectively, and 3) set the color effect to 85 for blue.
                 </p>),
                 image: copyPasteReuse
             }, 
