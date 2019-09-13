@@ -1,5 +1,6 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
+import styles from './deck-content-styles.css';
 
 // Intro
 import libraryIntro from './intro/lib-getting-started.jpg';
@@ -15,7 +16,7 @@ import jump1 from './intro/tutorial-1param-custom-block.gif'
 import cloningConcept from './intro/cloning-concept.gif';
 import walkingMovement from './intro/walking-movement.gif';
 import catCloning from './intro/cat-cloning.png';
-import originalVsGoal from './custom-block-deck/custom-card-original-vs-goal.png';
+import originalVsGoal from './custom-block-deck/original-vs-goal.png';
 import copyPasteReuse from './custom-block-deck/copy-paste-modify.gif';
 
 //QI
@@ -32,6 +33,12 @@ import studyTask1 from './study-tasks/study-task-1.gif';
 import studyTask2 from './study-tasks/study-task-2.gif';
 import studyTask3 from './study-tasks/study-task-3.gif';
 
+const Label = ({text}) => <span className={styles.cardType}>{text}</span>;
+const PracticeLabel = ()=> <Label text="Practice"/>;
+const QuizLabel = ()=> <Label text="Quiz"/>;
+const TipsLabel = ()=> <Label text="Tips"/>;
+const ConceptLabel = ()=> <Label text="Concept"/>;
+
 export default {
     'scratch-basics': {
         name: (
@@ -44,21 +51,21 @@ export default {
         tags: ['help', 'stuck', 'how', 'can', 'say'],
         img: libraryIntro,
         steps: [
-            // {
-            //     id: 'intro-vid',
-            //     video: 'rpjvs3v9gj'
-            // },
+            {
+                id: 'intro-vid',
+                video: 'rpjvs3v9gj'
+            },
             {
                 id: 'move-say',
                 title: (
-                    <p>Exercise: Follow the animated instruction below and click "Check"</p>
+                    <p><PracticeLabel/> Experiment with the command blocks shown below.</p>
                 ),
                 image: stepMove,
                 expected: [["motion_movesteps", "looks_sayforsecs"]],
             }, {
                 id: 'gf-move-say',
                 title: (
-                    <p>Exercise: Put "When Green Flag Clicked" block at the top, click the "Green Flag" button to run your first program.</p>
+                    <p><PracticeLabel/> Use "When Green Flag Clicked" block at the top, click the "Green Flag" button to run your first program.</p>
                 ),
                 image: stepMoveSayHello,
                 expected: [["event_whenflagclicked", "motion_movesteps", "looks_sayforsecs"]],
@@ -66,14 +73,15 @@ export default {
             {
                 id: 'tip-inspect',
                 title: (
-                    <p>Tip: Separate each code part and click it to see what it does.</p>
+                    <p><TipsLabel/> Separate each code part and click it to see what it does.</p>
                 ),
+                setupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='event_whenflagclicked' id='K+6DxCUq`c$nW]J9917d' x='91' y='88'><next><block type='control_forever' id='8p.EClpJ`2=QZ#0+`Swp'><statement name='SUBSTACK'><block type='control_repeat' id='Cq.ael%UMOJyNHB9[+e+'><value name='TIMES'><shadow type='math_whole_number' id='nY?;B3?TpUvh0@n=e4xV'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='looks_changeeffectby' id='`Ls7^xrYZxm65wm}ko(p'><field name='EFFECT'>GHOST</field><value name='CHANGE'><shadow type='math_number' id='p!5VpWaX*0;%yQSTTlq|'><field name='NUM'>10</field></shadow></value></block></statement><next><block type='control_repeat' id='O@oN3W-R38.oSeZtr[62'><value name='TIMES'><shadow type='math_whole_number' id='WsHP7W,iMf{P~%4kc-00'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='looks_changeeffectby' id='Ctd7:vUTr0p$Va9K7f:l'><field name='EFFECT'>GHOST</field><value name='CHANGE'><shadow type='math_number' id='V`x.64iC*N]4jU,bD/Ln'><field name='NUM'>-10</field></shadow></value></block></statement></block></next></block></statement></block></next></block></xml>",
                 image: inspectCode,
             },
             {
                 id: 'tip-delete',
                 title: (
-                    <p>Tip: Right click a block then select "Delete Block" to delete it.
+                    <p><TipsLabel/> Right click a block then select "Delete Block" to delete it.
                     When a block is dragged, the block sequence connected below it will also move along. 
                     Placing a block or a sequence of blocks to the toolbox area to delete.
                     </p>
@@ -83,7 +91,7 @@ export default {
             }, 
             {   id: 'color-random',
                 title: (
-                    <p>Exercise: Create a program that makes the cat turns purple 1 second when the green flag is clicked.
+                    <p><PracticeLabel/> Create a program that makes the cat turns purple 1 second when the green flag is clicked.
                         Experiment with the following color effect values (50,100,140,180).</p>
                 ),
                 image: coloringTheCat,
@@ -91,20 +99,20 @@ export default {
                 expected: [[//140
                     "event_whenflagclicked", "looks_seteffectto", "control_wait", "looks_cleargraphiceffects"]],
                 customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_seteffectto').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='140').length === 1"
-            }, 
+            },
             {
                 id: 'concept-sprite',
                 title: (
-                    <p>Concept: A Scratch program can contain many sprites.
+                    <p><ConceptLabel/> A Scratch program can contain many sprites.
                     Each sprite has Code, Costumes and Sounds associated with it.</p>
                 ),
                 image: spriteAndMedia,
                 shouldCleanup: true
-            }, 
+            },
             {
                 id: 'walking-anim',
                 title: (
-                    <p>Exercise: Create a basic walking animation.</p>
+                    <p><PracticeLabel/> Create a basic walking animation.</p>
                 ),
                 image: walkingMovement,
                 expected: [
@@ -118,7 +126,7 @@ export default {
                     <p> The setup program animates cat jumping continuously.
                         Click Green Flag to see the jumping animation. 
                         We can make a "jump" custom block out of the program part that performs the jumping action. <br/>
-                        Exercise: Follow the steps below to make a jump block and use it in the code.
+                        <PracticeLabel/> Follow the steps below to make a jump block and use it in the code.
                         Click Green Flag to check whether the "jump" custom block indeed makes the cat jumps. 
                         </p>
                 ),
@@ -135,8 +143,8 @@ export default {
             {
                 id: 'exercise-custom-block-param',
                 title: (
-                    <p> We want to make the cat jump with different heights.
-                        Exercise: Follow the steps below to introduce a height parameter to the "jump" custom block. 
+                    <p> We want to make the cat jump with different heights.<br/>
+                        <PracticeLabel/> Follow the steps below to introduce a height parameter to the "jump" custom block. 
                         Modify the program so the cat alternates between high jump (jump 15) and low jump (jump 5).
                         Click Green Flag to see whether the change to "jump" custom block indeed makes the cat jump with different heights.
                     </p>
@@ -152,7 +160,7 @@ export default {
             {   
                 id: 'concept-cloning',
                 title: (
-                    <p>Concept: Sprite cloning is creating multiple copies of the character sprite 
+                    <p><ConceptLabel/> We can clone (creating multiple copies of) a character sprite   
                         by using "create clone of "myself" and "when I start as a clone" blocks.</p>
                 ),
                 image: cloningConcept,
@@ -163,7 +171,7 @@ export default {
                 title: (
                     <p>A small program in the workspace creates 5 invisible cat clones, each go to a random position, 
                         becomes visible, and says "Hello!"<br />
-                        Exercise: Modify the program so each cat clone goes to a random position,
+                        <PracticeLabel/> Modify the program so each cat clone goes to a random position,
                         says a random number (1-10), and set itself to a random color effect (1-200)</p>
                 ),
                 image: catCloning,
@@ -171,9 +179,10 @@ export default {
                 shouldCleanup: true
             }, 
             {
-                id: 'completion',
+                id: 'copy-completion-code',
                 title: (
-                    <p>Please copy and paste the completion code below to the main survey.</p>
+                    <div><h3>Please copy and paste the completion code below to the main survey.</h3>
+                    <h4 style={{fontStyle:"italic"}}>You may close this Scratch editor.</h4></div>
                 ),
                 completionCode: 'scratch101',
                 recordCompletion: true
@@ -185,55 +194,72 @@ export default {
     'color-shade-generator': {
         steps: [
             {
+                id: 'intro',
                 title: (
-                    <p> The program behind this card generates a rows of green squares with decreasingly lighter shades (left).<br />
-                       You will modify this program so that it generates a blue triangles row.</p>
+                    <p> The program in the workspace generates a row of green squares with decreasingly lighter shades (left).
+                       You will modify this program so that it also generates a blue triangles row (right).</p>
                 ),
                 image: originalVsGoal
-            },{
-                title: (<p>Copy and paste the existing program part.<br/> 
-                Modify the code:  1) switch costume to triangle 2) set go to x, y  to -215 and 60 respectively, and 3) set the color effect to 85 for blue.
+            },
+            {
+                id: 'copy-paste',
+                title: (<p><PracticeLabel/> Follow the step-by-step guide below which walks you to: <br/>
+                1) copy and paste the program part that generates the square row <br/>
+                2) switch the costume so it generates triangles instead <br/> 
+                3) position it below the square row (set go to x, y  to -215 and 60 respectively)<br/>
+                4) set the color effect to 85 for blue.
                 </p>),
                 image: copyPasteReuse
             }, 
             {
-                title: (<p>Experiment: Let's modify the two repeat blocks by changing it from 5 to 9.
-                Make sure to change the values in two places!
+                id: 'modification-1',
+                title: (<p><PracticeLabel/> Let's change the input to the repeat blocks from 5 to 9.
+                Make sure to change the values in both repeat blocks!
                 </p>),
                 image: modifyRepeat,
                 customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='control_repeat').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='9').length === 2"
             },
-            {
-                title: (<p>Experiment: The brightness increases too dramatically. Let's change it from 15 to 9.
-                Make sure to change the values in two places!</p>),
+            {   
+                id: 'modification-2',
+                title: (<p><PracticeLabel/> The brightness increases too fast. Let's change it from 15 to 9.
+                Make sure to change the value in both places!</p>),
                 image: modifyBrightness,
                 customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='looks_changeeffectby').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='9').length === 2"
             }, 
             {
-                title: (<p>Tip: You can extract a custom block from common program parts that tend to be modified together.<br />
-                Such common program parts perform a specific action and are often the result of copying and pasting code.<br />
+                id: 'extract-cb-intro',
+                title: (<p><TipsLabel/> You can extract a custom block from common program parts that tend to be modified together.
+                Such common program parts perform a similar action and are often the result of copying and pasting code.
                 The next instruction will guide you how to improve your code.
                 </p>)
             },
-            {
-                title: (<p>Toggle the Code Wizard to see improvement hints and follow its suggestion! Click check when you are done.</p>),
+            {   
+                id: 'intro-QIS',
+                title: (<p><PracticeLabel/> Toggle Code Wizard to see improvement hints and follow its suggestion! Click check when you are done.</p>),
                 onlyVisibleToGroup: 'automated',
                 image: enableHintRefactoring,
                 customCheck: "(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_prototype').length === 1)&&(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_call').length===2)"
             }, 
             {
+                id: 'intro-manual',
                 title: (<p>We can make use of a custom block that we learn previously! Let's do it!</p>),
                 onlyVisibleToGroup: 'manual',
                 video: 'apchqdve3p',
                 customCheck: "(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_prototype').length === 1)&&(Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='procedures_call').length===2)"
-            }, {
-                title: (<p style={{}}>Experiment: Almost there! We need to increase the distance between each shape clone so that they fill the available area.<br/>
-                Try 30, 40 and 50. If the right value is used, clicking "Check" will show continue button.</p>),
+            }, 
+            {
+                id: 'modification-final',
+                title: (<p><PracticeLabel/> Last step. We need to increase the distance between each shape clone so that they fill the available area.<br/>
+                Try 30, 40 and 50. If the right value is used, clicking "Check" will show Next button.</p>),
                 image: modifyChangeXBy,
                 customCheck: "Blockly.getMainWorkspace().getAllBlocks().filter(b=>b.type==='motion_changexby').filter(b=>b.getChildren()[0].getFieldValue('NUM')==='40').length === 1"
             },
             {
-                title: (<p>Please enter the completion code below to the main survey.</p>),
+                id: 'copy-completion-code',
+                title: (
+                    <div><h3>Please copy and paste the completion code below to the main survey.</h3>
+                    <h4 style={{fontStyle:"italic"}}>You may close this Scratch editor.</h4></div>
+                ),
                 completionCode: 'abstraction',
                 recordCompletion: true
             }
@@ -242,6 +268,7 @@ export default {
     'particle-radiator': {
         steps: [
             {
+                id: 'study-task-intro',
                 title: (
                     <div><h2>Particle Radiator</h2>
                     <p>
@@ -251,32 +278,43 @@ export default {
                 )
             },
             {
+                id: 'preview-clone-action',
                 image: cloneAction
             },
             {
+                id: 'preview-clone-attribute-setting',
                 image: createCloneSeq
             },
             {
-                title: (<p>Modify the input of the Repeat block in the "When I start as a clone" by changing it from 8 to 20</p>),
+                id: 'modify-repeat',
+                title: (<p><QuizLabel/> Make particles move farther.<br/>
+                 Hint: change repeat 8 to 20 when move 10 steps</p>),
                 image: studyTask1
             },
             {
-                title: (<p>Add a block "change size by" and use 5 as its input</p>),
+                id: 'modify-size',
+                title: (<p><QuizLabel/> Make particles grow in size as they move.<br/>
+                 Hint: Add a block "change size by" and use 5 as its input</p>),
                 image: studyTask2
             },
-            {
-                title: (<p>Gradually fade: Add change ghost effect and experiment with effect values (20, 15, 10, 5) so that it looks like the result below.<br/></p>),
+            {   
+                id: 'modify-ghost',
+                title: (<p><QuizLabel/> Make particles gradually fade as they move.<br/>
+                Hint: Add change ghost effect and experiment with effect values (20, 15, 10, 5)</p>),
                 image: studyTask3
             },
             {
+                id: 'download-work',
                 title: (<p>
-                    Download your completed work file to your computer and upload to the main survey.
+                    Download your completed work file to your computer and upload it to the main survey.
                     To download your completed work, click File and then select "Save to your computer".
                 </p>)
             },
             {
+                id: 'copy-completion-code',
                 title: (
-                    <p>Please enter the completion code below to the main survey.</p>
+                    <div><h3>Please copy and paste the completion code below to the main survey.</h3>
+                    <h4 style={{fontStyle:"italic"}}>You may close this Scratch editor.</h4></div>
                 ),
                 completionCode: 'happy-scratching',
                 recordCompletion: true

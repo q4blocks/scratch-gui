@@ -125,7 +125,7 @@ const checkStmtSequence = ({ topBlock, expected, shouldExcludeShadow }) => {
         if (shouldExcludeShadow) {
             filteredActual = actual.filter(n => !n.isShadow_).map(b => b.type);
         }
-        console.log('expected block sequence',filteredActual);
+        console.log('expected block sequence', filteredActual);
         return filteredActual;
     }).map(seq => array_hash(seq)));
 
@@ -190,10 +190,10 @@ const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId, c
         isComplete = workspaceContainsScript({ workspace, expected });
     }
 
-    
-    if(customCheck){
+
+    if (customCheck) {
         isComplete = isComplete && eval(customCheck);
-         
+
     }
 
     //analytics
@@ -214,39 +214,69 @@ const populateWorkspace = (setupCode) => {
             workspaceFromXml(workspace, setupCode);
             setTimeout(() => {
                 workspace.cleanUp();
+                workspace.scrollCenter();
             }, 0)
         }, 100);
     }
 }
 
+const configureWorkspace = ({ shouldCleanup, dragging, setupCode, setUpdateCodeStatus, populateWorkspace }) => () => {
+    const workspace = Blockly.getMainWorkspace();
+    if (workspace && shouldCleanup && !dragging) {
+        workspace.clear();
+    }
+    if (setupCode) {
+        // setTimeout(()=>{
+        populateWorkspace(setupCode);
+        // },2000);
+    }
+    setUpdateCodeStatus(true);
 
+}
 
 class ImageStep extends React.Component {
-    constructor(props){
+    constructor(props) {
         super(props);
+        this.state = { copied: false};
     }
 
-    componentDidUpdate(){
+    componentDidMount() {
         const {
-            isAlreadySetup, setUpdateCodeStatus, shouldCleanup, dragging, setupCode 
+            setUpdateCodeStatus, shouldCleanup, dragging, setupCode
         } = this.props;
 
-        if (setupCode&&!isAlreadySetup) {
+        this.props.vm.addListener("workspaceUpdate",
+            configureWorkspace({ shouldCleanup, dragging, setupCode, setUpdateCodeStatus, populateWorkspace }));
+    }
+
+    componentDidUpdate() {
+
+
+        const {
+            isAlreadySetup, setUpdateCodeStatus, shouldCleanup, dragging, setupCode
+        } = this.props;
+
+
+        // configureWorkspace({shouldCleanup,dragging,setupCode, setUpdateCodeStatus, populateWorkspace})();
+
+        if ((setupCode || shouldCleanup) && !isAlreadySetup) {
             // clear
             const workspace = Blockly.getMainWorkspace();
             if (workspace && shouldCleanup && !dragging) {
                 workspace.clear();
             }
             if (setupCode) {
+                // setTimeout(()=>{
                 populateWorkspace(setupCode);
+                // },2000);
             }
             setUpdateCodeStatus(true);
         }
     }
 
-    render(){
+    render() {
         const {
-            title, image, completionCode} = this.props;
+            title, image, completionCode } = this.props;
         return (
             <Fragment>
                 <div className={styles.stepTitle}>
@@ -255,7 +285,8 @@ class ImageStep extends React.Component {
                 {completionCode && <div>
                     <div style={{ color: 'red', marginBottom: '30px', fontWeight: 'bold' }}>{completionCode}</div>
                     <CopyToClipboard text={completionCode}>
-                        <button>Copy the completion code</button>
+                        <div className={styles.copyCompletionCodeButton} onClick={()=>{this.setState({copied:true})}}>
+                            Click me to copy the completion code {this.state.copied&&<span style={{color:"#718096"}}>COPIED!</span>}</div>
                     </CopyToClipboard>
                 </div>
                 }
@@ -281,7 +312,6 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepComplete
                     <div
                         className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
                         onClick={(() => () => {
-                            console.log('set update code status is called');
                             setUpdateCodeStatus(false); //clear setup status to false
 
                             //analytics
@@ -306,7 +336,10 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepComplete
                     <div className={expanded ? (isRtl ? styles.rightCard : styles.leftCard) : styles.hidden} />
                     <div
                         className={expanded ? (isRtl ? styles.rightButton : styles.leftButton) : styles.hidden}
-                        onClick={onPrevStep}
+                        onClick={(() => () => {
+                            setUpdateCodeStatus(false);
+                            onPrevStep();
+                        })()}
                     >
                         <img
                             draggable={false}
@@ -376,12 +409,12 @@ class CustomCards extends React.Component {
             y = window.innerHeight - tallCardHeight - bottomMargin;
         }
 
-        let steps = null; 
-        
-        if(qualityHintToggleVisible){
-            steps = content[activeDeckId].steps.filter(c=>c.onlyVisibleToGroup===undefined||c.onlyVisibleToGroup==='automated')
-        }else{
-            steps = content[activeDeckId].steps.filter(c=>c.onlyVisibleToGroup===undefined||c.onlyVisibleToGroup==='manual')
+        let steps = null;
+
+        if (qualityHintToggleVisible) {
+            steps = content[activeDeckId].steps.filter(c => c.onlyVisibleToGroup === undefined || c.onlyVisibleToGroup === 'automated')
+        } else {
+            steps = content[activeDeckId].steps.filter(c => c.onlyVisibleToGroup === undefined || c.onlyVisibleToGroup === 'manual')
         }
 
         // populateWorkspace({ vm });
@@ -390,8 +423,6 @@ class CustomCards extends React.Component {
             console.log('record completion', activeDeckId);
             saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
         }
-
-        console.log(completed);
 
         return (
             <Draggable bounds="parent" position={{ x: x, y: y }} onDrag={onDrag} >
@@ -422,16 +453,18 @@ class CustomCards extends React.Component {
                                             setupCode={steps[step].setupCode}
                                             isAlreadySetup={this.state.isAlreadySetup}
                                             setUpdateCodeStatus={this.setUpdateCodeStatus}
+                                            vm={vm}
                                         />
                                     )
                             }
                             {steps[step].trackingPixel && steps[step].trackingPixel}
                         </div>
 
-                        {!!(steps[step].expected||steps[step].customCheck) && <div className={styles.footer}><div className={styles.checkButton} onClick={checkStepCompletion({ 
-                            onCompleteStep, vm, expected: steps[step].expected, customCheck:steps[step].customCheck })}>Check</div></div>}
+                        {!!(steps[step].expected || steps[step].customCheck) && <div className={styles.footer}><div className={styles.checkButton} onClick={checkStepCompletion({
+                            onCompleteStep, vm, expected: steps[step].expected, customCheck: steps[step].customCheck
+                        })}>Check</div></div>}
 
-                        
+
 
                         <NextPrevButtons
                             expanded={expanded}
@@ -439,7 +472,7 @@ class CustomCards extends React.Component {
                             dragging={dragging}
                             onNextStep={step < steps.length - 1 ? onNextStep : null}
                             onPrevStep={step > 0 ? onPrevStep : null}
-                            stepCompleted={bypassCheck || (!steps[step].expected && !steps[step].customCheck)|| completed.includes(steps[step].id)}
+                            stepCompleted={bypassCheck || (!steps[step].expected && !steps[step].customCheck) || completed.includes(steps[step].id)}
                             checkCompletion={checkStepCompletion({ onCompleteStep, vm, expected: steps[step].expected, currentInstructionId: steps[step].id })}
                             isAlreadySetup={this.state.isAlreadySetup}
                             setUpdateCodeStatus={this.setUpdateCodeStatus}
