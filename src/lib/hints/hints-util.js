@@ -1,6 +1,11 @@
 import ScratchBlocks from 'scratch-blocks';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE } from './constants';
 
+const REMOVE_LAST = "REMOVE_LAST";
+const MOVE_UP = "MOVE_UP";
+const MOVE_DOWN = "MOVE_DOWN";
+const ADD_TO_LAST = "ADD_TO_LAST";
+
 /**
  *  Use blockId specified in hint item as the location target for positioning hint icon
  * @param {*} hint 
@@ -107,7 +112,7 @@ const buildHintContextMenu = (type) => {
     }
 };
 
-const highlightDuplicateBlocks = function (hintId, state, workspace, analysisInfo) {
+const highlightDuplicateBlocks = function (hintId, state, workspace, analysisInfo, selection) {
     if (!state) {
         workspace.removeHighlightBox();
         return;
@@ -120,8 +125,15 @@ const highlightDuplicateBlocks = function (hintId, state, workspace, analysisInf
             workspace.drawHighlightBox(blockFragments[0], blockFragments[blockFragments.length - 1]);
         }
     }
-
 };
+
+const updateHighlighting = function(workspace, fragments){
+    workspace.removeHighlightBox();
+    for (let fNo in fragments) {
+        const blockFragments = fragments[fNo].stmtIds;
+        workspace.drawHighlightBox(blockFragments[0], blockFragments[blockFragments.length - 1]);
+    }
+}
 
 const getProcedureEntry = function (block) {
     const dom = ScratchBlocks.Xml.blockToDom(block);
@@ -185,5 +197,8 @@ const generateRenamableCodeHints = function (workspace, hintState) {
 export {
     getProcedureEntry, formatXmlString, buildHintContextMenu,
     highlightDuplicateBlocks, computeHintLocationStyles, analysisInfoToHints,
-    generateShareableCodeHints, generateRenamableCodeHints
+    generateShareableCodeHints, generateRenamableCodeHints,
+    updateHighlighting,
+    REMOVE_LAST, ADD_TO_LAST, MOVE_UP, MOVE_DOWN
+
 };

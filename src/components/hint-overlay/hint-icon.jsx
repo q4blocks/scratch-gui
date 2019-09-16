@@ -62,6 +62,7 @@ const HintIcon = props => {
                             className, iconStyles
                         ) + " hint_icon_" + hintId}
                         src={iconSvg}
+                        onClick= {props.onMouseClick}
                     />
                 </ContextMenuTrigger>
                 {hintMenuItems.length>0?(<ContextMenu id={hintId} hideOnLeave={true}>
