@@ -23,6 +23,7 @@ import copyPasteReuse from './custom-block-deck/copy-paste-modify.gif';
 import customBlockCfg from './intro/custom-block-cfg.png';
 import modifyBrightness from './custom-block-deck/modify-brightness-effect.png';
 import modifyRepeat from './custom-block-deck/modify-repeat.png';
+
 import enableHintRefactoring from './custom-block-deck/enable-hint-refactoring.gif';
 import modifyChangeXBy from './custom-block-deck/modify-change-x-by.png';
 
@@ -73,7 +74,7 @@ export default {
             {
                 id: 'tip-inspect',
                 title: (
-                    <p><TipsLabel/> Separate each code part and click it to see what it does.</p>
+                    <p><TipsLabel/> Separate each program part and click it to see what it does.</p>
                 ),
                 setupCode: "<xml xmlns='http://www.w3.org/1999/xhtml'><block type='event_whenflagclicked' id='K+6DxCUq`c$nW]J9917d' x='91' y='88'><next><block type='control_forever' id='8p.EClpJ`2=QZ#0+`Swp'><statement name='SUBSTACK'><block type='control_repeat' id='Cq.ael%UMOJyNHB9[+e+'><value name='TIMES'><shadow type='math_whole_number' id='nY?;B3?TpUvh0@n=e4xV'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='looks_changeeffectby' id='`Ls7^xrYZxm65wm}ko(p'><field name='EFFECT'>GHOST</field><value name='CHANGE'><shadow type='math_number' id='p!5VpWaX*0;%yQSTTlq|'><field name='NUM'>10</field></shadow></value></block></statement><next><block type='control_repeat' id='O@oN3W-R38.oSeZtr[62'><value name='TIMES'><shadow type='math_whole_number' id='WsHP7W,iMf{P~%4kc-00'><field name='NUM'>10</field></shadow></value><statement name='SUBSTACK'><block type='looks_changeeffectby' id='Ctd7:vUTr0p$Va9K7f:l'><field name='EFFECT'>GHOST</field><value name='CHANGE'><shadow type='math_number' id='V`x.64iC*N]4jU,bD/Ln'><field name='NUM'>-10</field></shadow></value></block></statement></block></next></block></statement></block></next></block></xml>",
                 image: inspectCode,
@@ -127,7 +128,7 @@ export default {
                         Click Green Flag to see the jumping animation. 
                         We can make a "jump" custom block out of the program part that performs the jumping action. <br/>
                         <PracticeLabel/> Follow the steps below to make a jump block and use it in the code.
-                        Click Green Flag to check whether the "jump" custom block indeed makes the cat jumps. 
+                        Click Green Flag to check whether the "jump" custom block indeed makes the cat jump. 
                         </p>
                 ),
                 image: jump0,
