@@ -38,6 +38,16 @@ const applyTransformation = function (hintId, vm, workspace, analysisInfo) {
     return actionSeq;
 }
 
+const applyBlocksTransformation = function (workspace, actions) {
+    let actionSeq = Promise.resolve();
+    for (let action of actions) {
+        actionSeq = actionSeq.then(() => {
+            let result = workspace.blockTransformer.executeAction(action);
+        });
+    }
+    return actionSeq;
+}
+
 const switchTarget = function (vm, targetName) {
     // console.log("switch target to:" + target);
     let targetId = Scratch.vm.runtime.targets.filter(t => t.getName() === targetName)[0].id;
@@ -80,6 +90,7 @@ const deleteSprite = function (vm, name) {
 
 export {
     applyTransformation,
+    applyBlocksTransformation,
     copyCostume,
     createEmptySprite,
     deleteSprite

@@ -1,5 +1,5 @@
-const localService = 'http://localhost:8080/analyze';
-const remoteService = 'https://quality-tutor-engine.appspot.com/analyze';
+const localService = 'http://localhost:8080';
+const remoteService = 'https://quality-tutor-engine.appspot.com';
 
 var localServerAvailable;
 if (localServerAvailable === undefined) {
@@ -23,6 +23,7 @@ if (localServerAvailable === undefined) {
  */
 const sendAnalysisReq = function (projectId, analysisType, xml, isProductionMode) {
     let url = isProductionMode ? remoteService : localService;
+    url = url+'/analyze';
     // url = localServerAvailable ? localService : remoteService;
     return fetch(url, {
         method: "POST",
@@ -32,6 +33,23 @@ const sendAnalysisReq = function (projectId, analysisType, xml, isProductionMode
             "Content-Type": "text/xml",
             "id": projectId,
             "type": analysisType
+        },
+        body: xml,
+    }).then(res => res.json());
+}
+
+const sendRefactoringAnalysisReq = function({projectId, type, xml, isProductionMode, params}){
+    let url = isProductionMode ? remoteService : localService;
+    url = url + '/transform';
+    return fetch(url, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "text/xml",
+            "id": projectId,
+            "type": type,
+            "params": params
         },
         body: xml,
     }).then(res => res.json());
@@ -65,5 +83,6 @@ const getProgramXml = function (vm) {
 
 export {
     sendAnalysisReq,
-    getProgramXml
+    getProgramXml,
+    sendRefactoringAnalysisReq
 }

@@ -10,16 +10,16 @@ import ScratchBlocks from 'scratch-blocks';
 import { addBlocksToWorkspace, testBlocks, getTestHints } from './hints/hint-test-workspace-setup';
 
 // workaround to show smaller duplicate sequence (hard code)
-const isWorkAround = true;
-const workAroundResp = 
+const isWorkAround = false;
+const workAroundResp =
 // no set color (parameterless)
 // {"records":{"ca61aede6a336b43":{"id":"ca61aede6a336b43","smell":{"type":"DuplicateCode","smellId":"ca61aede6a336b43","target":"Square","fragments":[{"stmtIds":["(4O$sHR,g!3GAhtHeAO;"]},{"stmtIds":["I!Z5HML1,Md5m=%De:ci"]}],"metadata":{"group_size":2,"instance_size":4,"_id":"ca61aede6a336b43"}},"refactoring":{"smellId":"ca61aede6a336b43","actions":[{"type":"BlockCreateAction","blockId":null,"info":null,"targetName":null,"block_xml":"<xml><block type='procedures_definition' id='2f'><value name='custom_block'><shadow type='procedures_prototype' id='YWGvP'><mutation proccode='DoSomething38' argumentids='[]' warp='false'/></shadow></value><next><block type='control_repeat' id='ki'><value name='TIMES'><shadow type='math_whole_number' id='cO'><field name='NUM'>9</field></shadow></value><statement name='SUBSTACK'><block type='motion_changexby' id='fp'><value name='DX'><shadow type='math_number' id='Gt'><field name='NUM'>20</field></shadow></value><next><block type='looks_changeeffectby' id='aF'><field name='EFFECT'>BRIGHTNESS</field><value name='CHANGE'><shadow type='math_number' id='gX'><field name='NUM'>9</field></shadow></value><next><block type='control_create_clone_of' id='dO'><value name='CLONE_OPTION'><shadow type='control_create_clone_of_menu' id='V4'><field name='CLONE_OPTION'>_myself_</field></shadow></value></block></next></block></next></block></statement></block></next></block></xml>"},{"type":"BlockCreateAction","blockId":"DoSomething38_Call1","info":"procedures_call","targetName":null,"block_xml":"<xml><block type='procedures_call' id='DoSomething38_Call1'><mutation proccode='DoSomething38' argumentids='[]' warp='null'/></block></xml>"},{"type":"ReplaceSeqAction","target_blocks":["(4O$sHR,g!3GAhtHeAO;"],"replace_with":"DoSomething38_Call1"},{"type":"BlockCreateAction","blockId":"DoSomething38_Call2","info":"procedures_call","targetName":null,"block_xml":"<xml><block type='procedures_call' id='DoSomething38_Call2'><mutation proccode='DoSomething38' argumentids='[]' warp='null'/></block></xml>"},{"type":"ReplaceSeqAction","target_blocks":["I!Z5HML1,Md5m=%De:ci"],"replace_with":"DoSomething38_Call2"}],"metadata":{"success":true,"_id":"ca61aede6a336b43","num_params":0}}}},"projectId":"null"};
 // with set color (1 parameter)
 {
     //color shade generator
-    326637227: {"records":{"079374d84f77b189":{"id":"079374d84f77b189","smell":{"type":"DuplicateCode","smellId":"079374d84f77b189","target":"Square","fragments":[{"stmtIds":["rP0yU%a`)#0-H_[ydMCX","(4O$sHR,g!3GAhtHeAO;"]},{"stmtIds":[".|a#!A|:VfcF_]ABZC(t","I!Z5HML1,Md5m=%De:ci"]}],"metadata":{"group_size":2,"instance_size":5,"_id":"079374d84f77b189"}},"refactoring":{"smellId":"079374d84f77b189","actions":[{"type":"BlockCreateAction","blockId":null,"info":null,"targetName":null,"block_xml":"<xml><block type='procedures_definition' id='Ux'><value name='custom_block'><shadow type='procedures_prototype' id='BPxJG'><mutation proccode='DoSomething28 %s' argumentids='[&quot;param0_ID&quot;]' argumentnames='[&quot;param0&quot;]' argumentdefaults='[&quot;&quot;]' warp='false'/><value name='param0_ID'><shadow type='argument_reporter_string_number' id='uUHc5Y'><field name='VALUE'>param0</field></shadow></value></shadow></value><next><block type='looks_seteffectto' id='4a'><field name='EFFECT'>COLOR</field><value name='VALUE'><shadow type='math_number' id='Jw'><field name='NUM'>35</field></shadow><block type='argument_reporter_string_number' id='S5'><field name='VALUE'>param0</field></block></value><next><block type='control_repeat' id='j6'><value name='TIMES'><shadow type='math_whole_number' id='tf'><field name='NUM'>9</field></shadow></value><statement name='SUBSTACK'><block type='motion_changexby' id='vO'><value name='DX'><shadow type='math_number' id='fn'><field name='NUM'>20</field></shadow></value><next><block type='looks_changeeffectby' id='Yz'><field name='EFFECT'>BRIGHTNESS</field><value name='CHANGE'><shadow type='math_number' id='cF'><field name='NUM'>9</field></shadow></value><next><block type='control_create_clone_of' id='ow'><value name='CLONE_OPTION'><shadow type='control_create_clone_of_menu' id='TI'><field name='CLONE_OPTION'>_myself_</field></shadow></value></block></next></block></next></block></statement></block></next></block></next></block></xml>"},{"type":"BlockCreateAction","blockId":"DoSomething28%s_Call1","info":"procedures_call","targetName":null,"block_xml":"<xml><block type='procedures_call' id='DoSomething28%s_Call1'><mutation proccode='DoSomething28 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething28%s_Call1_param_0'><field name='TEXT'>35</field></shadow></value></block></xml>"},{"type":"ReplaceSeqAction","target_blocks":["rP0yU%a`)#0-H_[ydMCX","(4O$sHR,g!3GAhtHeAO;"],"replace_with":"DoSomething28%s_Call1"},{"type":"BlockCreateAction","blockId":"DoSomething28%s_Call2","info":"procedures_call","targetName":null,"block_xml":"<xml><block type='procedures_call' id='DoSomething28%s_Call2'><mutation proccode='DoSomething28 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething28%s_Call2_param_0'><field name='TEXT'>85</field></shadow></value></block></xml>"},{"type":"ReplaceSeqAction","target_blocks":[".|a#!A|:VfcF_]ABZC(t","I!Z5HML1,Md5m=%De:ci"],"replace_with":"DoSomething28%s_Call2"}],"metadata":{"success":true,"_id":"079374d84f77b189","num_params":1}}}},"projectId":"null"},
+    326637227: { "records": { "079374d84f77b189": { "id": "079374d84f77b189", "smell": { "type": "DuplicateCode", "smellId": "079374d84f77b189", "target": "Square", "fragments": [{ "stmtIds": ["rP0yU%a`)#0-H_[ydMCX", "(4O$sHR,g!3GAhtHeAO;"] }, { "stmtIds": [".|a#!A|:VfcF_]ABZC(t", "I!Z5HML1,Md5m=%De:ci"] }], "metadata": { "group_size": 2, "instance_size": 5, "_id": "079374d84f77b189" } }, "refactoring": { "smellId": "079374d84f77b189", "actions": [{ "type": "BlockCreateAction", "blockId": null, "info": null, "targetName": null, "block_xml": "<xml><block type='procedures_definition' id='Ux'><value name='custom_block'><shadow type='procedures_prototype' id='BPxJG'><mutation proccode='DoSomething28 %s' argumentids='[&quot;param0_ID&quot;]' argumentnames='[&quot;param0&quot;]' argumentdefaults='[&quot;&quot;]' warp='false'/><value name='param0_ID'><shadow type='argument_reporter_string_number' id='uUHc5Y'><field name='VALUE'>param0</field></shadow></value></shadow></value><next><block type='looks_seteffectto' id='4a'><field name='EFFECT'>COLOR</field><value name='VALUE'><shadow type='math_number' id='Jw'><field name='NUM'>35</field></shadow><block type='argument_reporter_string_number' id='S5'><field name='VALUE'>param0</field></block></value><next><block type='control_repeat' id='j6'><value name='TIMES'><shadow type='math_whole_number' id='tf'><field name='NUM'>9</field></shadow></value><statement name='SUBSTACK'><block type='motion_changexby' id='vO'><value name='DX'><shadow type='math_number' id='fn'><field name='NUM'>20</field></shadow></value><next><block type='looks_changeeffectby' id='Yz'><field name='EFFECT'>BRIGHTNESS</field><value name='CHANGE'><shadow type='math_number' id='cF'><field name='NUM'>9</field></shadow></value><next><block type='control_create_clone_of' id='ow'><value name='CLONE_OPTION'><shadow type='control_create_clone_of_menu' id='TI'><field name='CLONE_OPTION'>_myself_</field></shadow></value></block></next></block></next></block></statement></block></next></block></next></block></xml>" }, { "type": "BlockCreateAction", "blockId": "DoSomething28%s_Call1", "info": "procedures_call", "targetName": null, "block_xml": "<xml><block type='procedures_call' id='DoSomething28%s_Call1'><mutation proccode='DoSomething28 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething28%s_Call1_param_0'><field name='TEXT'>35</field></shadow></value></block></xml>" }, { "type": "ReplaceSeqAction", "target_blocks": ["rP0yU%a`)#0-H_[ydMCX", "(4O$sHR,g!3GAhtHeAO;"], "replace_with": "DoSomething28%s_Call1" }, { "type": "BlockCreateAction", "blockId": "DoSomething28%s_Call2", "info": "procedures_call", "targetName": null, "block_xml": "<xml><block type='procedures_call' id='DoSomething28%s_Call2'><mutation proccode='DoSomething28 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething28%s_Call2_param_0'><field name='TEXT'>85</field></shadow></value></block></xml>" }, { "type": "ReplaceSeqAction", "target_blocks": [".|a#!A|:VfcF_]ABZC(t", "I!Z5HML1,Md5m=%De:ci"], "replace_with": "DoSomething28%s_Call2" }], "metadata": { "success": true, "_id": "079374d84f77b189", "num_params": 1 } } } }, "projectId": "null" },
     //particle generator
-    328143397: {"records":{"1020b66890e1ffb5":{"id":"1020b66890e1ffb5","smell":{"type":"DuplicateCode","smellId":"1020b66890e1ffb5","target":"particle","fragments":[{"stmtIds":["As{l_wLC37GK((]6k8h7","F(sS:?+I4h#h#~LyjX4H","ECk5#lT+:)wk_|lGR!gE"]},{"stmtIds":["U:=`=o]GfyTJ6K;P(3Km","Ezzb9-f6Lv5FT8BrBpRh","~hFv:]4yy(Yqm?cw$K=="]}],"metadata":{"group_size":3,"instance_size":4,"_id":"1020b66890e1ffb5"}},"refactoring":{"smellId":"1020b66890e1ffb5","actions":[{"type":"BlockCreateAction","blockId":null,"info":null,"targetName":null,"block_xml":"<xml><block type='procedures_definition' id='o5'><value name='custom_block'><shadow type='procedures_prototype' id='cNotf'><mutation proccode='DoSomething59 %s' argumentids='[&quot;param0_ID&quot;]' argumentnames='[&quot;param0&quot;]' argumentdefaults='[&quot;&quot;]' warp='false'/><value name='param0_ID'><shadow type='argument_reporter_string_number' id='s7srMi'><field name='VALUE'>param0</field></shadow></value></shadow></value><next><block type='looks_seteffectto' id='cJ'><field name='EFFECT'>COLOR</field><value name='VALUE'><shadow type='math_number' id='El'><field name='NUM'>185</field></shadow><block type='argument_reporter_string_number' id='Mn'><field name='VALUE'>param0</field></block></value><next><block type='control_repeat' id='M1'><value name='TIMES'><shadow type='math_whole_number' id='Jj'><field name='NUM'>8</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='2q'><value name='STEPS'><shadow type='math_number' id='FX'><field name='NUM'>10</field></shadow></value></block></statement><next><block type='control_delete_this_clone' id='t2'/></next></block></next></block></next></block></xml>"},{"type":"BlockCreateAction","blockId":"DoSomething59%s_Call1","info":"procedures_call","targetName":null,"block_xml":"<xml><block type='procedures_call' id='DoSomething59%s_Call1'><mutation proccode='DoSomething59 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething59%s_Call1_param_0'><field name='TEXT'>185</field></shadow></value></block></xml>"},{"type":"ReplaceSeqAction","target_blocks":["As{l_wLC37GK((]6k8h7","F(sS:?+I4h#h#~LyjX4H","ECk5#lT+:)wk_|lGR!gE"],"replace_with":"DoSomething59%s_Call1"},{"type":"BlockCreateAction","blockId":"DoSomething59%s_Call2","info":"procedures_call","targetName":null,"block_xml":"<xml><block type='procedures_call' id='DoSomething59%s_Call2'><mutation proccode='DoSomething59 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething59%s_Call2_param_0'><field name='TEXT'>80</field></shadow></value></block></xml>"},{"type":"ReplaceSeqAction","target_blocks":["U:=`=o]GfyTJ6K;P(3Km","Ezzb9-f6Lv5FT8BrBpRh","~hFv:]4yy(Yqm?cw$K=="],"replace_with":"DoSomething59%s_Call2"},{"type":"ReplaceSeqAction","target_blocks":["OE=T8GKfI0^*GyzsJX0h","Q(9=PDPX)MHQ`paDTZ[X",";~HYgB_MzOlE@CniOu;/"],"replace_with":"DoSomething59%s_Call3"}],"metadata":{"success":true,"_id":"1020b66890e1ffb5","num_params":1}}}},"projectId":"328143397"}
+    328143397: { "records": { "1020b66890e1ffb5": { "id": "1020b66890e1ffb5", "smell": { "type": "DuplicateCode", "smellId": "1020b66890e1ffb5", "target": "particle", "fragments": [{ "stmtIds": ["As{l_wLC37GK((]6k8h7", "F(sS:?+I4h#h#~LyjX4H", "ECk5#lT+:)wk_|lGR!gE"] }, { "stmtIds": ["U:=`=o]GfyTJ6K;P(3Km", "Ezzb9-f6Lv5FT8BrBpRh", "~hFv:]4yy(Yqm?cw$K=="] }], "metadata": { "group_size": 3, "instance_size": 4, "_id": "1020b66890e1ffb5" } }, "refactoring": { "smellId": "1020b66890e1ffb5", "actions": [{ "type": "BlockCreateAction", "blockId": null, "info": null, "targetName": null, "block_xml": "<xml><block type='procedures_definition' id='o5'><value name='custom_block'><shadow type='procedures_prototype' id='cNotf'><mutation proccode='DoSomething59 %s' argumentids='[&quot;param0_ID&quot;]' argumentnames='[&quot;param0&quot;]' argumentdefaults='[&quot;&quot;]' warp='false'/><value name='param0_ID'><shadow type='argument_reporter_string_number' id='s7srMi'><field name='VALUE'>param0</field></shadow></value></shadow></value><next><block type='looks_seteffectto' id='cJ'><field name='EFFECT'>COLOR</field><value name='VALUE'><shadow type='math_number' id='El'><field name='NUM'>185</field></shadow><block type='argument_reporter_string_number' id='Mn'><field name='VALUE'>param0</field></block></value><next><block type='control_repeat' id='M1'><value name='TIMES'><shadow type='math_whole_number' id='Jj'><field name='NUM'>8</field></shadow></value><statement name='SUBSTACK'><block type='motion_movesteps' id='2q'><value name='STEPS'><shadow type='math_number' id='FX'><field name='NUM'>10</field></shadow></value></block></statement><next><block type='control_delete_this_clone' id='t2'/></next></block></next></block></next></block></xml>" }, { "type": "BlockCreateAction", "blockId": "DoSomething59%s_Call1", "info": "procedures_call", "targetName": null, "block_xml": "<xml><block type='procedures_call' id='DoSomething59%s_Call1'><mutation proccode='DoSomething59 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething59%s_Call1_param_0'><field name='TEXT'>185</field></shadow></value></block></xml>" }, { "type": "ReplaceSeqAction", "target_blocks": ["As{l_wLC37GK((]6k8h7", "F(sS:?+I4h#h#~LyjX4H", "ECk5#lT+:)wk_|lGR!gE"], "replace_with": "DoSomething59%s_Call1" }, { "type": "BlockCreateAction", "blockId": "DoSomething59%s_Call2", "info": "procedures_call", "targetName": null, "block_xml": "<xml><block type='procedures_call' id='DoSomething59%s_Call2'><mutation proccode='DoSomething59 %s' argumentids='[&quot;param0_ID&quot;]' warp='null'/><value name='param0_ID'><shadow type='text' id='DoSomething59%s_Call2_param_0'><field name='TEXT'>80</field></shadow></value></block></xml>" }, { "type": "ReplaceSeqAction", "target_blocks": ["U:=`=o]GfyTJ6K;P(3Km", "Ezzb9-f6Lv5FT8BrBpRh", "~hFv:]4yy(Yqm?cw$K=="], "replace_with": "DoSomething59%s_Call2" }, { "type": "ReplaceSeqAction", "target_blocks": ["OE=T8GKfI0^*GyzsJX0h", "Q(9=PDPX)MHQ`paDTZ[X", ";~HYgB_MzOlE@CniOu;/"], "replace_with": "DoSomething59%s_Call3" }], "metadata": { "success": true, "_id": "1020b66890e1ffb5", "num_params": 1 } } } }, "projectId": "328143397" }
 };
 const addFunctionListener = (object, property, callback) => {
     const oldFn = object[property];
@@ -41,6 +41,7 @@ class HintManager {
         this.dispatch = dispatch;
         this.options = options;
         this.projectId = options ? options.projectId : '0';
+        this.onUpdateTrackingCallBacks = [];
 
         bindAll(this, [
             'blockListener',
@@ -52,28 +53,38 @@ class HintManager {
         this.computeQualityHintsDebounced = debounce(this.computeQualityHints, 100);
     }
 
+    addUpdateTrackingCallback(cb) {
+        this.onUpdateTrackingCallBacks.push(cb);
+    }
+    removeUpdateTrackingCallback(cb) {
+        const index = this.onUpdateTrackingCallBacks.indexOf(cb);
+        if (index > -1) {
+            this.onUpdateTrackingCallBacks.splice(index, 1);
+        }
+    }
+
     blockListener(e) {
         //if hintState.options showQualityHint
         if (!(['ui', 'endDrag'].includes(e.type))) { //recompute upon code changes
             if (this.hintState.options.showQualityHint) {
                 this.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
-//                 this.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
+                //                 this.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
                 this.generateHints(RENAMABLE_CUSTOM_BLOCK);
             }
-        } 
-        if(e.type==='ui'){      
-            const gesture = this.workspace.getGesture(e);  
+        }
+        if (e.type === 'ui') {
+            const gesture = this.workspace.getGesture(e);
             let targetHint = null;
-            
-            if(gesture&&gesture.startField_){
+
+            if (gesture && gesture.startField_) {
                 const activeField = gesture.startField_;
                 const shadowId = activeField.sourceBlock_.id;
                 // todo: find any hints that its valueIds contains showdowId
-                targetHint = this.hintState.hints.find(h => h.valueIds&&h.valueIds.indexOf(shadowId)>=0);
-                
-                if (e.newValue){
+                targetHint = this.hintState.hints.find(h => h.valueIds && h.valueIds.indexOf(shadowId) >= 0);
+
+                if (e.newValue) {
                     if (targetHint) {
-                        if(targetHint.hintId!==this.currentHintId){
+                        if (targetHint.hintId !== this.currentHintId) {
                             // a different hint so hide the previous one first
                             this.dispatch(updateHint(this.currentHintId, {
                                 styles: Object.assign({}, targetHint.styles, { 'visibility': 'hidden' })
@@ -84,14 +95,14 @@ class HintManager {
                             blockId: shadowId,
                             styles: Object.assign({}, targetHint.styles, { 'visibility': 'visible' })
                         }));
-                    } 
+                    }
                 }
             }
-            
+
             // click on empty space 
-            if(e.newValue===null){
+            if (e.newValue === null) {
                 targetHint = this.hintState.hints.find(h => h.hintId === this.currentHintId);
-                if(targetHint){
+                if (targetHint) {
                     this.dispatch(updateHint(targetHint.hintId, {
                         styles: Object.assign({}, targetHint.styles, { 'visibility': 'hidden' })
                     }));
@@ -126,7 +137,7 @@ class HintManager {
             .then(() => getProgramXml(_vm))
             .then(xml => sendAnalysisReq(this.projectId, hintType, xml, isProductionMode))
             .then(json => {
-                const analysisInfo = isWorkAround?workAroundResp[this.projectId]:json;
+                const analysisInfo = isWorkAround ? workAroundResp[this.projectId] : json;
                 this.analysisInfo = analysisInfo;
                 return analysisInfo ? analysisInfoToHints(analysisInfo) : [];
             }).then(hints => {
@@ -201,6 +212,11 @@ class HintManager {
                 renamables: this.calculateHintTracking(renamables)
             }
         ));
+        
+        if(this.onUpdateTrackingCallBacks.length>1){
+            console.warn("Should not have more than one at at time!",this.onUpdateTrackingCallBacks.length);
+        }
+        this.onUpdateTrackingCallBacks.forEach(cb=>cb());
     }
 
     onWorkspaceUpdate() {

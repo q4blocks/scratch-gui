@@ -39,7 +39,6 @@ const getIconSpec = (type) => {
                 iconStyles: iconStyles.lightBulb
             }
     }
-
 }
 
 const HintIcon = props => {
@@ -52,29 +51,15 @@ const HintIcon = props => {
         </div>
         ) : (
             <div style={styles}>
-                <ContextMenuTrigger id={hintId}
-                    attributes={{
-                        onMouseEnter: props.onMouseEnter,
-                        onMouseLeave: props.onMouseLeave
-                    }}>
-                    <img
-                        className={classNames(
-                            className, iconStyles
-                        ) + " hint_icon_" + hintId}
-                        src={iconSvg}
-                        onClick= {props.onMouseClick}
-                    />
-                </ContextMenuTrigger>
-                {hintMenuItems.length>0?(<ContextMenu id={hintId} hideOnLeave={true}>
-                    {
-                        hintMenuItems.map((menuItem, key) => (
-                            <MenuItem key={key} onClick={() => props.onHandleHintMenuItemClick()(menuItem.itemAction)}>
-                                {menuItem.item_name}
-                            </MenuItem>
-                        ))
-                    }
-
-                </ContextMenu>):null}
+                <img
+                    className={classNames(
+                        className, iconStyles
+                    ) + " hint_icon_" + hintId}
+                    src={iconSvg}
+                    onClick={props.onMouseClick}
+                    onMouseEnter={props.onMouseEnter}
+                    onMouseLeave={props.onMouseLeave}
+                />
             </div>);
 };
 

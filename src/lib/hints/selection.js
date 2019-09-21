@@ -1,3 +1,5 @@
+import {REMOVE_LAST, ADD_TO_LAST, MOVE_UP, MOVE_DOWN } from './hints-util';
+
 class Selection {
     constructor(fragments) {
         this.fragments = fragments;
@@ -31,7 +33,28 @@ class Selection {
         }
     }
 
-    getUpdatedFragments() {
+    apply(action){
+        switch (action) {
+            case REMOVE_LAST: {
+                this.removeLast();
+                break;
+            }
+            case ADD_TO_LAST: {
+                this.addToLast();
+                break;
+            }
+            case MOVE_UP: {
+                this.moveUp();
+                break;
+            }
+            case MOVE_DOWN: {
+                this.moveDown();
+                break;
+            }
+        }
+    }
+
+    getSelectedFragments() {
         const outputFragments = {};
         Object.keys(this.fragments).forEach(k => {
             outputFragments[k] = { stmtIds: this.fragments[k].stmtIds.slice(this.start, this.end + 1) };
