@@ -31,6 +31,8 @@ import controls from '../../containers/controls.jsx';
 
 import hintIcon from "./light-bulb-icon.svg";
 
+import {CloseButton} from './common-component.jsx';
+
 const ActionPreview = ({ type }) => {
     const mapping = {
         [ADD_TO_LAST]: animatedAdd,
@@ -58,14 +60,6 @@ const ActionButton = ({ onActionClick, type, actionName, onMouseEnterAction, onM
     >{<img src={mapping[type]} className={styles.actionButton} />}
     </div>)
 }
-
-const CloseButton = props => (
-    <div className={classNames(styles.floaterHeader)}>
-        <div className={styles.closeButton}>
-            <img className={classNames(styles.small, styles.closeIcon)} src={closeIcon} onClick={props.onClose} />
-        </div>
-    </div>
-)
 
 const ControlComponent = (props) => {
     return (
@@ -286,11 +280,11 @@ class ExtractCustomBlockHint extends React.Component {
                 open={shouldShow}
                 getPopper={(popper, origin) => {
                     window.popper = popper;
-                    this.props.hintManager.addUpdateTrackingCallback(() => {
+                    this.props.hintManager.setUpdateTrackingCallback(h.hintId, () => {
                         popper.instance.scheduleUpdate();
                     });
                 }}
-                disableAnimation={false}
+                disableAnimation={true}
                 styles={{
                     arrow: {
                         display: shouldShow ? 'inline-flex' : 'none',

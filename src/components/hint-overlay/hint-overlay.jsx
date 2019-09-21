@@ -1,6 +1,7 @@
 import React from 'react';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE } from "../../lib/hints/constants";
 import ExtractCustomBlockHint from './extract-custom-block';
+import RenamableElement from './renamable-element';
 
 const getHintOverlayText = function (type) {
     switch (type) {
@@ -33,6 +34,8 @@ class HintOverlayComponent extends React.Component {
                         switch (h.type) {
                             case "duplicate_code":
                                 return <ExtractCustomBlockHint key={h.hintId + "_floater"} hint={h} {...this.props} />
+                            case "RENAMABLE_CUSTOM_BLOCK":
+                                return <RenamableElement key={h.hintId + "_floater"} hint={h} {...this.props}/>
                         }
 
                     }

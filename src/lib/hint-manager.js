@@ -42,6 +42,7 @@ class HintManager {
         this.options = options;
         this.projectId = options ? options.projectId : '0';
         this.onUpdateTrackingCallBacks = [];
+        this.updateTrackingCallBackMap = {};
 
         bindAll(this, [
             'blockListener',
@@ -53,14 +54,9 @@ class HintManager {
         this.computeQualityHintsDebounced = debounce(this.computeQualityHints, 100);
     }
 
-    addUpdateTrackingCallback(cb) {
-        this.onUpdateTrackingCallBacks.push(cb);
-    }
-    removeUpdateTrackingCallback(cb) {
-        const index = this.onUpdateTrackingCallBacks.indexOf(cb);
-        if (index > -1) {
-            this.onUpdateTrackingCallBacks.splice(index, 1);
-        }
+
+    setUpdateTrackingCallback(hintId, cb) {
+        this.updateTrackingCallBackMap[hintId] =  cb;
     }
 
     blockListener(e) {
@@ -217,6 +213,7 @@ class HintManager {
             console.warn("Should not have more than one at at time!",this.onUpdateTrackingCallBacks.length);
         }
         this.onUpdateTrackingCallBacks.forEach(cb=>cb());
+        Object.values(this.updateTrackingCallBackMap).forEach(cb=>cb());
     }
 
     onWorkspaceUpdate() {
