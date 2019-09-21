@@ -309,7 +309,4 @@ class ExtractCustomBlockHint extends React.Component {
     }
 }
 
-export {
-    ControlComponent,
-    ExtractCustomBlockHint
-}
+export default ExtractCustomBlockHint;

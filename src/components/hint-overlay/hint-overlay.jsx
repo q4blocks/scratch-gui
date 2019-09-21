@@ -1,6 +1,6 @@
 import React from 'react';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE } from "../../lib/hints/constants";
-import { ExtractCustomBlockHint, ControlComponent } from './extract-custom-block';
+import ExtractCustomBlockHint from './extract-custom-block';
 
 const getHintOverlayText = function (type) {
     switch (type) {
