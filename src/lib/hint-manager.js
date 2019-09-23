@@ -31,7 +31,7 @@ const addFunctionListener = (object, property, callback) => {
 };
 
 const isTesting = false;
-const isProductionMode = true;
+const isProductionMode = false;
 
 class HintManager {
     constructor(vm, workspace, dispatch, hintState, options) {
@@ -64,8 +64,10 @@ class HintManager {
         if (!(['ui', 'endDrag'].includes(e.type))) { //recompute upon code changes
             if (this.hintState.options.showQualityHint) {
                 this.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
-                //                 this.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
                 this.generateHints(RENAMABLE_CUSTOM_BLOCK);
+                setTimeout(()=>{
+                    this.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
+                },1000);
             }
         }
         if (e.type === 'ui') {
@@ -134,11 +136,17 @@ class HintManager {
             .then(xml => sendAnalysisReq(this.projectId, hintType, xml, isProductionMode))
             .then(json => {
                 const analysisInfo = isWorkAround ? workAroundResp[this.projectId] : json;
-                this.analysisInfo = analysisInfo;
-                return analysisInfo ? analysisInfoToHints(analysisInfo) : [];
+                let combinedRecord = null;
+                if(this.analysisInfo){
+                    combinedRecord = Object.assign({}, this.analysisInfo.records, analysisInfo.records);
+                }else{
+                    combinedRecord = analysisInfo.records;
+                }
+                this.analysisInfo = analysisInfo?{projectId: analysisInfo.projectId, records: combinedRecord}:null;
+                return this.analysisInfo ? analysisInfoToHints(this.analysisInfo) : [];
             }).then(hints => {
                 const trackedHints = this.calculateHintTracking(hints);
-                this.dispatch(putAllHints(trackedHints, DUPLICATE_CODE_SMELL_HINT_TYPE));
+                this.dispatch(putAllHints(trackedHints, hintType));
                 this.dispatch(setUpdateStatus({ isUpdating: false }));
             });
     }
@@ -200,12 +208,13 @@ class HintManager {
 
     updateHintTracking() {
         //when no need to reanalyze (but only update its location tracking)
-        const { hints, blocksSharableHints, renamables } = this.hintState;
+        const { hints, blocksSharableHints, renamables, extract_const_hints } = this.hintState;
         this.dispatch(putHintMap(
             {
                 hints: this.calculateHintTracking(hints),
                 blocksSharableHints: this.calculateHintTracking(blocksSharableHints),
-                renamables: this.calculateHintTracking(renamables)
+                renamables: this.calculateHintTracking(renamables),
+                extract_const_hints: this.calculateHintTracking(extract_const_hints)
             }
         ));
         

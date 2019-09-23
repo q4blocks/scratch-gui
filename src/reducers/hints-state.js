@@ -1,4 +1,4 @@
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, DUPLICATE_CONSTANT_HINT_TYPE } from '../lib/hints/constants';
 const SORT_HINTS = 'scratch-gui/hints-state/SORT_HINTS';
 const UPDATE_HINT = 'UPDATE_HINT';
 const PUT_ALL_HINTS = "PUT_ALL_HINTS";
@@ -21,6 +21,7 @@ const initialState = {
     hints: [],
     blocksSharableHints: [],
     renamables: [],
+    extract_const_hints: [],
     isUpdating: false,
     hintManager: null,
     options: {
@@ -53,15 +54,19 @@ const reducer = function (state, action) {
         case PUT_ALL_HINTS:{
             if(action.hintType===DUPLICATE_CODE_SMELL_HINT_TYPE){
                 return Object.assign({}, state, {
-                    hints: action.hints.concat(),
+                    hints: action.hints.filter(h=>h.type===DUPLICATE_CODE_SMELL_HINT_TYPE).concat(),
                 })
             }else if(action.hintType===SHAREABLE_CODE_HINT_TYPE){
                 return Object.assign({}, state, {
-                    blocksSharableHints: action.hints.concat(),
+                    blocksSharableHints: action.hints.filter(h=>h.type===SHAREABLE_CODE_HINT_TYPE).concat(),
                 })
             }else if(action.hintType===RENAMABLE_CUSTOM_BLOCK){
                 return Object.assign({}, state, {
-                    renamables: action.hints.concat(),   //maybe renamables
+                    renamables: action.hints.filter(h=>h.type===RENAMABLE_CUSTOM_BLOCK).concat(),   //maybe renamables
+                })
+            } else if (action.hintType===DUPLICATE_CONSTANT_HINT_TYPE){
+                return Object.assign({}, state, {
+                    extract_const_hints: action.hints.filter(h=>h.type===DUPLICATE_CONSTANT_HINT_TYPE).concat(),
                 })
             }
         }
@@ -69,7 +74,8 @@ const reducer = function (state, action) {
             return Object.assign({}, state, {
                 hints: action.hintMap.hints,
                 blocksSharableHints: action.hintMap.blocksSharableHints,
-                renamables: action.hintMap.renamables
+                renamables: action.hintMap.renamables,
+                extract_const_hints: action.hintMap.extract_const_hints
             })
         }
 
@@ -121,10 +127,10 @@ const putAllHints = function (hints,hintType) {
     };
 }
 
-const putHintMap = function ({hints, blocksSharableHints, renamables}){
+const putHintMap = function ({hints, blocksSharableHints, renamables, extract_const_hints}){
     return {
         type: PUT_HINT_MAP,
-        hintMap: {hints, blocksSharableHints, renamables}
+        hintMap: {hints, blocksSharableHints, renamables, extract_const_hints}
     }
 }
 

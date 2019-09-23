@@ -11,7 +11,8 @@ import { MenuItem, MenuSection } from '../menu/menu.jsx';
 import MenuBarMenu from '../menu-bar/menu-bar-menu.jsx';
 import ProjectIdInput from './project-id-input.jsx';
 import analytics from "../../lib/custom-analytics";
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK } from '../../lib/hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, 
+  CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE } from '../../lib/hints/constants';
 import { setHintOptions } from '../../reducers/hints-state';
 import { showTutorial, setShowTutorial } from '../../reducers/custom-menu';
 import {
@@ -95,9 +96,11 @@ class CustomizedMenuBar extends React.Component {
               if (isEnabled) {
                 this.props.hintManager.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
                 this.props.hintManager.generateHints(RENAMABLE_CUSTOM_BLOCK);
+                this.props.hintManager.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
               } else {
                 this.props.hintManager.clearAll(DUPLICATE_CODE_SMELL_HINT_TYPE);
                 this.props.hintManager.clearAll(RENAMABLE_CUSTOM_BLOCK);
+                this.props.hintManager.clearAll(DUPLICATE_CONSTANT_HINT_TYPE);
               }
 
               analytics.event({

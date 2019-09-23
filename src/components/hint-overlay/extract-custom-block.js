@@ -31,7 +31,7 @@ import controls from '../../containers/controls.jsx';
 
 import hintIcon from "./light-bulb-icon.svg";
 
-import {CloseButton} from './common-component.jsx';
+import { CloseButton } from './common-component.jsx';
 
 const ActionPreview = ({ type }) => {
     const mapping = {
@@ -131,34 +131,20 @@ class ExtractCustomBlockHint extends React.Component {
     }
 
     onMouseEnter(hint) {
-        switch (hint.type) {
-            case DUPLICATE_CODE_SMELL_HINT_TYPE:
-                highlightDuplicateBlocks(hint.hintId, true, this.props.workspace, this.props.hintManager.getAnalysisInfo());
-                break;
-            case DUPLICATE_CONSTANT_HINT_TYPE:
-                hint.valueIds.forEach(id => this.props.workspace.highlightField(id));
-                break;
-        }
+        highlightDuplicateBlocks(hint.hintId, true, this.props.workspace, this.props.hintManager.getAnalysisInfo());
         if (!this.state.clicked) {
             this.setState({ showHintMessage: true });
         }
     }
 
     onMouseLeave(hint) {
-        switch (hint.type) {
-            case DUPLICATE_CODE_SMELL_HINT_TYPE: {
-                highlightDuplicateBlocks(hint.hintId, false, this.props.workspace, this.props.hintManager.getAnalysisInfo());
-                analytics.event({
-                    category: "Feature",
-                    action: "View Hints",
-                    label: JSON.stringify({ projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
-                });
-                break;
-            }
-            case DUPLICATE_CONSTANT_HINT_TYPE:
-                hint.valueIds.forEach(id => this.props.workspace.unHighlightField(id));
-                break;
-        }
+        highlightDuplicateBlocks(hint.hintId, false, this.props.workspace, this.props.hintManager.getAnalysisInfo());
+        analytics.event({
+            category: "Feature",
+            action: "View Hints",
+            label: JSON.stringify({ projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
+        });
+
         if (!this.state.clicked) {
             this.setState({ showHintMessage: false });
         }
