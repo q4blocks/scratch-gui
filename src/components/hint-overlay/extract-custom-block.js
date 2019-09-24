@@ -202,7 +202,7 @@ class ExtractCustomBlockHint extends React.Component {
 
     onCustomBlockExtractClick() {
         const fragments = this.state.selection.getSelectedFragments();
-        this.setState({ selection: null });
+        this.setState({ selection: null, showRefactoringControl:false });
         Promise.resolve()
             .then(() => getProgramXml(this.props.vm))
             .then(xml => {
@@ -250,7 +250,7 @@ class ExtractCustomBlockHint extends React.Component {
             component = props => (
                 <div className={styles.hintMessage}>
                     <h3>Reusable Repeats!</h3>
-                    <p>You can extract a custom block from these repeated program parts.
+                    <p>You can extract a custom block from these repeated program parts.<br/>
                     Click <img className={styles.msgHintIcon} src={hintIcon} /> to see options!
                     </p>
                 </div>
