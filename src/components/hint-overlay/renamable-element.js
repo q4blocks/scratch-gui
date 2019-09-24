@@ -8,11 +8,12 @@ import HintIcon from './hint-icon.jsx';
 import hintIconSvg from "./light-bulb-icon.svg";
 import { CloseButton } from './common-component.jsx';
 
+import renameCustomBlockGif from './rename-custom-block.gif';
+
 class RenamableElement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            clicked: false,
             showRefactoringControl: false,
             showHintMessage: false
         }
@@ -28,27 +29,26 @@ class RenamableElement extends React.Component {
 
     onHintIconClick() {
         this.setState({
-            showHintMessage: false,
-            clicked: true,
-            showRefactoringControl: true
+            showHintMessage: !this.state.showHintMessage,
+            showRefactoringControl: !this.state.showRefactoringControl
         });
     }
 
     onMouseEnter() {
-        if (!this.state.clicked) {
+        if (!this.state.showRefactoringControl) {
             this.setState({ showHintMessage: true });
         }
     }
 
     onMouseLeave() {
-        if (!this.state.clicked) {
+        if (this.state.showHintMessage) {
             this.setState({ showHintMessage: false });
         }
     }
 
     createOnClose() {
         return () => {
-            this.setState({ showRefactoringControl: !this.state.showRefactoringControl, clicked: false, showHintMessage: false });
+            this.setState({ showRefactoringControl: !this.state.showRefactoringControl, showHintMessage: false });
         }
     }
 
@@ -61,16 +61,16 @@ class RenamableElement extends React.Component {
             <div className={styles.hintMessage}>
                 <h3>Renamable Custom Block!</h3>
                 <p>Consider giving this custom block a more descriptive name.
-                Click <img className={styles.msgHintIcon} src={hintIconSvg} /> to see how.</p>
+                Click <img className={styles.msgHintIcon} src={hintIconSvg} /> to see an example.</p>
             </div>
         );
 
         const RefactoringComponent = props => (
-            <div className={styles.hintMessage}>
+            <div className={styles.hintControlStepGuide}>
                 <CloseButton onClose={this.createOnClose()} />
-                <h3>Right click the custom block definition</h3>
+                <h3>Example : Renaming a Custom Block</h3>
                 <div>
-                    showing edit custom block and modify the definition
+                    <img className={styles.stepByStepImage} src={renameCustomBlockGif}/>
                 </div>
             </div>
         );
