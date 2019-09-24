@@ -137,9 +137,7 @@ class HintManager {
             .then(xml => sendAnalysisReq(this.projectId, hintType, xml, isProductionMode))
             .then(json => {
                 const analysisInfo = isWorkAround ? workAroundResp[this.projectId] : json;
-                console.log('analysisInfo',analysisInfo.records);
                 let combinedRecord = null;
-                console.log(hintType);
                 if (this.analysisInfo) {
                     //remove the old records of the requested type
                     let filtered = Object.entries(analysisInfo.records).filter(e=>e[1].type!==hintType)
@@ -148,7 +146,6 @@ class HintManager {
                 } else {
                     combinedRecord = analysisInfo.records;
                 }
-                console.log('combinedRecord', combinedRecord);
                 this.analysisInfo = analysisInfo ? { projectId: analysisInfo.projectId, records: combinedRecord } : null;
                 return this.analysisInfo ? analysisInfoToHints(this.analysisInfo) : [];
             }).then(hints => {
