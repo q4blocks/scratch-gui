@@ -62,7 +62,7 @@ const analysisInfoToHints = function (analysisInfo) {
         let record = analysisInfo['records'][recordKey];
         let { type, smellId, target, fragments } = record.smell;
         if (!record.refactoring.metadata.success) continue;
-        if (type === 'DuplicateCode') {
+        if (type === DUPLICATE_CODE_SMELL_HINT_TYPE) {
             let f = fragments[0]; //use first fragment
             let anchorBlockId = f.stmtIds[0]; //and first block of each fragment clone to place hint
 
@@ -144,7 +144,7 @@ const highlightDuplicateBlocks = function (hintId, state, workspace, analysisInf
         return;
     }
     const record = analysisInfo['records'][hintId];
-    if (record.smell.type === 'DuplicateCode') {
+    if (record.smell.type === DUPLICATE_CODE_SMELL_HINT_TYPE) {
         const fragments = record.smell['fragments'];
         for (let fNo in fragments) {
             const blockFragments = fragments[fNo].stmtIds;
