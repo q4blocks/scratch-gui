@@ -110,3 +110,17 @@ $action-button-size: 2.75rem;
     /* line-height: 30px;  */
     margin: 0px;
   }
+
+.step-by-step-image{
+    max-width: 466px;
+}
+
+.hint-control-step-guide{
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 5px;
+    max-width: 490px;
+    padding: 0.75rem;
+    text-align: center;
+}

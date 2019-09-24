@@ -45,7 +45,7 @@ const ActionPreview = ({ type }) => {
     return <img src={mapping[type]} />
 }
 
-const ActionButton = ({ onActionClick, type, actionName, onMouseEnterAction, onMouseLeaveAction }) => {
+const ActionButton = ({ onActionClick, type, actionName, onMouseEnterAction, onMouseLeaveAction, tooltipMsg }) => {
     const mapping = {
         [REMOVE_LAST]: removeButton,
         [ADD_TO_LAST]: addButton,
@@ -57,7 +57,17 @@ const ActionButton = ({ onActionClick, type, actionName, onMouseEnterAction, onM
     return (<div onClick={onActionClick}
         onMouseEnter={onMouseEnterAction}
         onMouseLeave={onMouseLeaveAction}
-    >{<img src={mapping[type]} className={styles.actionButton} />}
+    >
+        <Floater content={tooltipMsg} 
+            event="hover" placement="right" 
+            disableAnimation={true} eventDelay={0}
+            styles={{
+                floater: {
+                    maxWidth: 250,
+                }
+            }}>
+            <img src={mapping[type]} className={styles.actionButton} />
+        </Floater>
     </div>)
 }
 
@@ -74,30 +84,35 @@ const ControlComponent = (props) => {
                         onActionClick={props.onMoveUp}
                         onMouseEnterAction={props.onMouseEnterAction(MOVE_UP)}
                         onMouseLeaveAction={props.onMouseLeaveAction(MOVE_UP)}
+                        tooltipMsg="Move the selection up"
                     />
                     <ActionButton actionName="MoveDown"
                         type={MOVE_DOWN}
                         onMouseEnterAction={props.onMouseEnterAction(MOVE_DOWN)}
                         onMouseLeaveAction={props.onMouseLeaveAction(MOVE_DOWN)}
                         onActionClick={props.onMoveDown}
+                        tooltipMsg="Move the selection down"
                     />
                     <ActionButton actionName="AddToLast"
                         type={ADD_TO_LAST}
                         onActionClick={props.onAddToLast}
                         onMouseEnterAction={props.onMouseEnterAction(ADD_TO_LAST)}
                         onMouseLeaveAction={props.onMouseLeaveAction(ADD_TO_LAST)}
+                        tooltipMsg="Expand the selection"
                     />
                     <ActionButton actionName="RemoveLast"
                         type={REMOVE_LAST}
                         onActionClick={props.onRemoveLast}
                         onMouseEnterAction={props.onMouseEnterAction(REMOVE_LAST)}
                         onMouseLeaveAction={props.onMouseLeaveAction(REMOVE_LAST)}
+                        tooltipMsg="Shrink the selection"
                     />
                     <ActionButton actionName="Extract"
                         type={"Extract"}
                         onActionClick={props.onCustomBlockExtractClick}
                         onMouseEnterAction={() => { }}
                         onMouseLeaveAction={() => { }}
+                        tooltipMsg="Extract the selection as a custom block"
                     />
                     {/* <div className={classNames(styles.preview, styles.outline)}>
                         <ActionPreview type={props.currentActionHovered || 'default'} />
@@ -202,7 +217,7 @@ class ExtractCustomBlockHint extends React.Component {
 
     onCustomBlockExtractClick() {
         const fragments = this.state.selection.getSelectedFragments();
-        this.setState({ selection: null, showRefactoringControl:false });
+        this.setState({ selection: null, showRefactoringControl: false });
         Promise.resolve()
             .then(() => getProgramXml(this.props.vm))
             .then(xml => {
@@ -250,8 +265,8 @@ class ExtractCustomBlockHint extends React.Component {
             component = props => (
                 <div className={styles.hintMessage}>
                     <h3>Reusable Repeats!</h3>
-                    <p>You can extract a custom block from these repeated program parts.<br/>
-                    Click <img className={styles.msgHintIcon} src={hintIcon} /> to see options!
+                    <p>You can extract a custom block from these repeated program parts.<br />
+                        Click <img className={styles.msgHintIcon} src={hintIcon} /> to see options!
                     </p>
                 </div>
             );
