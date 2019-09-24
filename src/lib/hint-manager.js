@@ -1,5 +1,5 @@
 import bindAll from 'lodash.bindall';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, DUPLICATE_CONSTANT_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK } from './hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, DUPLICATE_CONSTANT_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, BROAD_SCOPE_VAR_HINT_TYPE } from './hints/constants';
 import { putAllHints, putHintMap, setUpdateStatus, updateHint } from '../reducers/hints-state';
 import { sendAnalysisReq, getProgramXml } from './hints/analysis-server-api';
 import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints, generateRenamableCodeHints } from './hints/hints-util';
@@ -38,6 +38,7 @@ class HintManager {
         this.hintState = hintState;
         this.vm = vm;
         this.workspace = workspace;
+        this.flyoutWorkspace = workspace.getFlyout().getWorkspace();
         this.dispatch = dispatch;
         this.options = options;
         this.projectId = options ? options.projectId : '0';
@@ -56,7 +57,7 @@ class HintManager {
 
 
     setUpdateTrackingCallback(hintId, cb) {
-        this.updateTrackingCallBackMap[hintId] =  cb;
+        this.updateTrackingCallBackMap[hintId] = cb;
     }
 
     blockListener(e) {
@@ -65,9 +66,9 @@ class HintManager {
             if (this.hintState.options.showQualityHint) {
                 this.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
                 this.generateHints(RENAMABLE_CUSTOM_BLOCK);
-                setTimeout(()=>{
+                setTimeout(() => {
                     this.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
-                },1000);
+                }, 1000);
             }
         }
         if (e.type === 'ui') {
@@ -112,7 +113,7 @@ class HintManager {
 
     calculateHintTracking(hints) {
         const trackedHints = hints.map(h =>
-            Object.assign({}, h, computeHintLocationStyles(h, this.workspace)));
+            Object.assign({}, h, computeHintLocationStyles(h,  this.workspace)));
         return trackedHints;
     }
 
@@ -137,12 +138,12 @@ class HintManager {
             .then(json => {
                 const analysisInfo = isWorkAround ? workAroundResp[this.projectId] : json;
                 let combinedRecord = null;
-                if(this.analysisInfo){
+                if (this.analysisInfo) {
                     combinedRecord = Object.assign({}, this.analysisInfo.records, analysisInfo.records);
-                }else{
+                } else {
                     combinedRecord = analysisInfo.records;
                 }
-                this.analysisInfo = analysisInfo?{projectId: analysisInfo.projectId, records: combinedRecord}:null;
+                this.analysisInfo = analysisInfo ? { projectId: analysisInfo.projectId, records: combinedRecord } : null;
                 return this.analysisInfo ? analysisInfoToHints(this.analysisInfo) : [];
             }).then(hints => {
                 const trackedHints = this.calculateHintTracking(hints);
@@ -192,6 +193,8 @@ class HintManager {
             this.computeRenamableCustomBlocks();
         } else if (hintType === DUPLICATE_CONSTANT_HINT_TYPE) {
             this.computeQualityHintsDebounced(hintType); //merge with duplicate code
+        } else if (hintType === BROAD_SCOPE_VAR_HINT_TYPE) {
+            this.computeQualityHintsDebounced(hintType);
         }
     }
 
@@ -208,21 +211,22 @@ class HintManager {
 
     updateHintTracking() {
         //when no need to reanalyze (but only update its location tracking)
-        const { hints, blocksSharableHints, renamables, extract_const_hints } = this.hintState;
+        const { hints, blocksSharableHints, renamables, extract_const_hints, broad_scope_var_hints} = this.hintState;
         this.dispatch(putHintMap(
             {
                 hints: this.calculateHintTracking(hints),
                 blocksSharableHints: this.calculateHintTracking(blocksSharableHints),
                 renamables: this.calculateHintTracking(renamables),
-                extract_const_hints: this.calculateHintTracking(extract_const_hints)
+                extract_const_hints: this.calculateHintTracking(extract_const_hints),
+                broad_scope_var_hints: this.calculateHintTracking(broad_scope_var_hints)
             }
         ));
-        
-        if(this.onUpdateTrackingCallBacks.length>1){
-            console.warn("Should not have more than one at at time!",this.onUpdateTrackingCallBacks.length);
+
+        if (this.onUpdateTrackingCallBacks.length > 1) {
+            console.warn("Should not have more than one at at time!", this.onUpdateTrackingCallBacks.length);
         }
-        this.onUpdateTrackingCallBacks.forEach(cb=>cb());
-        Object.values(this.updateTrackingCallBackMap).forEach(cb=>cb());
+        this.onUpdateTrackingCallBacks.forEach(cb => cb());
+        Object.values(this.updateTrackingCallBackMap).forEach(cb => cb());
     }
 
     onWorkspaceUpdate() {
@@ -250,6 +254,12 @@ class HintManager {
         addFunctionListener(this.workspace, 'translate', debounce(() => this.updateHintTracking()));
         addFunctionListener(this.workspace, 'zoom', debounce(() => this.updateHintTracking()));
         addFunctionListener(ScratchBlocks.Gesture.prototype, 'updateDragDelta_', debounce(() => this.updateHintTracking()));
+
+        // this.flyoutWorkspace.addChangeListener(e=>{
+        //     console.log('flyout change',e.type);
+        // })
+
+        addFunctionListener(this.flyoutWorkspace, 'translate', debounce(() => this.updateHintTracking()));
     }
 
     detachVM() {

@@ -1,5 +1,5 @@
 import ScratchBlocks from 'scratch-blocks';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE } from './constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE, BROAD_SCOPE_VAR_HINT_TYPE } from './constants';
 
 const REMOVE_LAST = "REMOVE_LAST";
 const MOVE_UP = "MOVE_UP";
@@ -12,7 +12,12 @@ const ADD_TO_LAST = "ADD_TO_LAST";
  * @param {*} workspace 
  */
 const computeHintLocationStyles = function (hint, workspace) {
-    const block = workspace.getBlockById(hint.blockId);
+    let block
+    if(hint.blockId){
+        block = workspace.getBlockById(hint.blockId);
+    }else if(hint.varId){
+        block = workspace.getFlyout().getWorkspace().getBlockById(hint.varId);//actually it's also block id
+    }
     if (!block) return;
     const blockSvg = block.getSvgRoot();
     const blockWidth = block.svgPath_.getBBox().width;
@@ -22,17 +27,29 @@ const computeHintLocationStyles = function (hint, workspace) {
         return blockSvg.getBoundingClientRect().x - workspace.svgBackground_.getBoundingClientRect().left + (blockWidth + hintOffset) * workspace.scale;
     }
 
+    const computedTop = computeTop(blockSvg, workspace);
+
     let defaultVisibility = 'visible';
+    let overridingVisibility;
     if(hint.type==='duplicate-constant'){
         defaultVisibility = 'hidden'; //only show when the active field is part of a detected smell
     }
+    if(hint.type==='broad_scope_var'){
+        if(computedTop<0){
+            overridingVisibility = 'hidden';
+        }else{
+            overridingVisibility = 'visible';
+        }
+    }
+
 
     const changes = {
         styles: {
             position: 'absolute',
-            top: computeTop(blockSvg, workspace) + 'px',
+            top: computedTop + 'px',
             left: computeLeft(blockSvg, workspace) + 'px',
-            visibility: hint.styles?hint.styles.visibility: defaultVisibility
+            visibility: overridingVisibility||(hint.styles?hint.styles.visibility: defaultVisibility),
+            zIndex: 100
         }
     };
     return changes;
@@ -67,6 +84,15 @@ const analysisInfoToHints = function (analysisInfo) {
                 blockId: record.smell.valueIds[0],
                 valueIds: record.smell.valueIds,
                 "hintMenuItems": buildHintContextMenu(DUPLICATE_CONSTANT_HINT_TYPE)
+            };
+            hints.push(hint);
+        }
+
+        if (type === 'BroadScopeVar') {
+            const hint = {
+                type: BROAD_SCOPE_VAR_HINT_TYPE,
+                hintId: smellId,
+                varId: record.smell.varId
             };
             hints.push(hint);
         }
