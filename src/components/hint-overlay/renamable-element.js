@@ -6,7 +6,7 @@ import Floater from 'react-floater';
 import styles from './selection.css';
 import HintIcon from './hint-icon.jsx';
 import hintIconSvg from "./light-bulb-icon.svg";
-import {CloseButton} from './common-component.jsx';
+import { CloseButton } from './common-component.jsx';
 
 class RenamableElement extends React.Component {
     constructor(props) {
@@ -69,6 +69,9 @@ class RenamableElement extends React.Component {
             <div className={styles.hintMessage}>
                 <CloseButton onClose={this.createOnClose()} />
                 <h3>Right click the custom block definition</h3>
+                <div>
+                    showing edit custom block and modify the definition
+                </div>
             </div>
         );
 
@@ -79,6 +82,10 @@ class RenamableElement extends React.Component {
         } else {
             return props => <div></div>;
         }
+    }
+
+    componentDidUpdate(){
+        this.popper&&this.popper.instance.scheduleUpdate();
     }
 
 
@@ -92,6 +99,7 @@ class RenamableElement extends React.Component {
                 placement="right"
                 offset={30}
                 getPopper={(popper, origin) => {
+                    this.popper = popper;
                     this.props.hintManager.setUpdateTrackingCallback(h.hintId, () => {
                         popper.instance.scheduleUpdate();
                     });
