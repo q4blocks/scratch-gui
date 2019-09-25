@@ -1,0 +1,112 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+@import "../../css/z-index.css";
+
+.container>h3 {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #38aaa4;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    color: #2d3748;
+    width: 100%;
+    max-width: 466px;
+    max-height:  257px;
+    background: #f7fafc;
+    padding: 0.5rem;
+    justify-items: center;
+}
+
+div::-webkit-scrollbar {
+    width: 8px;
+}
+
+div::-webkit-scrollbar-track {
+    /* border-radius: 10px; */
+    background:rgb(173, 235, 232); ; 
+}
+
+div::-webkit-scrollbar-thumb {
+    /* border-radius: 10px; */
+    background: #38aaa4a4; 
+    /* -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); */
+}
+
+.card-image{
+    max-width: 400px;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.card{
+    display: flex;
+    flex-direction: column;
+    /* max-width: 420px; */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    padding:0.75rem;
+    border-color: #38b2ac94;
+    border-style: solid;
+    border-width: 2px;
+    /* border-color: grey; */
+    margin-top: 1rem;
+}
+.card>h4{
+    margin: 0px;
+    text-align: center;
+    color: #21686494;
+}
+
+.image-container{
+    display: flex;
+    flex-direction: row;
+    margin: 0.5rem;
+}
+
+.top-button{
+    cursor: pointer;
+    text-align: center;
+    position: absolute;
+    bottom: 5px;
+}
+
+.up-icon{
+    width: 30px;
+    height: 30px;
+    transition: transform, box-shadow 0.2s;
+    border-radius: 100%;
+    box-shadow: 0 0 0 3px #7ae9e394;
+}
+
+.up-icon:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 5px #7ae9e394;
+}
+
+.link-container{
+    display: block;
+}
+.card-link{
+    text-decoration: none;
+    color: #38b2ac;
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.card-link:hover{
+    text-decoration: none;
+    color: #319795;
+}
+
+.toc{
+    padding-left: 2rem;
+}
+
+
+  
+ 

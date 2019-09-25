@@ -105,19 +105,32 @@
     font-weight: bold;
 }
 
-.remove-button, .all-button {
+.remove-button, .all-button, .shrink-expand-button{
     cursor: pointer;
     color: white;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 0.75rem;
 }
 
-.remove-button:hover, .all-button:hover {
+.remove-button:hover, .all-button:hover, .shrink-expand-button{
     background-color: $ui-black-transparent;
 }
+
+/* .shrink-expand-button, .all-button {
+    cursor: pointer;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.75rem;
+} */
+
+/* .shrink-expand-button:hover {
+    background-color: $ui-black-transparent;
+} */
 
 .step-title {
     font-size: 0.9rem;
@@ -276,20 +289,6 @@
     display: none;
 }
 
-.shrink-expand-button {
-    cursor: pointer;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 0.75rem;
-}
-
-.shrink-expand-button:hover, .all-button:hover {
-    background-color: $ui-black-transparent;
-}
-
 .footer {
     background: $ui-white;
     display: flex;
@@ -343,4 +342,31 @@
 .copy-completion-code-button:hover {
     box-shadow: 0 0 0 6px #A3BFFA;
     transform: scale(1.125);
+}
+
+.view-selectable{
+    display: inline-block;
+    padding: 0.5rem;
+    margin:0px;
+    cursor: pointer;
+    color: white;
+}
+
+.view-selectable:hover{
+    background-color: $ui-black-transparent;
+}
+
+.view-button-group{
+    display: flex;
+    flex-direction: row;
+}
+
+
+.selected-view-selectable{
+    display: inline-block;
+    padding: 0.5rem;
+    margin:0px;
+    cursor: pointer;
+    color: white;
+    background-color: $ui-black-transparent;
 }

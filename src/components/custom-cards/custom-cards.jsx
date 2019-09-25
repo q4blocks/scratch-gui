@@ -2,6 +2,7 @@
 import React, { Fragment } from 'react';
 import { FormattedMessage } from 'react-intl';
 import Draggable from 'react-draggable';
+import classnames from 'classnames';
 
 import ScratchBlocks from 'scratch-blocks';
 
@@ -21,14 +22,32 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 // analytics
 import analytics from "../../lib/custom-analytics";
 
-const enableCloseCard = false;
-const bypassCheck = false;
+import Reference from './reference.jsx';
 
-const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded, dbManager }) => (
+const enableCloseCard = false;
+const bypassCheck = true;
+
+const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded, dbManager, onViewSelected, view }) => (
     <div className={styles.headerButtons}>
-        <div className={styles.allButton}>
-            <span>Instructions</span>
+        {/* <div classnames={styles.viewButtonGroup}> */}
+        {/* <div className={styles.allButton}>
+                <div className={styles.viewSelectable}
+                    onClick={() => { onViewSelected('instructions') }}>Instructions</div>
+            </div>
+            <div className={styles.allButton}>
+                <div className={styles.viewSelectable}
+                    onClick={() => { onViewSelected('reference') }}>Reference
+            </div>
+            </div> */}
+        <div className={styles.viewButtonGroup}>
+            <div className={view==='instructions'?styles.selectedViewSelectable:styles.viewSelectable} 
+                onClick={() => { onViewSelected('instructions') }}
+            >Instruction</div>
+            <div className={view==='reference'?styles.selectedViewSelectable:styles.viewSelectable} 
+                onClick={() => { onViewSelected('reference') }}
+            >Reference</div>
         </div>
+        {/* </div> */}
         {totalSteps > 1 ? (
             <div className={styles.stepsList}>
                 {Array(totalSteps).fill(0)
@@ -42,10 +61,11 @@ const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, ex
         ) : null}
 
         <div
-            className={styles.shrinkExpandButton}
+            className={classnames(styles.viewSelectable)}
             onClick={onShrinkExpandCards}
         >
             <img
+                style={{display:'inline-block', width:'16px', marginRight:'0.2rem', verticalAlign:'bottom'}}
                 draggable={false}
                 src={expanded ? shrinkIcon : expandIcon}
             />
@@ -237,7 +257,7 @@ const configureWorkspace = ({ shouldCleanup, dragging, setupCode, setUpdateCodeS
 class ImageStep extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { copied: false};
+        this.state = { copied: false };
     }
 
     componentDidMount() {
@@ -285,8 +305,8 @@ class ImageStep extends React.Component {
                 {completionCode && <div>
                     <div style={{ color: 'red', marginBottom: '30px', fontWeight: 'bold' }}>{completionCode}</div>
                     <CopyToClipboard text={completionCode}>
-                        <div className={styles.copyCompletionCodeButton} onClick={()=>{this.setState({copied:true})}}>
-                            Click me to copy the completion code {this.state.copied&&<span style={{color:"#718096"}}>COPIED!</span>}</div>
+                        <div className={styles.copyCompletionCodeButton} onClick={() => { this.setState({ copied: true }) }}>
+                            Click me to copy the completion code {this.state.copied && <span style={{ color: "#718096" }}>COPIED!</span>}</div>
                     </CopyToClipboard>
                 </div>
                 }
@@ -352,21 +372,55 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepComplete
     )
 };
 
-
+const Instructions = ({ stepCompleted, expanded, styles, steps, step, isAlreadySetup, setUpdateCodeStatus, vm }) => {
+    return (
+        <div className={expanded ? styles.stepBody : styles.hidden}>
+            {
+                steps[step].video ? (
+                    <VideoStep
+                        dragging={dragging}
+                        video={steps[step].video}
+                    />
+                ) : (
+                        <ImageStep
+                            image={steps[step].image}
+                            title={steps[step].title}
+                            stepCompleted={stepCompleted}
+                            completionCode={steps[step].completionCode}
+                            shouldCleanup={steps[step].shouldCleanup}
+                            setupCode={steps[step].setupCode}
+                            isAlreadySetup={isAlreadySetup}
+                            setUpdateCodeStatus={setUpdateCodeStatus}
+                            vm={vm}
+                        />
+                    )
+            }
+            {steps[step].trackingPixel && steps[step].trackingPixel}
+        </div>
+    );
+};
 
 class CustomCards extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAlreadySetup: false
+            isAlreadySetup: false,
+            selectedView:
+                // 'instructions'
+                'reference'
         }
         this.setUpdateCodeStatus = this.setUpdateCodeStatus.bind(this);
+        this.onViewSelected = this.onViewSelected.bind(this);
     }
 
     setUpdateCodeStatus(alreadySetup) {
         this.setState({
             isAlreadySetup: alreadySetup
         })
+    }
+
+    onViewSelected(viewName) {
+        this.setState({ selectedView: viewName });
     }
 
     render() {
@@ -435,38 +489,30 @@ class CustomCards extends React.Component {
                             onCloseCards={onCloseCards}
                             onShowAll={onShowAll}
                             onShrinkExpandCards={onShrinkExpandCards}
+                            onViewSelected={this.onViewSelected}
+                            view={this.state.selectedView}
                         />
-                        <div className={expanded ? styles.stepBody : styles.hidden}>
-                            {
-                                steps[step].video ? (
-                                    <VideoStep
-                                        dragging={dragging}
-                                        video={steps[step].video}
-                                    />
-                                ) : (
-                                        <ImageStep
-                                            image={steps[step].image}
-                                            title={steps[step].title}
-                                            stepCompleted={stepCompleted}
-                                            completionCode={steps[step].completionCode}
-                                            shouldCleanup={steps[step].shouldCleanup}
-                                            setupCode={steps[step].setupCode}
-                                            isAlreadySetup={this.state.isAlreadySetup}
-                                            setUpdateCodeStatus={this.setUpdateCodeStatus}
-                                            vm={vm}
-                                        />
-                                    )
-                            }
-                            {steps[step].trackingPixel && steps[step].trackingPixel}
-                        </div>
+                        {this.state.selectedView === 'instructions' &&
+                            <Instructions
+                                stepCompleted={stepCompleted}
+                                steps={steps}
+                                expanded={expanded}
+                                styles={styles}
+                                step={step}
+                                isAlreadySetup={this.state.isAlreadySetup}
+                                setUpdateCodeStatus={this.setUpdateCodeStatus}
+                                vm={vm}
+                            />}
 
-                        {!!(steps[step].expected || steps[step].customCheck) && <div className={styles.footer}><div className={styles.checkButton} onClick={checkStepCompletion({
-                            onCompleteStep, vm, expected: steps[step].expected, customCheck: steps[step].customCheck
-                        })}>Check</div></div>}
+                        {this.state.selectedView === 'reference' && <Reference expanded={expanded} />}
 
 
+                        {this.state.selectedView === 'instructions' &&
+                            !!(steps[step].expected || steps[step].customCheck) && <div className={styles.footer}><div className={styles.checkButton} onClick={checkStepCompletion({
+                                onCompleteStep, vm, expected: steps[step].expected, customCheck: steps[step].customCheck
+                            })}>Check</div></div>}
 
-                        <NextPrevButtons
+                        {this.state.selectedView === 'instructions' && <NextPrevButtons
                             expanded={expanded}
                             isRtl={false}
                             dragging={dragging}
@@ -477,7 +523,7 @@ class CustomCards extends React.Component {
                             isAlreadySetup={this.state.isAlreadySetup}
                             setUpdateCodeStatus={this.setUpdateCodeStatus}
                             currentInstructionId={steps[step].id}
-                        />
+                        />}
                     </div>
                 </div>
             </Draggable>
