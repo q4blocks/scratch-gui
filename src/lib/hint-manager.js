@@ -1,5 +1,5 @@
 import bindAll from 'lodash.bindall';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, DUPLICATE_CONSTANT_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, BROAD_SCOPE_VAR_HINT_TYPE } from './hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, DUPLICATE_CONSTANT_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, BROAD_SCOPE_VAR_HINT_TYPE, DUPLICATE_SPRITE_HINT_TYPE } from './hints/constants';
 import { putAllHints, putHintMap, setUpdateStatus, updateHint } from '../reducers/hints-state';
 import { sendAnalysisReq, getProgramXml } from './hints/analysis-server-api';
 import { computeHintLocationStyles, analysisInfoToHints, generateShareableCodeHints, generateRenamableCodeHints } from './hints/hints-util';
@@ -113,7 +113,7 @@ class HintManager {
 
     calculateHintTracking(hints) {
         const trackedHints = hints.map(h =>
-            Object.assign({}, h, computeHintLocationStyles(h,  this.workspace)));
+            Object.assign({}, h, computeHintLocationStyles({ hint: h, workspace: this.workspace, vm: this.vm })));
         return trackedHints;
     }
 
@@ -140,7 +140,7 @@ class HintManager {
                 let combinedRecord = null;
                 if (this.analysisInfo) {
                     //remove the old records of the requested type
-                    let filtered = Object.entries(analysisInfo.records).filter(e=>e[1].type!==hintType)
+                    let filtered = Object.entries(analysisInfo.records).filter(e => e[1].type !== hintType)
                     let filteredRecords = Object.fromEntries(filtered);
                     combinedRecord = Object.assign({}, filteredRecords, analysisInfo.records);
                 } else {
@@ -185,6 +185,7 @@ class HintManager {
         }
         this.workspace.addChangeListener(
             this.blockListener);
+        return actionSeq;
     }
 
     generateHints(hintType) {
@@ -197,6 +198,8 @@ class HintManager {
         } else if (hintType === DUPLICATE_CONSTANT_HINT_TYPE) {
             this.computeQualityHintsDebounced(hintType); //merge with duplicate code
         } else if (hintType === BROAD_SCOPE_VAR_HINT_TYPE) {
+            this.computeQualityHintsDebounced(hintType);
+        } else if (hintType === DUPLICATE_SPRITE_HINT_TYPE) {
             this.computeQualityHintsDebounced(hintType);
         }
     }
@@ -214,14 +217,15 @@ class HintManager {
 
     updateHintTracking() {
         //when no need to reanalyze (but only update its location tracking)
-        const { hints, blocksSharableHints, renamables, extract_const_hints, broad_scope_var_hints} = this.hintState;
+        const { hints, blocksSharableHints, renamables, extract_const_hints, broad_scope_var_hints, extract_parent_sprite_hints } = this.hintState;
         this.dispatch(putHintMap(
             {
                 hints: this.calculateHintTracking(hints),
                 blocksSharableHints: this.calculateHintTracking(blocksSharableHints),
                 renamables: this.calculateHintTracking(renamables),
                 extract_const_hints: this.calculateHintTracking(extract_const_hints),
-                broad_scope_var_hints: this.calculateHintTracking(broad_scope_var_hints)
+                broad_scope_var_hints: this.calculateHintTracking(broad_scope_var_hints),
+                extract_parent_sprite_hints: this.calculateHintTracking(extract_parent_sprite_hints)
             }
         ));
 

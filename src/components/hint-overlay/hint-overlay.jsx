@@ -4,21 +4,7 @@ import ExtractCustomBlockHint from './extract-custom-block';
 import RenamableElement from './renamable-element';
 import ExtractConstantHint from './extract-constant';
 import ReduceVarScopeHint from './reduce-var-scope';
-
-const getHintOverlayText = function (type) {
-    switch (type) {
-        case DUPLICATE_CODE_SMELL_HINT_TYPE:
-            return "Consider creating a custom block for the highlighted code. Right click on the hint icon to see options.";
-        case DUPLICATE_CONSTANT_HINT_TYPE:
-            return "Consider creating a variable to hold this commonly used value. Right click on the hint icon to see options.";
-        case SHAREABLE_CODE_HINT_TYPE:
-            return "This custom block can be shared. Right click on the hint icon to see options";
-        case RENAMABLE_CUSTOM_BLOCK:
-            return "Consider renaming this custom block to something more meaningful. Right click on the hint icon to see options.";
-        default:
-            return "Code hint available."
-    }
-};
+import ExtractParentSprite from './extract-parent-sprite.jsx';
 
 class HintOverlayComponent extends React.Component {
     constructor(props) {
@@ -26,8 +12,8 @@ class HintOverlayComponent extends React.Component {
     }
     render() {
 
-        const { broad_scope_var_hints, hints, blocksSharableHints, renamables,extract_const_hints, options } = this.props.hintState;
-        const allHints = hints.concat(blocksSharableHints).concat(renamables).concat(extract_const_hints).concat(broad_scope_var_hints);
+        const { broad_scope_var_hints, hints, blocksSharableHints, renamables,extract_const_hints, extract_parent_sprite_hints, options } = this.props.hintState;
+        const allHints = hints.concat(blocksSharableHints).concat(renamables).concat(extract_const_hints).concat(broad_scope_var_hints).concat(extract_parent_sprite_hints);
         return allHints&&(
             <div>
                 {allHints
@@ -45,6 +31,8 @@ class HintOverlayComponent extends React.Component {
                                 return <ExtractConstantHint key={h.hintId + "_floater"} hint={h} {...this.props}/>
                             case "broad_scope_var":
                                 return <ReduceVarScopeHint key={h.hintId + "_floater"} hint={h} {...this.props}/>
+                            case "duplicate_sprite":
+                                return <ExtractParentSprite key={h.hintId + "_floater"} hint={h} {...this.props}/>
                         }
 
                     }

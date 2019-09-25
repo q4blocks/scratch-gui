@@ -221,12 +221,13 @@ class ExtractCustomBlockHint extends React.Component {
         Promise.resolve()
             .then(() => getProgramXml(this.props.vm))
             .then(xml => {
+                const editingTarget = this.props.vm.editingTarget;
                 const request = {
                     type: "ExtractCustomBlock",
                     projectId: this.props.projectId,
                     xml: xml,
                     params: JSON.stringify({
-                        target: "Square",
+                        target: editingTarget.getName(),
                         fragments: Object.values(fragments).map(entry => entry.stmtIds)
                     }),
                     isProductionMode: false

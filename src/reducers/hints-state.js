@@ -1,4 +1,4 @@
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, DUPLICATE_CONSTANT_HINT_TYPE, BROAD_SCOPE_VAR_HINT_TYPE } from '../lib/hints/constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, DUPLICATE_CONSTANT_HINT_TYPE, BROAD_SCOPE_VAR_HINT_TYPE, DUPLICATE_SPRITE_HINT_TYPE } from '../lib/hints/constants';
 const SORT_HINTS = 'scratch-gui/hints-state/SORT_HINTS';
 const UPDATE_HINT = 'UPDATE_HINT';
 const PUT_ALL_HINTS = "PUT_ALL_HINTS";
@@ -23,6 +23,7 @@ const initialState = {
     renamables: [],
     extract_const_hints: [],
     broad_scope_var_hints: [],
+    extract_parent_sprite_hints: [],
     isUpdating: false,
     hintManager: null,
     options: {
@@ -74,6 +75,11 @@ const reducer = function (state, action) {
                 return Object.assign({}, state, {
                     broad_scope_var_hints: hints
                 })
+            } else if (action.hintType===DUPLICATE_SPRITE_HINT_TYPE){
+                const hints = action.hints.filter(h=>h.type===DUPLICATE_SPRITE_HINT_TYPE).concat();
+                return Object.assign({}, state, {
+                    extract_parent_sprite_hints: hints
+                })
             }
         }
         case PUT_HINT_MAP: {
@@ -82,7 +88,8 @@ const reducer = function (state, action) {
                 blocksSharableHints: action.hintMap.blocksSharableHints,
                 renamables: action.hintMap.renamables,
                 extract_const_hints: action.hintMap.extract_const_hints,
-                broad_scope_var_hints: action.hintMap.broad_scope_var_hints
+                broad_scope_var_hints: action.hintMap.broad_scope_var_hints,
+                extract_parent_sprite_hints: action.hintMap.extract_parent_sprite_hints
             })
         }
 
@@ -134,10 +141,10 @@ const putAllHints = function (hints,hintType) {
     };
 }
 
-const putHintMap = function ({hints, blocksSharableHints, renamables, extract_const_hints, broad_scope_var_hints}){
+const putHintMap = function ({hints, blocksSharableHints, renamables, extract_const_hints, broad_scope_var_hints, extract_parent_sprite_hints}){
     return {
         type: PUT_HINT_MAP,
-        hintMap: {hints, blocksSharableHints, renamables, extract_const_hints, broad_scope_var_hints}
+        hintMap: {hints, blocksSharableHints, renamables, extract_const_hints, broad_scope_var_hints, extract_parent_sprite_hints}
     }
 }
 

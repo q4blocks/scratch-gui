@@ -1,21 +1,58 @@
 import ScratchBlocks from 'scratch-blocks';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE, BROAD_SCOPE_VAR_HINT_TYPE } from './constants';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE, BROAD_SCOPE_VAR_HINT_TYPE, DUPLICATE_SPRITE_HINT_TYPE } from './constants';
 
 const REMOVE_LAST = "REMOVE_LAST";
 const MOVE_UP = "MOVE_UP";
 const MOVE_DOWN = "MOVE_DOWN";
 const ADD_TO_LAST = "ADD_TO_LAST";
 
+const computeSpriteHintLocationStyles = ({ hint, vm }) => {
+
+    const currentSpriteName = vm.editingTarget.getName();
+    let changes;
+    if(hint.spriteNames.includes(currentSpriteName)){
+        const allSpriteSelectors = document.querySelectorAll("div[class^='sprite-selector_sprite-wrapper']");
+        const currentSpriteSelectorDom = [].slice.call(allSpriteSelectors).find(dom => dom.querySelector("div[class^='sprite-selector-item_sprite-name']").textContent === currentSpriteName)
+        const {x,y,width,height} = currentSpriteSelectorDom.getBoundingClientRect();
+        const computedTop = y-height+10;
+        const computedLeft = x+width-20;
+        changes = {
+            styles: {
+                position: 'absolute',
+                top: computedTop + 'px',
+                left: computedLeft + 'px',
+                visibility: 'visible',
+                zIndex: 100
+            }
+        }
+    }else{
+        changes = {
+            styles: {
+                position: 'absolute',
+                top: computedTop + 'px',
+                left: computedLeft + 'px',
+                visibility: 'hidden',
+                zIndex: 100
+            }
+        }
+    }
+    
+    return changes;
+}
+
 /**
  *  Use blockId specified in hint item as the location target for positioning hint icon
  * @param {*} hint 
  * @param {*} workspace 
  */
-const computeHintLocationStyles = function (hint, workspace) {
+const computeHintLocationStyles = function ({ hint, workspace, vm }) {
+    if (hint.type === DUPLICATE_SPRITE_HINT_TYPE) {
+        return computeSpriteHintLocationStyles({ hint, vm });
+    }
     let block
-    if(hint.blockId){
+    if (hint.blockId) {
         block = workspace.getBlockById(hint.blockId);
-    }else if(hint.varId){
+    } else if (hint.varId) {
         block = workspace.getFlyout().getWorkspace().getBlockById(hint.varId);//actually it's also block id
     }
     if (!block) return;
@@ -31,13 +68,13 @@ const computeHintLocationStyles = function (hint, workspace) {
 
     let defaultVisibility = 'visible';
     let overridingVisibility;
-    if(hint.type==='duplicate-constant'){
+    if (hint.type === 'duplicate-constant') {
         defaultVisibility = 'hidden'; //only show when the active field is part of a detected smell
     }
-    if(hint.type==='broad_scope_var'){
-        if(computedTop<0){
+    if (hint.type === 'broad_scope_var') {
+        if (computedTop < 0) {
             overridingVisibility = 'hidden';
-        }else{
+        } else {
             overridingVisibility = 'visible';
         }
     }
@@ -48,7 +85,7 @@ const computeHintLocationStyles = function (hint, workspace) {
             position: 'absolute',
             top: computedTop + 'px',
             left: computeLeft(blockSvg, workspace) + 'px',
-            visibility: overridingVisibility||(hint.styles?hint.styles.visibility: defaultVisibility),
+            visibility: overridingVisibility || (hint.styles ? hint.styles.visibility : defaultVisibility),
             zIndex: 100
         }
     };
@@ -96,6 +133,15 @@ const analysisInfoToHints = function (analysisInfo) {
             };
             hints.push(hint);
         }
+
+        if (type === DUPLICATE_SPRITE_HINT_TYPE) {
+            const hint = {
+                type: DUPLICATE_SPRITE_HINT_TYPE,
+                hintId: smellId,
+                spriteNames: record.smell.sprites.map(s=>s.spriteName)
+            };
+            hints.push(hint);
+        }
     }
     return hints;
 }
@@ -130,10 +176,10 @@ const buildHintContextMenu = (type) => {
             ]
         case DUPLICATE_CONSTANT_HINT_TYPE:
             return [
-              {
-                item_name: 'Help me create a constant variable',
-                itemAction: CONTEXT_MENU_REFACTOR
-              }
+                {
+                    item_name: 'Help me create a constant variable',
+                    itemAction: CONTEXT_MENU_REFACTOR
+                }
             ];
     }
 };
@@ -153,7 +199,7 @@ const highlightDuplicateBlocks = function (hintId, state, workspace, analysisInf
     }
 };
 
-const updateHighlighting = function(workspace, fragments){
+const updateHighlighting = function (workspace, fragments) {
     workspace.removeHighlightBox();
     for (let fNo in fragments) {
         const blockFragments = fragments[fNo].stmtIds;

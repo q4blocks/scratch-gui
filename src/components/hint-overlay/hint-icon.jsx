@@ -44,6 +44,12 @@ const getIconSpec = (type) => {
                 iconSvg: lightBulbIcon,
                 iconStyles: iconStyles.lightBulb
             }
+        default:
+            return {
+                className: "light-bulb",
+                iconSvg: lightBulbIcon,
+                iconStyles: iconStyles.lightBulb
+            }
     }
 }
 

@@ -73,7 +73,7 @@ import customStyles from '../custom-menu-bar/custom-menu-bar.css';
 
 import { setHintOptions } from '../../reducers/hints-state';
 import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, 
-    CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE, BROAD_SCOPE_VAR_HINT_TYPE
+    CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, RENAMABLE_CUSTOM_BLOCK, DUPLICATE_CONSTANT_HINT_TYPE, BROAD_SCOPE_VAR_HINT_TYPE, DUPLICATE_SPRITE_HINT_TYPE
 } from '../../lib/hints/constants';
 
 // analytics
@@ -499,8 +499,9 @@ class MenuBar extends React.Component {
                         this.props.onToggleQualityHintFeature(isEnabled)
                         if (isEnabled) {
                             // this.props.hintManager.generateHints(DUPLICATE_CODE_SMELL_HINT_TYPE);
-                            this.props.hintManager.generateHints(BROAD_SCOPE_VAR_HINT_TYPE);
-                            this.props.hintManager.generateHints(RENAMABLE_CUSTOM_BLOCK);
+                            // this.props.hintManager.generateHints(BROAD_SCOPE_VAR_HINT_TYPE);
+                            // this.props.hintManager.generateHints(RENAMABLE_CUSTOM_BLOCK);
+                            this.props.hintManager.generateHints(DUPLICATE_SPRITE_HINT_TYPE);
                             setTimeout(()=>{
                                 // this.props.hintManager.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
                             },1000);
@@ -510,6 +511,7 @@ class MenuBar extends React.Component {
                             this.props.hintManager.clearAll(RENAMABLE_CUSTOM_BLOCK);
                             this.props.hintManager.clearAll(DUPLICATE_CONSTANT_HINT_TYPE);
                             this.props.hintManager.clearAll(BROAD_SCOPE_VAR_HINT_TYPE);
+                            this.props.hintManager.clearAll(DUPLICATE_SPRITE_HINT_TYPE);
                         }
 
                         analytics.event({
@@ -519,7 +521,7 @@ class MenuBar extends React.Component {
                         });
                         }}
                     />
-                        
+
                         </div>}
                     {/* END-customized gui: quality hints*/}
                     {!this.props.customizedGui&&<Divider className={classNames(styles.divider)} />}
