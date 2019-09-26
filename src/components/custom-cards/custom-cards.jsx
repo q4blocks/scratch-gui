@@ -48,7 +48,7 @@ const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, ex
             >Reference</div>
         </div>
         {/* </div> */}
-        {totalSteps > 1 ? (
+        {view==='instructions'&&totalSteps > 1 ? (
             <div className={styles.stepsList}>
                 {Array(totalSteps).fill(0)
                     .map((_, i) => (
@@ -58,7 +58,7 @@ const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, ex
                         />
                     ))}
             </div>
-        ) : null}
+        ) : <div></div>}
 
         <div
             className={classnames(styles.viewSelectable)}

@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import styles from './reference.css';
 import inspectCode from '../../lib/libraries/custom-decks/intro/figure-out-code-1.gif';
+import createCustomBlock from '../../lib/libraries/custom-decks/reference/simple-custom-block.gif';
 // import inspectCode from '../../lib/libraries/custom-decks/intro/figure-out-code-1.gif'
 import customCardStyles from './custom-card.css';
 import upIcon from './up-icon.png';
@@ -32,12 +33,11 @@ const cardContents = [
     {
         id: "create-custom-block",
         title: "Create a custom block",
-        image: inspectCode
+        image: createCustomBlock
     }
 ];
 
 const Reference = ({ expanded}) => {
-    console.log('expanded?',expanded);
     return (
         <div className={expanded? styles.container:customCardStyles.hidden}>
             <h3 id="top">Quick Reference</h3>

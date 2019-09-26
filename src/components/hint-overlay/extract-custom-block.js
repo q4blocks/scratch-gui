@@ -17,6 +17,7 @@ import moveUpButton from './move-up-button.svg';
 import moveDownButton from './move-down-button.svg';
 import extractButton from './extract-button.svg';
 import closeIcon from './icon--close.svg';
+import showMeButton from './show-me-button.svg';
 
 // improve or remove?
 import animatedAdd from './animated-add.gif';
@@ -30,6 +31,8 @@ import analytics from "../../lib/custom-analytics";
 import controls from '../../containers/controls.jsx';
 
 import hintIcon from "./light-bulb-icon.svg";
+
+import customExtraction from './custom-extraction.gif';
 
 import { CloseButton } from './common-component.jsx';
 
@@ -52,14 +55,15 @@ const ActionButton = ({ onActionClick, type, actionName, onMouseEnterAction, onM
         [MOVE_UP]: moveUpButton,
         [MOVE_DOWN]: moveDownButton,
         "Extract": extractButton,
+        "ShowMe": showMeButton,
         default: removeButton
     }
     return (<div onClick={onActionClick}
         onMouseEnter={onMouseEnterAction}
         onMouseLeave={onMouseLeaveAction}
     >
-        <Floater content={tooltipMsg} 
-            event="hover" placement="right" 
+        <Floater content={tooltipMsg}
+            event="hover" placement="right"
             disableAnimation={true} eventDelay={0}
             styles={{
                 floater: {
@@ -74,9 +78,7 @@ const ActionButton = ({ onActionClick, type, actionName, onMouseEnterAction, onM
 const ControlComponent = (props) => {
     return (
         <div className={styles.floaterLayout}>
-
             <div className={classNames(styles.body)}>
-
                 <div className={classNames(styles.selectActionContainer)}>
                     <CloseButton onClose={props.onClose} />
                     <ActionButton actionName="MoveUp"
@@ -114,10 +116,20 @@ const ControlComponent = (props) => {
                         onMouseLeaveAction={() => { }}
                         tooltipMsg="Extract the selection as a custom block"
                     />
-                    {/* <div className={classNames(styles.preview, styles.outline)}>
-                        <ActionPreview type={props.currentActionHovered || 'default'} />
-                    </div> */}
+                    <div className={styles.showMeButtonWrapper}> 
+                        <ActionButton actionName="ShowMe"
+                            type={"ShowMe"}
+                            onActionClick={props.onShowMeHowClick}
+                            onMouseEnterAction={() => { }}
+                            onMouseLeaveAction={() => { }}
+                            tooltipMsg="Show me how this works"
+                        />
+                    </div>
                 </div>
+                {props.showMeHow&&<div className={classNames(styles.preview, styles.outline)}>
+                    {/* <ActionPreview type={props.currentActionHovered || 'default'} /> */}
+                    <img src={customExtraction} />
+                </div>}
             </div>
         </div>
     )
@@ -131,7 +143,8 @@ class ExtractCustomBlockHint extends React.Component {
             showRefactoringControl: false,
             selection: null,
             currentActionHovered: null,
-            showHintMessage: false
+            showHintMessage: false,
+            showMeHow: false
         }
         bindAll(this, [
             'onMouseEnter',
@@ -142,6 +155,7 @@ class ExtractCustomBlockHint extends React.Component {
             'createOnClose',
             'onMouseEnterAction',
             'onMouseLeaveAction',
+            'onShowMeHowClick'
         ]);
     }
 
@@ -199,6 +213,10 @@ class ExtractCustomBlockHint extends React.Component {
         if (this.state.selection) {
             updateHighlighting(this.props.workspace, this.state.selection.getSelectedFragments());
         }
+    }
+
+    onShowMeHowClick() {
+        this.setState({showMeHow:!this.state.showMeHow});
     }
 
 
@@ -261,6 +279,8 @@ class ExtractCustomBlockHint extends React.Component {
                     onMouseLeaveAction={this.onMouseLeaveAction}
                     currentActionHovered={this.state.currentActionHovered}
                     onCustomBlockExtractClick={this.onCustomBlockExtractClick}
+                    onShowMeHowClick={this.onShowMeHowClick}
+                    showMeHow={this.state.showMeHow}
                 />);
         } else if (showHintMessage) {
             component = props => (
