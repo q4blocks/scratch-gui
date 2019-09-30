@@ -27,7 +27,7 @@ import animatedMoveDown from './animated-down.gif';
 import defaultPreview from './default.gif';
 
 import Selection from "../../lib/hints/selection";
-import analytics from "../../lib/custom-analytics";
+import analytics, { saveDataToMongo } from "../../lib/custom-analytics";
 import controls from '../../containers/controls.jsx';
 
 import hintIcon from "./light-bulb-icon.svg";
@@ -116,7 +116,7 @@ const ControlComponent = (props) => {
                         onMouseLeaveAction={() => { }}
                         tooltipMsg="Extract the selection as a custom block"
                     />
-                    <div className={styles.showMeButtonWrapper}> 
+                    <div className={styles.showMeButtonWrapper}>
                         <ActionButton actionName="ShowMe"
                             type={"ShowMe"}
                             onActionClick={props.onShowMeHowClick}
@@ -126,7 +126,7 @@ const ControlComponent = (props) => {
                         />
                     </div>
                 </div>
-                {props.showMeHow&&<div className={classNames(styles.preview, styles.outline)}>
+                {props.showMeHow && <div className={classNames(styles.preview, styles.outline)}>
                     {/* <ActionPreview type={props.currentActionHovered || 'default'} /> */}
                     <img src={customExtraction} />
                 </div>}
@@ -174,6 +174,10 @@ class ExtractCustomBlockHint extends React.Component {
             label: JSON.stringify({ projectId: this.props.projectId, withinTutorial: this.props.showTutorial })
         });
 
+        saveDataToMongo('interact',
+            this.props.deckId + '_view-hint', new Date().toLocaleString('en-US', { timeZone: "America/New_York" })
+        );
+
         if (!this.state.clicked) {
             this.setState({ showHintMessage: false });
         }
@@ -201,6 +205,11 @@ class ExtractCustomBlockHint extends React.Component {
     onHintIconClick(hint) {
         const analysisInfo = this.props.hintManager.getAnalysisInfo();
         const record = analysisInfo['records'][hint.hintId];
+
+        saveDataToMongo('interact',
+            this.props.deckId + '_click-hint', new Date().toLocaleString('en-US', { timeZone: "America/New_York" })
+        );
+
         this.setState({
             showHintMessage: false,
             clicked: true,
@@ -216,7 +225,7 @@ class ExtractCustomBlockHint extends React.Component {
     }
 
     onShowMeHowClick() {
-        this.setState({showMeHow:!this.state.showMeHow});
+        this.setState({ showMeHow: !this.state.showMeHow });
     }
 
 
@@ -230,6 +239,10 @@ class ExtractCustomBlockHint extends React.Component {
         const { hints } = this.props.hintState;
         return () => {
             this.handleBlockSelection(h, action);
+
+            saveDataToMongo('interact',
+                    this.props.deckId + '_'+action, new Date().toLocaleString('en-US', { timeZone: "America/New_York" })
+                );
         }
     }
 
@@ -258,6 +271,10 @@ class ExtractCustomBlockHint extends React.Component {
                 if (res.result.metadata.success) {
                     applyBlocksTransformation(this.props.workspace, res.result.actions);
                 }
+
+                saveDataToMongo('interact',
+                    this.props.deckId + '_refactor', new Date().toLocaleString('en-US', { timeZone: "America/New_York" })
+                );
             });
     }
 

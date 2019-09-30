@@ -77,6 +77,19 @@ const saveDataToMongo = (collectionName, key, value) => {
     })
 }
 
+const saveFlatJSONToMongo = (collectionName, entry) => {
+    stitchClient.auth.loginWithCredential(new AnonymousCredential()).then(user => {
+        const userId = stitchClient.auth.user.id;
+        db.collection(collectionName).findOne({ userId: userId }).then(res => {
+            if (res) {
+                db.collection(collectionName).updateOne({ userId: userId }, { $set: Object.assign({}, res, { ...entry }) }, { upsert: true })
+            } else {
+                db.collection(collectionName).updateOne({ userId: userId }, { $set: { userId, ...entry } }, { upsert: true })
+            }
+        });
+    })
+}
+
 const queryData = (userId, key) => {
     window.stitchClient = stitchClient;
     //     const http = context.services.get("CheckCompletion");
@@ -90,5 +103,5 @@ const queryData = (userId, key) => {
 
 
 export default analytics;
-export { stitchClient, sendFeedbackData, saveProfileData, saveDataToMongo, queryData };
+export { stitchClient, sendFeedbackData, saveProfileData, saveDataToMongo, saveFlatJSONToMongo, queryData };
 

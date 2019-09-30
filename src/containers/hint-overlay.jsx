@@ -72,7 +72,8 @@ const mapStateToProps = (state, props) => {
         hintManager: state.scratchGui.hintState.hintManager,
         currentTargetId,
         projectId: state.scratchGui.projectState.projectId,
-        showTutorial: props.showTutorial || state.scratchGui.customMenu.showTutorial
+        showTutorial: props.showTutorial || state.scratchGui.customMenu.showTutorial,
+        deckId: state.scratchGui.customCards.activeDeckId
         //fix probably not the right place to put showTutorial in customMenu; should be part of state.scratchGui.tutorial
     };
 };
