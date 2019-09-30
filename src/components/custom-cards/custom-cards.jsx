@@ -372,7 +372,7 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepComplete
     )
 };
 
-const Instructions = ({ stepCompleted, expanded, styles, steps, step, isAlreadySetup, setUpdateCodeStatus, vm }) => {
+const Instructions = ({dragging, stepCompleted, expanded, styles, steps, step, isAlreadySetup, setUpdateCodeStatus, vm }) => {
     return (
         <div className={expanded ? styles.stepBody : styles.hidden}>
             {
@@ -383,6 +383,7 @@ const Instructions = ({ stepCompleted, expanded, styles, steps, step, isAlreadyS
                     />
                 ) : (
                         <ImageStep
+                            dragging={dragging}
                             image={steps[step].image}
                             title={steps[step].title}
                             stepCompleted={stepCompleted}
@@ -406,8 +407,8 @@ class CustomCards extends React.Component {
         this.state = {
             isAlreadySetup: false,
             selectedView:
-                // 'instructions'
-                'reference'
+                'instructions'
+                // 'reference'
         }
         this.setUpdateCodeStatus = this.setUpdateCodeStatus.bind(this);
         this.onViewSelected = this.onViewSelected.bind(this);
@@ -494,6 +495,7 @@ class CustomCards extends React.Component {
                         />
                         {this.state.selectedView === 'instructions' &&
                             <Instructions
+                                dragging={dragging}    
                                 stepCompleted={stepCompleted}
                                 steps={steps}
                                 expanded={expanded}
@@ -507,8 +509,9 @@ class CustomCards extends React.Component {
                         {this.state.selectedView === 'reference' && <Reference expanded={expanded} />}
 
 
-                        {this.state.selectedView === 'instructions' &&
-                            !!(steps[step].expected || steps[step].customCheck) && <div className={styles.footer}><div className={styles.checkButton} onClick={checkStepCompletion({
+                        {this.state.selectedView === 'instructions' && expanded &&
+                            !!(steps[step].expected || steps[step].customCheck) && <div className={styles.footer}>
+                                <div className={styles.checkButton} onClick={checkStepCompletion({
                                 onCompleteStep, vm, expected: steps[step].expected, customCheck: steps[step].customCheck
                             })}>Check</div></div>}
 
