@@ -3,189 +3,57 @@ import bindAll from 'lodash.bindall';
 import omit from 'lodash.omit';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-
 import VM from 'scratch-vm';
 import ScratchBlocks from 'scratch-blocks';
 
-import { setHint, updateHint, putHint, putAllHints, removeHint, setUpdateStatus } from '../reducers/hints-state';
+import { updateHint, putAllHints, removeHint, setHintManager, setHintOptions } from '../reducers/hints-state';
 import HintOverlayComponent from '../components/hint-overlay/hint-overlay.jsx';
-import { DUPLICATE_CODE_SMELL_HINT_TYPE, SHAREABLE_CODE_HINT_TYPE, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE } from '../lib/hints/constants';
-import { computeHintLocationStyles, analysisInfoToHints, getProcedureEntry, generateShareableCodeHints, highlightDuplicateBlocks } from '../lib/hints/hints-util';
-import { sendAnalysisReq, getProgramXml } from '../lib/hints/analysis-server-api';
-import { applyTransformation } from '../lib/hints/transform-api';
-import { addBlocksToWorkspace, testBlocks, getTestHints } from '../lib/hints/hint-test-workspace-setup';
+import { DUPLICATE_CODE_SMELL_HINT_TYPE, RENAMABLE_CUSTOM_BLOCK, CONTEXT_MENU_RENAME_BLOCK, CONTEXT_MENU_REFACTOR, CONTEXT_MENU_INFO, CONTEXT_MENU_CODE_SHARE, DUPLICATE_CONSTANT_HINT_TYPE } from '../lib/hints/constants';
+import { getProcedureEntry, highlightDuplicateBlocks, updateHighlighting, REMOVE_LAST, ADD_TO_LAST, MOVE_UP, MOVE_DOWN } from '../lib/hints/hints-util';
 
+import HintManager from '../lib/hint-manager';
+import analytics from "../lib/custom-analytics";
 
-const isProductionMode = true;
-const isTesting = true;
-
-const addFunctionListener = (object, property, callback) => {
-    const oldFn = object[property];
-    object[property] = function () {
-        const result = oldFn.apply(this, arguments);
-        callback.apply(this, result);
-        return result;
-    };
-};
-
+const SNIPPET_LOCAL_STORAGE_KEY = '__snippet__';
+const updateShareSnippetOnLocalStorage = snippetEntry => {
+    const serializedSnippet = JSON.stringify(snippetEntry);
+    localStorage.setItem(SNIPPET_LOCAL_STORAGE_KEY, serializedSnippet);
+}
 
 class HintOverlay extends React.Component {
     constructor(props) {
         super(props);
-
-        bindAll(this, [
-            'onWorkspaceUpdate',
-            'onWorkspaceMetricsChange',
-            'onTargetsUpdate',
-            'blockListener',
-            'onHandleHintMenuItemClick',
-            'onMouseEnter',
-            'onMouseLeave'
-        ]);
     }
 
     componentDidMount() {
         this.workspace = ScratchBlocks.getMainWorkspace();
-        this.attachVM();
-    }
-
-    attachVM() {
-        if (!this.props.vm) return;
-        this.workspace.addChangeListener(this.blockListener);
-        this.props.vm.addListener('workspaceUpdate', this.onWorkspaceUpdate);
-        this.props.vm.addListener('targetsUpdate', this.onTargetsUpdate);
-        addFunctionListener(this.workspace, 'translate', this.onWorkspaceMetricsChange);
-        addFunctionListener(this.workspace, 'zoom', this.onWorkspaceMetricsChange);
-    }
-
-    detachVM() {
-        this.props.vm.removeListener('workspaceUpdate', this.onWorkspaceUpdate);
-        this.props.vm.removeListener('targetsUpdate', this.onTargetsUpdate);
-    }
-
-    onWorkspaceUpdate(data) {
-        if (isTesting && !this.alreadySetup) {
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleDuplicate2);
-            addBlocksToWorkspace(this.workspace, testBlocks.simpleProcedure);
-            this.workspace.cleanUp();
+        const options = {
+            projectId: this.props.projectId,
+            userStudyMode: this.props.userStudyMode,
+            serviceEndpoint: this.props.serviceEndpoint
         }
-        this.alreadySetup = true;
+        this.props.setHintManager(new HintManager(
+            this.props.vm, this.workspace, this.props.dispatch, this.props.hintState,
+            options));
+        //quick fix for tutorial mode
+        //auto switch on if showQualityHint is passed from parent
+        this.props.dispatch(setHintOptions({
+            showQualityHint: this.props.showQualityHint || false
+        }));
     }
 
-    onTargetsUpdate() {
-        console.log('TODO: show hint that is only relevant to the current target');
-    }
-
-    onWorkspaceMetricsChange() {
-        //disregard metrics change when workspace for custom block is shown
-        const isProcedureEditorOpened = this.workspace.id !== Blockly.getMainWorkspace().id;
-
-        if (this.props.hintState.hints.length <= 0 || isProcedureEditorOpened) return;
-        this.showHint();
-    }
-
-    showHint() {
-        this.props.hintState.hints.map(h => this.updateHintTracking(h));
-    }
-
-    updateHintTracking(hint) {
-        const changes = computeHintLocationStyles(hint, this.workspace);
-        this.props.onUpdateHint(hint.hintId, changes);
-    }
-
-    onHandleHintMenuItemClick(hintId, itemAction) {
-        const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
-
-        switch (itemAction) {
-            case CONTEXT_MENU_REFACTOR: {
-                applyTransformation(hintId, this.props.vm, this.workspace, this.analysisInfo);
-                this.props.removeHint(hintId); //remove hint when the specified action is taken
-                break;
-            }
-            case CONTEXT_MENU_CODE_SHARE: {
-                console.log('Post request to save procedure to library');
-                const block = this.workspace.getBlockById(hint.blockId);
-                const entry = getProcedureEntry(block);
-                console.log(entry);
-                break;
-            }
-        }
-    }
-
-    analyzeAndGenerateHints() {
-        const _vm = this.props.vm;
-        return Promise.resolve()
-            .then(() => getProgramXml(_vm))
-            .then(xml => sendAnalysisReq('projectId', 'duplicate_code', xml, isProductionMode))
-            .then(json => {
-                const analysisInfo = this.analysisInfo = json;
-                return analysisInfo ? analysisInfoToHints(analysisInfo) : [];
-            }).then(hints => {
-                this.props.setHint(hints);
-            });
-    }
-
-    blockListener(e) {
-        if (this.workspace.isDragging()) return;
-        console.log('TODO: logic to delay analyzing hints waiting for a good time');
-
-        if (e.type === 'create' && e.xml.getAttribute('type') === 'procedures_definition') {
-            const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
-            if (hints.length > 0) {
-                this.props.putAllHints(hints);
-                this.showHint();
-            }
-        }
-        
-        if (e.type ==='delete') {
-            this.props.hintState.hints.filter(h=>!this.workspace.getBlockById(h.blockId)).forEach(h=>{
-                this.props.removeHint(h.hintId);
-            });
-        }
-
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-        }
-        this.timeout = setTimeout(() => {
-            this.analyzeAndGenerateHints().then(() => {
-                const hints = generateShareableCodeHints(this.workspace, this.props.hintState);
-                if (hints.length > 0) {
-                    this.props.putAllHints(hints);
-                }
-                if (this.props.hintState.hints.length > 0) {
-                    this.showHint();
-                }
-            });
-        }, 1000);
-    }
-
-    onMouseEnter(hintId) {
-        const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
-        switch (hint.type) {
-            case DUPLICATE_CODE_SMELL_HINT_TYPE:
-                highlightDuplicateBlocks(hintId, true, this.workspace, this.analysisInfo);
-                break;
-        }
-    }
-
-    onMouseLeave(hintId) {
-        const hint = this.props.hintState.hints.find(h => h.hintId === hintId);
-        switch (hint.type) {
-            case DUPLICATE_CODE_SMELL_HINT_TYPE:
-                highlightDuplicateBlocks(hintId, false, this.workspace, this.analysisInfo);
-                break;
-        }
+    componentDidUpdate() {
+        this.props.hintManager.updateHintState(this.props.hintState);
+        this.props.hintManager.updateOptions({ isTutorialMode: this.props.showTutorial });
     }
 
     render() {
         const componentProps = omit(this.props, ['asset', 'vm']);
         return (
             <HintOverlayComponent
-                hints={this.props.hintState}
                 onHandleHintMenuItemClick={this.onHandleHintMenuItemClick}
-                onMouseEnter={this.onMouseEnter}
-                onMouseLeave={this.onMouseLeave}
+                workspace={this.workspace}
+                vm={this.props.vm}
                 {...componentProps}
             />
         );
@@ -196,30 +64,28 @@ HintOverlay.propTypes = {
     vm: PropTypes.instanceOf(VM).isRequired
 };
 
-const mapStateToProps = state => {
+const mapStateToProps = (state, props) => {
     const targets = state.scratchGui.targets;
     const currentTargetId = targets.editingTarget;
     return {
         vm: state.scratchGui.vm,
         hintState: state.scratchGui.hintState,
-        currentTargetId
+        hintManager: state.scratchGui.hintState.hintManager,
+        currentTargetId,
+        projectId: state.scratchGui.projectState.projectId,
+        showTutorial: props.showTutorial || state.scratchGui.customMenu.showTutorial,
+        deckId: state.scratchGui.customCards.activeDeckId
+        //fix probably not the right place to put showTutorial in customMenu; should be part of state.scratchGui.tutorial
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        setHint: hints => {
-            dispatch(setHint(hints));
-        },
-        onUpdateHint: (hintId, changes) => {
-            dispatch(updateHint(hintId, changes));
-        },
-        setUpdateStatus: isUpdating => dispatch(setUpdateStatus(isUpdating)),
-        removeHint: hintId => {
-            dispatch(removeHint(hintId))
-        },
-        putHint: hint => dispatch(putHint(hint)),
-        putAllHints: hints => dispatch(putAllHints(hints))
+        onUpdateHint: (hintId, changes) => dispatch(updateHint(hintId, changes)),
+        removeHint: hintId => dispatch(removeHint(hintId)),
+        putAllHints: hints => dispatch(putAllHints(hints)),
+        setHintManager: hm => dispatch(setHintManager(hm)),
+        dispatch
     }
 };
 

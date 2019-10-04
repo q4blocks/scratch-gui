@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {compose} from 'redux';
+import { compose } from 'redux';
 
 import AppStateHOC from '../lib/app-state-hoc.jsx';
 import GUI from '../containers/gui.jsx';
@@ -81,6 +81,46 @@ export default appTarget => {
                 backpackHost={backpackHost}
                 canSave={false}
                 onClickLogo={onClickLogo}
+                // customGuiState
+                showCustomMenuBar={true}
+                userStudyMode={true}
+                hintMode={true}    //to set from user study site
+                qualityHintToggleVisible={true} //  to set user study site (true: hnrf, false: rfg)
+                showTutorial={false}
+                showCustomGuiDevPanel={false}
+                procedureShareToggleVisible={true}
+                tutorialDevMode={false}
+                showQualityHint={false}
+                showSurveyCallBack={(origin) => { console.log(`open the modal survey! origin: ${origin}`) }}
+                qisServiceEndpoint={
+                    // 'https://quality-tutor-engine.appspot.com'
+                    'http://localhost:8080'
+                }
+                customCardsVisible={true}
+                customDeckId={
+                    'scratch-basics'
+                    // 'color-shade-generator'
+                    // 'particle-radiator'
+                }
+                projectId={
+                    // scratch-basics
+                    // "326026661"
+                    // color-shade-generator
+                    // "326637227"
+                    // particle-radiator
+                    // "328143397"
+                    //test-custom-selection // duplicated code populated
+                    // 329224756
+                    //test reduce var scope
+                    // 330600515
+                    // test extract parent sprite
+                    // 331488059
+                    // 331812747
+                    // test extract constant
+                    // 326142227
+                    // empty
+                    330600515
+                }
             />,
         appTarget);
 };

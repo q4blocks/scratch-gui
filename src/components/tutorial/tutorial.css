@@ -1,0 +1,104 @@
+@keyframes BeaconFlick {
+  0% {
+    opacity: 1;
+    /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px; */
+  }
+  50% {
+    opacity: 0.3;
+    /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 4px; */
+  }
+  100% {
+    opacity: 1;
+    /* box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px; */
+  }
+}
+
+.next-button {
+  -webkit-appearance: none;
+  background-color: #f04;
+  border-radius: 6px;
+  border: 1px;
+  border-style: solid;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  outline: none;
+  padding: 8px 16px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+.next-button:hover {
+  border-color: #f04;
+  -webkit-appearance: none;
+  background-color: #fff;
+  border-radius: 6px;
+  border: 1px;
+  border-style: solid;
+  color: #f04;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  outline: none;
+  padding: 8px 16px;
+  white-space: nowrap;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.336);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}
+
+p {
+  -webkit-appearance: none;
+  font-size: 14px;
+  text-align: left;
+}
+
+span {
+  font-size: 14px
+}
+
+div {
+  font-size: 14px;
+}
+
+.ReactModal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40vw;
+  /* height: 40vh; */
+  right: auto;
+  bottom: auto;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  /* custom styling */
+  background-color: #fff;
+  ;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  line-height: 1.6;
+  color: rgb(102, 102, 102);
+  font-size: 14px;
+  box-sizing: border-box
+}
+
+.ReactOverlay {
+  background-color: rgba(0, 0, 0, 0.336);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 100;
+}

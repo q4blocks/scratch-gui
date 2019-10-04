@@ -10,6 +10,7 @@ import {setPlayer, setFullScreen} from '../reducers/mode.js';
 
 import locales from 'scratch-l10n';
 import {detectLocale} from './detect-locale';
+import ScratchBlocks from 'scratch-blocks';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
@@ -22,7 +23,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
                         only rendering modals, not the GUI.
  * @returns {React.Component} component with redux and intl state provided
  */
-const AppStateHOC = function (WrappedComponent, localesOnly) {
+const AppStateHOC = function (WrappedComponent, localesOnly, externalStateController) {
     class AppStateWrapper extends React.Component {
         constructor (props) {
             super(props);
@@ -86,6 +87,10 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
                 initialState,
                 enhancer
             );
+            if(externalStateController){
+                externalStateController.setStore(this.store);
+                externalStateController.setScratchBlocks(ScratchBlocks);
+            }
         }
         componentDidUpdate (prevProps) {
             if (localesOnly) return;

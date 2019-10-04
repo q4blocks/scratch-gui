@@ -1,28 +1,16 @@
-const localService = 'http://localhost:8080/analyze';
-const remoteService = 'https://quality-tutor-engine.appspot.com/analyze';
-
-var localServerAvailable;
-if (localServerAvailable === undefined) {
-    fetch("http://localhost:8080").then(res => {
-        if (res.status === 200) {
-            localServerAvailable = true
-        }
-    }, (err) => {
-        localServerAvailable = false;
-        console.warn("local analysis server not available...switch to remote analysis server one");
-    });
-}
+const localService = 'http://localhost:8080';
+const remoteService = 'https://quality-tutor-engine.appspot.com';
 
 /**
  * 
  * @param {*} projectId 
  * @param {*} analysisType (duplicate_code, duplicate_sprite, all)
  * @param {*} xml 
- * @param {*} isProductionMode 
  */
-const sendAnalysisReq = function (projectId, analysisType, xml, isProductionMode) {
-    let url = isProductionMode ? remoteService : localService;
-    url = localServerAvailable ? localService : remoteService;
+const sendAnalysisReq = function ({projectId, analysisType, xml, serviceEndpoint}) {
+    let url = serviceEndpoint;
+    url = url+'/analyze';
+    // url = localServerAvailable ? localService : remoteService;
     return fetch(url, {
         method: "POST",
         mode: "cors",
@@ -31,6 +19,23 @@ const sendAnalysisReq = function (projectId, analysisType, xml, isProductionMode
             "Content-Type": "text/xml",
             "id": projectId,
             "type": analysisType
+        },
+        body: xml,
+    }).then(res => res.json());
+}
+
+const sendRefactoringAnalysisReq = function({projectId, type, xml, isProductionMode, params}){
+    let url = isProductionMode ? remoteService : localService;
+    url = url + '/transform';
+    return fetch(url, {
+        method: "POST",
+        mode: "cors",
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "text/xml",
+            "id": projectId,
+            "type": type,
+            "params": params
         },
         body: xml,
     }).then(res => res.json());
@@ -64,5 +69,6 @@ const getProgramXml = function (vm) {
 
 export {
     sendAnalysisReq,
-    getProgramXml
+    getProgramXml,
+    sendRefactoringAnalysisReq
 }

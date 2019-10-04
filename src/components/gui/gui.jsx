@@ -43,6 +43,13 @@ import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
 
+import Tutorial from '../../containers/tutorial.jsx';
+
+import CustomizedMenuBar from '../custom-menu-bar/custom-menu-bar.jsx';
+import CustomGuiDevPanel from '../../containers/custom-gui-dev-panel.jsx';
+
+import CustomCards from '../../containers/custom-cards.jsx';
+
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -117,8 +124,29 @@ const GUIComponent = props => {
         telemetryModalVisible,
         tipsLibraryVisible,
         vm,
+        hintMode,
+        showCustomGuiDevPanel,
+        showTutorial,
+        procedureShareToggleVisible,
+        qualityHintToggleVisible,
+        showCustomMenuBar,
+        showSurveyCallBack,
+        tutorialDevMode,
+        showQualityHint,
+        userStudyMode,
+        customCardsVisible,
+        customDeckId,
+        qisServiceEndpoint,
         ...componentProps
     } = omit(props, 'dispatch');
+
+    const customOptions = {
+        menuBarVisible: true,
+        previewInfoVisible: false,
+        backpackVisible: false,
+        customizedGui: showCustomMenuBar
+    }
+
     if (children) {
         return <Box {...componentProps}>{children}</Box>;
     }
@@ -158,7 +186,10 @@ const GUIComponent = props => {
                 dir={isRtl ? 'rtl' : 'ltr'}
                 {...componentProps}
             >
-                {previewInfoVisible ? (
+                
+                <Tutorial showTutorial={showTutorial} showSurveyCallBack={showSurveyCallBack} tutorialDevMode={tutorialDevMode}/>
+
+                {customOptions.previewInfoVisible ? (
                     <PreviewModal />
                 ) : null}
                 {telemetryModalVisible ? (
@@ -187,6 +218,9 @@ const GUIComponent = props => {
                 {cardsVisible ? (
                     <Cards />
                 ) : null}
+                {customCardsVisible? (
+                    <CustomCards activeDeckId={customDeckId} qualityHintToggleVisible={qualityHintToggleVisible}/>
+                ): null}
                 {alertsVisible ? (
                     <Alerts className={styles.alertsContainer} />
                 ) : null}
@@ -207,7 +241,23 @@ const GUIComponent = props => {
                         onRequestClose={onRequestCloseBackdropLibrary}
                     />
                 ) : null}
-                <MenuBar
+                {showCustomGuiDevPanel?<CustomGuiDevPanel/>:null}
+                
+                {
+                    /*
+                    (<CustomizedMenuBar
+                    procedureShareToggleVisible={procedureShareToggleVisible}
+                    qualityHintToggleVisible={qualityHintToggleVisible}
+                    onUpdateProjectTitle={onUpdateProjectTitle}
+                    showTutorial={showTutorial}
+                    userStudyMode={userStudyMode}
+                    showSurveyCallBack={showSurveyCallBack}
+                />)
+                    */
+                }
+
+                {customOptions.customizedGui&& 
+                (<MenuBar
                     accountNavOpen={accountNavOpen}
                     authorId={authorId}
                     authorThumbnailUrl={authorThumbnailUrl}
@@ -232,7 +282,9 @@ const GUIComponent = props => {
                     onShare={onShare}
                     onToggleLoginOpen={onToggleLoginOpen}
                     onUpdateProjectTitle={onUpdateProjectTitle}
-                />
+                    customizedGui={customOptions.customizedGui}
+                    qualityHintToggleVisible={qualityHintToggleVisible}
+                />)}
                 <Box className={styles.bodyWrapper}>
                     <Box className={styles.flexWrapper}>
                         <Box className={styles.editorWrapper}>
@@ -323,7 +375,12 @@ const GUIComponent = props => {
                                         <Watermark />
                                     </Box>
                                     <Box className="hint-overlay">
-                                        <HintOverlay />
+                                        {hintMode?(<HintOverlay 
+                                            userStudyMode={userStudyMode} 
+                                            showTutorial={showTutorial} 
+                                            showQualityHint={showQualityHint}
+                                            serviceEndpoint={qisServiceEndpoint}
+                                            />):null}
                                     </Box>
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>
@@ -333,7 +390,7 @@ const GUIComponent = props => {
                                     {soundsTabVisible ? <SoundTab vm={vm} /> : null}
                                 </TabPanel>
                             </Tabs>
-                            {backpackVisible ? (
+                            {customOptions.backpackVisible ? (
                                 <Backpack host={backpackHost} />
                             ) : null}
                         </Box>
@@ -419,7 +476,9 @@ GUIComponent.propTypes = {
     targetIsStage: PropTypes.bool,
     telemetryModalVisible: PropTypes.bool,
     tipsLibraryVisible: PropTypes.bool,
-    vm: PropTypes.instanceOf(VM).isRequired
+    vm: PropTypes.instanceOf(VM).isRequired,
+    hintMode: PropTypes.bool,
+    tutorialId: PropTypes.string
 };
 GUIComponent.defaultProps = {
     backpackHost: null,

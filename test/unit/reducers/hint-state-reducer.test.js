@@ -1,4 +1,4 @@
-import hintStateReducer, { setHint, updateHint, putHint, putAllHints, removeHint, setUpdateStatus } from '../../../src/reducers/hints-state';
+import hintStateReducer, { updateHint, putAllHints, removeHint, setUpdateStatus, setHintOptions } from '../../../src/reducers/hints-state';
 
 test("initialState", () => {
     let defaultState
@@ -8,11 +8,6 @@ test("initialState", () => {
     expect(hintStateReducer(defaultState, { type: 'anything' }).isUpdating).toBe(false);
 });
 
-test("set hints", () => {
-    let defaultState
-    expect(hintStateReducer(defaultState, setHint([{}])).hints.length).toBe(1);
-    expect(hintStateReducer(defaultState, setHint([])).hints.length).not.toBeNull();
-});
 
 test("update hint item", () => {
     let state = {
@@ -40,21 +35,7 @@ test("update hint item", () => {
     expect(newState.hints.find(h => h.hintId === 'id2').visible).toBe(true);
 });
 
-test("put hint", () => {
-    let state = {
-        timestamp: 'date',
-        hints: [{
-            hintId: 'id1',
-            type: 'Extract Procedure',
-            target: 'sprite1',
-            visible: false
-        }]
-    };
 
-    const newState = hintStateReducer(state, putHint({ id: 'id2', type: 'Extract Procedure', target: 'Sprite3' }));
-    expect(newState.hints.find(h => h.id === 'id2')).toBeDefined();
-    expect(newState.hints.length).toBe(2);
-});
 
 test("put all hints", () => {
     let state = {
@@ -68,7 +49,7 @@ test("put all hints", () => {
     };
 
     const newState = hintStateReducer(state, putAllHints([
-        { hintId: 'id2', type: 'Extract Procedure', target: 'Sprite3' }, 
+        { hintId: 'id2', type: 'Extract Procedure', target: 'Sprite3' },
         { hintId: 'id1', type: 'Extract Procedure', target: 'Sprite3', visible: false },
         { hintId: 'id3', type: 'Extract Procedure', target: 'Sprite4' }
     ]));
@@ -109,10 +90,37 @@ test("update status", () => {
         hints: [],
         isUpdating: false
     };
-    const newState1 = hintStateReducer(state, setUpdateStatus(true));
+    const newState1 = hintStateReducer(state, setUpdateStatus({isUpdating:true}));
     expect(newState1.isUpdating).toBe(true);
 
-    const newState2 = hintStateReducer(newState1, setUpdateStatus(false));
+    const newState2 = hintStateReducer(newState1, setUpdateStatus({isUpdating:false}));
     expect(newState2.isUpdating).toBe(false);
 
+});
+
+
+test("hint options", () => {
+    let state = {
+        hints: [],
+        options: {
+            showQualityHint: false,
+            showProcedureSharingHint: true
+        }
+    };
+
+    const newState1 = hintStateReducer(state, setHintOptions({}));
+    expect(newState1.options).toEqual({
+        showQualityHint: false,
+        showProcedureSharingHint: true
+    });
+
+    const newState2 = hintStateReducer(state, setHintOptions({
+        showQualityHint: true,
+        showProcedureSharingHint: false
+    }));
+
+    expect(newState2.options).toEqual({
+        showQualityHint: true,
+        showProcedureSharingHint: false
+    });
 });
