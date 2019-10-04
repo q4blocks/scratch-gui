@@ -503,8 +503,8 @@ class MenuBar extends React.Component {
                                     // this.props.hintManager.generateHints(BROAD_SCOPE_VAR_HINT_TYPE);
                                     // this.props.hintManager.generateHints(RENAMABLE_CUSTOM_BLOCK);
                                     // this.props.hintManager.generateHints(DUPLICATE_SPRITE_HINT_TYPE);
+                                    // this.props.hintManager.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
                                     setTimeout(() => {
-                                        // this.props.hintManager.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
                                     }, 1000);
 
                                 } else {

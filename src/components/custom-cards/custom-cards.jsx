@@ -18,14 +18,14 @@ import { workspaceFromXml, addBlocksToWorkspace } from '../../lib/hints/hint-tes
 import { saveDataToMongo, queryData } from "../../lib/custom-analytics";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 // reference for latest update: https://github.com/LLK/scratch-gui/blob/develop/src/components/cards/cards.jsx
-
+import Floater from 'react-floater';
 // analytics
 import analytics from "../../lib/custom-analytics";
 
 import Reference from './reference.jsx';
 
 const enableCloseCard = false;
-const bypassCheck = true;
+const bypassCheck = false;
 
 const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, expanded, dbManager, onViewSelected, view }) => (
     <div className={styles.headerButtons}>
@@ -40,15 +40,15 @@ const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, ex
             </div>
             </div> */}
         <div className={styles.viewButtonGroup}>
-            <div className={view==='instructions'?styles.selectedViewSelectable:styles.viewSelectable} 
+            <div className={view === 'instructions' ? styles.selectedViewSelectable : styles.viewSelectable}
                 onClick={() => { onViewSelected('instructions') }}
             >Instruction</div>
-            <div className={view==='reference'?styles.selectedViewSelectable:styles.viewSelectable} 
+            <div className={view === 'reference' ? styles.selectedViewSelectable : styles.viewSelectable}
                 onClick={() => { onViewSelected('reference') }}
             >Reference</div>
         </div>
         {/* </div> */}
-        {view==='instructions'&&totalSteps > 1 ? (
+        {view === 'instructions' && totalSteps > 1 ? (
             <div className={styles.stepsList}>
                 {Array(totalSteps).fill(0)
                     .map((_, i) => (
@@ -65,7 +65,7 @@ const QISCardHeader = ({ onCloseCards, onShrinkExpandCards, totalSteps, step, ex
             onClick={onShrinkExpandCards}
         >
             <img
-                style={{display:'inline-block', width:'16px', marginRight:'0.2rem', verticalAlign:'bottom'}}
+                style={{ display: 'inline-block', width: '16px', marginRight: '0.2rem', verticalAlign: 'bottom' }}
                 draggable={false}
                 src={expanded ? shrinkIcon : expandIcon}
             />
@@ -145,7 +145,6 @@ const checkStmtSequence = ({ topBlock, expected, shouldExcludeShadow }) => {
         if (shouldExcludeShadow) {
             filteredActual = actual.filter(n => !n.isShadow_).map(b => b.type);
         }
-        console.log('expected block sequence', filteredActual);
         return filteredActual;
     }).map(seq => array_hash(seq)));
 
@@ -201,7 +200,7 @@ const workspaceContainsScript = ({ workspace, expected, shouldExcludeShadow = tr
     return !!found;
 }
 
-const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId, customCheck }) => () => {
+const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId, customCheck, onShowReminderMessage }) => () => {
     let isComplete = null;
     if (!expected) {
         isComplete = true;//not specified => auto complete
@@ -224,7 +223,7 @@ const checkStepCompletion = ({ onCompleteStep, expected, currentInstructionId, c
     });
 
 
-    isComplete ? onCompleteStep() : () => { };
+    isComplete ? onCompleteStep() : onShowReminderMessage("Please follow the instruction and try again");
 }
 
 const populateWorkspace = (setupCode) => {
@@ -323,15 +322,15 @@ class ImageStep extends React.Component {
 }
 
 
-const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted, setUpdateCodeStatus, currentInstructionId }) => {
+const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepCompleted, setUpdateCodeStatus, currentInstructionId, onShowReminderMessage }) => {
     return (
         <Fragment>
-            {stepCompleted && onNextStep ? (
+            {onNextStep ? (
                 <div>
-                    <div className={expanded ? (isRtl ? styles.leftCard : styles.rightCard) : styles.hidden} />
+                    <div className={expanded ? styles.rightCard : styles.hidden} />
                     <div
-                        className={expanded ? (isRtl ? styles.leftButton : styles.rightButton) : styles.hidden}
-                        onClick={(() => () => {
+                        className={expanded ? (stepCompleted ? styles.rightButton : classnames(styles.buttonDisabled, styles.rightButton)) : styles.hidden}
+                        onClick={stepCompleted ? (() => () => {
                             setUpdateCodeStatus(false); //clear setup status to false
 
                             //analytics
@@ -342,7 +341,7 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepComplete
                             });
 
                             onNextStep();
-                        })()}
+                        })() : ()=>{onShowReminderMessage("Please check your work to continue.");}}
                     >
                         <img
                             draggable={false}
@@ -372,7 +371,7 @@ const NextPrevButtons = ({ isRtl, onNextStep, onPrevStep, expanded, stepComplete
     )
 };
 
-const Instructions = ({dragging, stepCompleted, expanded, styles, steps, step, isAlreadySetup, setUpdateCodeStatus, vm }) => {
+const Instructions = ({ dragging, stepCompleted, expanded, styles, steps, step, isAlreadySetup, setUpdateCodeStatus, vm }) => {
     return (
         <div className={expanded ? styles.stepBody : styles.hidden}>
             {
@@ -407,11 +406,14 @@ class CustomCards extends React.Component {
         this.state = {
             isAlreadySetup: false,
             selectedView:
-                'instructions'
-                // 'reference'
+                'instructions',
+            // 'reference',
+            shouldShowReminder: false,
+            reminderMessage: null
         }
         this.setUpdateCodeStatus = this.setUpdateCodeStatus.bind(this);
         this.onViewSelected = this.onViewSelected.bind(this);
+        this.onShowReminderMessage = this.onShowReminderMessage.bind(this);
     }
 
     setUpdateCodeStatus(alreadySetup) {
@@ -422,6 +424,20 @@ class CustomCards extends React.Component {
 
     onViewSelected(viewName) {
         this.setState({ selectedView: viewName });
+    }
+
+    onShowReminderMessage(msg) {
+        this.setState({
+            shouldShowReminder: true,
+            reminderMessage: msg
+        });
+
+        setTimeout(() => {
+            this.setState({
+                shouldShowReminder: false,
+                reminderMessage: null
+            });
+        }, 2000);
     }
 
     render() {
@@ -475,7 +491,6 @@ class CustomCards extends React.Component {
         // populateWorkspace({ vm });
         if (steps[step].recordCompletion) {
             //dbmanager record tutorial completion
-            console.log('record completion', activeDeckId);
             saveDataToMongo('completion', activeDeckId, new Date().toLocaleString('en-US', { timeZone: "America/New_York" }));
         }
 
@@ -495,7 +510,7 @@ class CustomCards extends React.Component {
                         />
                         {this.state.selectedView === 'instructions' &&
                             <Instructions
-                                dragging={dragging}    
+                                dragging={dragging}
                                 stepCompleted={stepCompleted}
                                 steps={steps}
                                 expanded={expanded}
@@ -510,10 +525,24 @@ class CustomCards extends React.Component {
 
 
                         {this.state.selectedView === 'instructions' && expanded &&
-                            !!(steps[step].expected || steps[step].customCheck) && <div className={styles.footer}>
-                                <div className={styles.checkButton} onClick={checkStepCompletion({
-                                onCompleteStep, vm, expected: steps[step].expected, customCheck: steps[step].customCheck
-                            })}>Check</div></div>}
+                            !!(steps[step].expected || steps[step].customCheck) &&
+                            <div className={styles.footer}>
+                                {completed.includes(steps[step].id) ? <div className={styles.completedStatus}>Completed</div> :
+                                    <Floater content={this.state.reminderMessage||"Click to check your work!"}
+                                        open={!!this.state.reminderMessage}
+                                        styles={{
+                                            floater: {
+                                                zIndex: 9999
+                                            }
+                                        }}>
+                                        <div className={styles.checkButton} 
+                                            onClick={checkStepCompletion({
+                                                onCompleteStep, vm, expected: steps[step].expected, customCheck: steps[step].customCheck,
+                                                onShowReminderMessage:this.onShowReminderMessage
+                                        })}>Check</div>
+                                    </Floater>
+                                }
+                            </div>}
 
                         {this.state.selectedView === 'instructions' && <NextPrevButtons
                             expanded={expanded}
@@ -526,6 +555,7 @@ class CustomCards extends React.Component {
                             isAlreadySetup={this.state.isAlreadySetup}
                             setUpdateCodeStatus={this.setUpdateCodeStatus}
                             currentInstructionId={steps[step].id}
+                            onShowReminderMessage={this.onShowReminderMessage}
                         />}
                     </div>
                 </div>

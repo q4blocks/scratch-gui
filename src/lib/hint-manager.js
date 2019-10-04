@@ -134,7 +134,7 @@ class HintManager {
         const _vm = this.vm;
         return Promise.resolve()
             .then(() => getProgramXml(_vm))
-            .then(xml => sendAnalysisReq(this.projectId, hintType, xml, isProductionMode))
+            .then(xml => sendAnalysisReq({projectId:this.projectId, analysisType:hintType, xml, serviceEndpoint: this.options.serviceEndpoint}))
             .then(json => {
                 const analysisInfo = isWorkAround ? workAroundResp[this.projectId] : json;
                 let combinedRecord = null;

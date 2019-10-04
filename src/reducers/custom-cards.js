@@ -12,7 +12,7 @@ const END_DRAG = 'scratch-gui/custom-cards/END_DRAG';
 const COMPLETE_STEP = 'scratch-gui/custom-cards/COMPLETE_STEP';
 
 const initialState = {
-    visible: false,
+    visible: true, //default visibility
     content: decks,
     activeDeckId: 'scratch-basics',
     step: 0,

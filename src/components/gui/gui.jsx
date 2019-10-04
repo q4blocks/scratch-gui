@@ -136,6 +136,7 @@ const GUIComponent = props => {
         userStudyMode,
         customCardsVisible,
         customDeckId,
+        qisServiceEndpoint,
         ...componentProps
     } = omit(props, 'dispatch');
 
@@ -374,7 +375,12 @@ const GUIComponent = props => {
                                         <Watermark />
                                     </Box>
                                     <Box className="hint-overlay">
-                                        {hintMode?(<HintOverlay userStudyMode={userStudyMode} showTutorial={showTutorial} showQualityHint={showQualityHint}/>):null}
+                                        {hintMode?(<HintOverlay 
+                                            userStudyMode={userStudyMode} 
+                                            showTutorial={showTutorial} 
+                                            showQualityHint={showQualityHint}
+                                            serviceEndpoint={qisServiceEndpoint}
+                                            />):null}
                                     </Box>
                                 </TabPanel>
                                 <TabPanel className={tabClassNames.tabPanel}>

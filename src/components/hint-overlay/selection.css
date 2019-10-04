@@ -143,3 +143,17 @@ $action-button-size: 2.75rem;
 .show-me-button-wrapper {
     margin-top:2.5rem;
 }
+
+.img-demo-abstract{
+    width: 400px;
+}
+
+.demo-abstract-container{
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 5px;
+    /* max-width: 250px; */
+    padding: 0.75rem;
+    text-align: center;
+}

@@ -80,6 +80,15 @@
     right: -27px;
 }
 
+.button-disabled {
+    background-color: #bababa;
+    box-shadow: 0 0 0 4px #aeaeae59;
+}
+
+.button-disabled:hover{
+    box-shadow: 0 0 0 4px #aeaeae59;
+}
+
 .card {
     border: 1px solid $ui-tertiary;
     border-radius: 0.75rem;
@@ -369,4 +378,11 @@
     cursor: pointer;
     color: white;
     background-color: $ui-black-transparent;
+}
+
+.completed-status{
+    color: $extensions-primary;
+    padding-bottom: 0.6rem;
+    font-weight: 600;
+
 }

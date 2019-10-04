@@ -8,7 +8,9 @@ import HintIcon from './hint-icon.jsx';
 import hintIconSvg from "./light-bulb-icon.svg";
 import {CloseButton} from './common-component.jsx';
 import { applyBlocksTransformation } from '../../lib/hints/transform-api';
+import {DUPLICATE_CONSTANT_HINT_TYPE} from '../../lib/hints/constants';
 
+import refactorDemoAbstract from './extract-const-before-after.png';
 
 class ExtractConstantHint extends React.Component {
     constructor(props) {
@@ -31,14 +33,17 @@ class ExtractConstantHint extends React.Component {
 
     onHintIconClick() {
         this.setState({
-            showHintMessage: false,
-            clicked: true,
-            showRefactoringControl: true
+            // showHintMessage: false,
+            // clicked: true,
+            // showRefactoringControl: true
+            showHintMessage: !this.state.showHintMessage,
+            showRefactoringControl: !this.state.showRefactoringControl
         });
     }
 
     onMouseEnter() {
-        if (!this.state.clicked) {
+        // if (!this.state.clicked) {
+        if (!this.state.showRefactoringControl) {
             this.setState({ showHintMessage: true });
         }
         this.props.hint.valueIds.forEach(id => this.props.workspace.highlightField(id));
@@ -71,9 +76,10 @@ class ExtractConstantHint extends React.Component {
         );
 
         const RefactoringComponent = props => (
-            <div className={styles.hintMessage}>
+            <div className={styles.demoAbstractContainer}>
                 <CloseButton onClose={this.createOnClose()} />
-                <h3>Extract a constant variable.</h3>
+                <h3>Extract Constant Variable</h3>
+                <img src={refactorDemoAbstract} className={styles.imgDemoAbstract}/>
                 <button onClick={this.onRefactoringClick}>Extract Constant</button>
             </div>
         );
@@ -90,7 +96,10 @@ class ExtractConstantHint extends React.Component {
     onRefactoringClick(){
         const {workspace, hint} = this.props;
         let actions = this.props.hintManager.getAnalysisInfo().records[hint.hintId].refactoring.actions;
-        applyBlocksTransformation(workspace, actions);
+        applyBlocksTransformation(workspace, actions).then(()=>{
+            this.props.hintManager.clearAll(DUPLICATE_CONSTANT_HINT_TYPE);
+            this.props.hintManager.generateHints(DUPLICATE_CONSTANT_HINT_TYPE);
+        });
     }
 
     render() {

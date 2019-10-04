@@ -29,7 +29,8 @@ class HintOverlay extends React.Component {
         this.workspace = ScratchBlocks.getMainWorkspace();
         const options = {
             projectId: this.props.projectId,
-            userStudyMode: this.props.userStudyMode
+            userStudyMode: this.props.userStudyMode,
+            serviceEndpoint: this.props.serviceEndpoint
         }
         this.props.setHintManager(new HintManager(
             this.props.vm, this.workspace, this.props.dispatch, this.props.hintState,

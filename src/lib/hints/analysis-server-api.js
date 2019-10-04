@@ -1,28 +1,14 @@
 const localService = 'http://localhost:8080';
 const remoteService = 'https://quality-tutor-engine.appspot.com';
 
-var localServerAvailable;
-if (localServerAvailable === undefined) {
-    // should pass remote endpoint from the parent component
-    // fetch("http://localhost:8080").then(res => {
-    //     if (res.status === 200) {
-    //         localServerAvailable = true
-    //     }
-    // }, (err) => {
-        localServerAvailable = false;
-        // console.warn("local analysis server not available...switch to remote analysis server one");
-    // });
-}
-
 /**
  * 
  * @param {*} projectId 
  * @param {*} analysisType (duplicate_code, duplicate_sprite, all)
  * @param {*} xml 
- * @param {*} isProductionMode 
  */
-const sendAnalysisReq = function (projectId, analysisType, xml, isProductionMode) {
-    let url = isProductionMode ? remoteService : localService;
+const sendAnalysisReq = function ({projectId, analysisType, xml, serviceEndpoint}) {
+    let url = serviceEndpoint;
     url = url+'/analyze';
     // url = localServerAvailable ? localService : remoteService;
     return fetch(url, {
